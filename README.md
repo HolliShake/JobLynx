@@ -6,14 +6,14 @@
 </p>
 
 ## FEATURES 🗃️🗃️🗃️
-[x] - Admin
-[x] - Employer
-[x] - Employee management
-[x] - Job Posting
-[x] - Office Position Management
-[x] - Applicant
-[x] - Track application
-[x] - Generate CV/Resume'/PDS
+- [x] Admin
+- [x] Employer
+- [x] Employee management
+- [x] Job Posting
+- [x] Office Position Management
+- [x] Applicant
+- [x] Track application
+- [x] Generate CV/Resume'/PDS
 
 
 ## DEPENDENCY 💉💉💉
