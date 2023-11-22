@@ -33,9 +33,42 @@ const tableHeader = ref([
 const modalRef = ref()
 const loaded = ref(false)
 const toast = inject("toast")
+const swal = inject("swal")
+
+const items = computed(() => {
+  return salaryStore.getSalaries
+    .filter(s => s.title.toLowerCase().includes(search.value.toLowerCase()))
+})
 
 async function onCreate() {
   modalRef.value.open()
+}
+
+async function onUpdate(salary) {
+  salaryStore.setField(salary.raw)
+  modalRef.value.openAsUpdateMode()
+}
+
+async function onDelete(salary) {
+  swal.value.fire({
+    question: "Are you sure you want to delete salary entry?",
+    dangerMode: true,
+  }).then(async (result) => {
+    if (!result) return
+
+    try
+    {
+      const { status: code } = await SalaryService.deleteSalary(salary.id)
+
+      if (code == 204) {
+        toast.success("Salary deleted successfully")
+        salaryStore.delete(salary)
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error(error.message)
+    }
+  })
 }
 
 watch(companyContext, async (value) => {
@@ -99,8 +132,35 @@ watch(companyContext, async (value) => {
     </VCardText>
     <AppTable 
       :headers="tableHeader"
+      :items="items"
       :items-per-page="itemsPerPage"
-    />
+      :loading="!loaded"
+      @click:row="onUpdate"
+    >
+      <template #item.level="{ item }">
+        <VChip
+          variant="tonal"
+          color="success"
+          rounded="sm"
+        >
+          {{ item.raw.level }}
+        </VChip>
+      </template>
+      <template #item.action="{ item }">
+        <VBtn
+          icon=""
+          variant="text"
+          color="error"
+          size="x-small"
+          @click.stop="onDelete(item.raw)"
+        >
+          <VTooltip activator="parent">Delete salary</VTooltip>
+          <VIcon
+            icon="tabler-trash"
+          />
+        </VBtn>
+      </template>
+    </AppTable>
   </VCard>
 
   <SalaryModal ref="modalRef" />

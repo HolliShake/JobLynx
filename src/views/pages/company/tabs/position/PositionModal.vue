@@ -4,9 +4,10 @@ import EducationService from '@/service/education.service';
 import useEducationStore from '@/stores/education.store';
 import { helpers } from '@/helpers';
 import { integerValidator } from '@/@core/utils/validators';
+import { onMounted } from 'vue';
+import SalaryService from '@/service/salary.service';
 
-const educationService = EducationService;
-const educationStore = useEducationStore()
+const companyContext = inject('companyContext')
 const refVForm = ref()
 const submitted = ref(false)
 const form = ref({})
@@ -19,6 +20,17 @@ const errors = ref({
 })
 const toast = inject("toast")
 const modalRef = ref()
+
+const salaryItems = ref([])
+const salaryLoaded = ref(false)
+
+const mappedSalaryItems = computed(() => {
+  return salaryItems.value
+    .map(s => ({
+      title: `${s.title} (${s.level})`,
+      value: s.id
+    }))
+})
 
 defineExpose({
     open() {
@@ -58,6 +70,20 @@ async function update() {
     }
   }
 }
+
+onMounted(async () => {
+  try
+  {
+    const { status: code, data: response } = await SalaryService.getSalaryByCompanyId(companyContext.value.id)
+
+    if (code == 200) {
+      salaryItems.value = response
+      salaryLoaded.value = true
+    }
+  } catch (error) {
+    toast.error(error.message)
+  }
+})
 
 // 
 </script>
@@ -99,8 +125,10 @@ async function update() {
             <VSelect
               v-model="form.salary_id"
               label="Salary"
+              :items="mappedSalaryItems"
               :rules="[integerValidator]"
               :error-messages="errors.salary_id"
+              :loading="!salaryLoaded"
             />
           </VCol>
           <VCol cols="12">

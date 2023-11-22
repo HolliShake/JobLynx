@@ -51,7 +51,6 @@ async function create() {
     }
 
   } catch (err) {
-    console.log(err);
     if ((err.response?.data?.errors) ?? false) {
       errors.value = err.response?.data?.errors
     }
@@ -61,6 +60,14 @@ async function create() {
 async function update() {
   try
   {
+    const { status: code, data: response } = await SalaryService.updateSalary(form.value.id, form.value)   
+
+    if (code == 200) {
+      toast.success("Salary updated successfully")
+      modalRef.value.close()
+      salaryStore.update(response)
+    }
+
   } catch (err) {
     if ((err.response?.data?.errors) ?? false) {
       errors.value = err.response?.data?.errors
@@ -106,7 +113,7 @@ async function update() {
           >
             <VTextField
               v-model="form.value"
-              label="Salary"
+              label="Amount"
               :rules="[moneyValidator]"
               :error-messages="errors.value"
             />

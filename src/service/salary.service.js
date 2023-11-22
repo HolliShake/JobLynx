@@ -8,6 +8,12 @@ const SalaryService = new (class {
     async createSalary(payload) {
         return await axiosIns.post('/Salary/create', payload)
     }
+    async updateSalary(salarydId, payload) {
+        return await axiosIns.put(`/Salary/update/${salarydId}`, payload)
+    }
+    async deleteSalary(salarydId) {
+        return await axiosIns.delete(`/Salary/delete/${salarydId}`)
+    }
 })
 
 export default SalaryService

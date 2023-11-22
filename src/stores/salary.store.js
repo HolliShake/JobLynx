@@ -46,8 +46,8 @@ const useSalaryStore = defineStore("Salary", {
                 salary
             )
         },
-        delete(salaryId) {
-            this.salaries = this.salaries.filter(s => s.id != salaryId)
+        delete(salary) {
+            this.salaries = this.salaries.filter(s => s.id != salary.id)
         },
         setCompany(companyId) {
             this.companyId = companyId

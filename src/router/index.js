@@ -20,7 +20,7 @@ router.beforeEach((to, from, next) => {
   } else {
     setTimeout(() => {
       useRawLayout().setLayoutFluid(false);
-    }, 300)
+    }, 1000)
   }
   next()
 })
