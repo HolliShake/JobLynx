@@ -1,0 +1,4 @@
+// Write your overrides
+.v-overlay.v-overlay--active > .v-overlay__scrim {
+  backdrop-filter: blur(2px);
+}
