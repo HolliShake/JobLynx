@@ -79,6 +79,10 @@ onMounted(async () => {
     if (code == 200) {
       salaryItems.value = response
       salaryLoaded.value = true
+
+      if (response.length > 0) {
+        form.value.salary_id = response[0].id
+      }
     }
   } catch (error) {
     toast.error(error.message)
