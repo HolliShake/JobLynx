@@ -71,7 +71,8 @@ async function onDelete(company) {
         toast.success("Successfully deleted.")
       }
     } catch (error) {
-      toast.error(error.message)
+      console.error(error)
+      toast.error("Failed to delete company.")
     }
   })
 }
@@ -88,7 +89,8 @@ onMounted(async () => {
       loaded.value = true
     }
   } catch (error) {
-    toast.error(error.message)
+    console.error(error)
+    toast.error("Failed to load companies.")
   }
 })
 // 

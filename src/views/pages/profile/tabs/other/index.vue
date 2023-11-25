@@ -45,7 +45,8 @@ onMounted(async () => {
     }
 
   } catch (error) {
-    toast.error(error.message)
+    console.error(error)
+    toast.error("Failed to load personal data.")
   }
 })
 

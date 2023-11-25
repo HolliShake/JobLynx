@@ -55,7 +55,7 @@ const useSalaryStore = defineStore("Salary", {
         setField(salary) {
             this.salaryModel = salary
         },
-        resetModel() {
+        resetField() {
             this.salaryModel = defaultModel()
         },
     }

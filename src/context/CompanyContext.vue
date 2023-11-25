@@ -32,7 +32,8 @@ onMounted(async () => {
       loaded.value = true
     } 
   } catch (error) {
-    toast.error(error.message)
+    console.error(error)
+    toast.error("Failed to load company data")
   }
 })
 // 

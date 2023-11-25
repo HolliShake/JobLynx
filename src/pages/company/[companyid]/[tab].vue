@@ -4,6 +4,8 @@ import useRawLayout from '@/layouts/useRawLayout';
 import { h } from 'vue';
 import { onMounted } from 'vue';
 import DashboardTab from "@/views/pages/company/tabs/dashboard/index.vue"
+import OfficeTab from "@/views/pages/company/tabs/office/index.vue"
+import JobPostingCardTab from "@/views/pages/company/tabs/jobposting/index.vue"
 import PositionTab from "@/views/pages/company/tabs/position/index.vue"
 import SalaryTab from "@/views/pages/company/tabs/salary/index.vue"
 import { useRoute, useRouter } from 'vue-router';
@@ -23,6 +25,11 @@ const tabs = ref([
     title: "Dashboard",
     key: "dashboard",
     icon: "mdi-view-dashboard",
+  },
+  {
+    title: "Offices",
+    key: "offices",
+    icon: "mdi-office-building",
   },
   {
     title: "Employees",
@@ -51,6 +58,10 @@ function getComponent(key) {
   switch (key) {
     case "dashboard":
       return h(DashboardTab)
+    case "offices":
+      return h(OfficeTab)
+    case "jobPosting":
+      return h(JobPostingCardTab)
     case "position":
       return h(PositionTab)
     case "salary":

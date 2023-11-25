@@ -48,7 +48,8 @@ async function onDelete(skill) {
       }
 
     } catch (error) {
-      toast.error(error.message)
+      console.error(error)
+      toast.error("Failed to delete skill.")
     }
   })
 }
@@ -73,7 +74,7 @@ onMounted(async () => {
       loaded.value = true
     }
   } catch (error) {
-    toast.error(error.message)
+    toast.error("Failed to load skills.")
   }
 })
 

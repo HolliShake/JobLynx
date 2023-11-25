@@ -56,7 +56,7 @@ const useJobClassificationStore = defineStore("JobClassicationStore", {
         setField(jobClassification) {
             this.jobClassificationModel = jobClassification
         },
-        resetModel() {
+        resetField() {
             this.jobClassificationModel = defaultModel()
         },
     }

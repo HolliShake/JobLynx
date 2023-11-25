@@ -46,7 +46,8 @@ async function onDelete(education) {
           toast.success('Successfully deleted.')
         }
       } catch (error) {
-        toast.error(error.message)
+        console.error(error)
+        toast.error("Failed to delete education.")
       }
     })
 }
@@ -63,7 +64,8 @@ onMounted(async () => {
       educationStore.initialize(response)
     }
   } catch (error) {
-    toast.error(error.message)
+    console.error(error)
+    toast.error("Failed to load educations.")
   }
 })
 

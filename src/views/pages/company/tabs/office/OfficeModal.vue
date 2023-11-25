@@ -1,12 +1,10 @@
 
 <script setup>
-import EducationService from '@/service/education.service';
-import useEducationStore from '@/stores/education.store';
-import { integerValidator, moneyValidator } from '@/@core/utils/validators';
-import SalaryService from '@/service/salary.service';
-import useSalaryStore from '@/stores/salary.store';
+import OfficeService from '@/service/office.service'
+import useOfficeStore from '@/stores/office.store'
 
-const salaryStore = useSalaryStore()
+
+const officeStore = useOfficeStore()
 const refVForm = ref()
 const submitted = ref(false)
 const form = ref({})
@@ -21,16 +19,16 @@ const toast = inject("toast")
 defineExpose({
     open() {
       modalRef.value.open()
-      salaryStore.resetField()
-      form.value = salaryStore.getSalaryModel
+      officeStore.resetField()
+      form.value = officeStore.getOfficeModel
     },
     openAsUpdateMode() {
       modalRef.value.openAsUpdateMode()
-      form.value = salaryStore.getSalaryModel
+      form.value = officeStore.getOfficeModel
     },
     close() {
       modalRef.value.close()
-      salaryStore.resetField()
+      officeStore.resetField()
     },
 })
 
@@ -42,14 +40,13 @@ async function onSubmit() {
 async function create() {
   try
   {
-    const { status: code, data: response } = await SalaryService.createSalary(form.value)   
+    const { status: code, data: response } = await OfficeService.createOffice(form.value)
 
     if (code == 201) {
-      toast.success("Salary created successfully")
+      toast.success("Office created successfully")
       modalRef.value.close()
-      salaryStore.add(response)
+      officeStore.add(response)
     }
-
   } catch (err) {
     if ((err.response?.data?.errors) ?? false) {
       errors.value = err.response?.data?.errors
@@ -60,14 +57,13 @@ async function create() {
 async function update() {
   try
   {
-    const { status: code, data: response } = await SalaryService.updateSalary(form.value.id, form.value)   
+    const { status: code, data: response } = await OfficeService.updateOffice(form.value.id, form.value)
 
     if (code == 200) {
-      toast.success("Salary updated successfully")
+      toast.success("Office update successfully")
       modalRef.value.close()
-      salaryStore.update(response)
+      officeStore.update(response)
     }
-
   } catch (err) {
     if ((err.response?.data?.errors) ?? false) {
       errors.value = err.response?.data?.errors
@@ -81,7 +77,7 @@ async function update() {
 <template>
   <AppDialog ref="modalRef" :max-width="420">
     <template #title>
-      Position Details
+      Office Details
     </template>
 
     <template #content>
@@ -91,38 +87,35 @@ async function update() {
       >
         <VRow>
           <VCol cols="12">
-            <span class="text-sm font-weight-bold">TITLE</span>
+            <span class="text-sm font-weight-bold">NAME</span>
             <VTextField
-              v-model="form.title"
-              :error-messages="errors.title"
+              v-model="form.name"
+              :error-messages="errors.name"
             />
           </VCol>
-          <VCol 
-            cols="12"
-          >
-            <span class="text-sm font-weight-bold">LEVEL</span>
+          <VCol cols="12">
+            <span class="text-sm font-weight-bold">CONTACT NUMBER</span>
             <VTextField
-              v-model="form.level"
-              :error-messages="errors.level"
+              v-model="form.mobile_number"
+              :error-messages="errors.mobile_number"
             />
           </VCol>
-          <VCol 
-            cols="12"
-          >
-            <span class="text-sm font-weight-bold">CURRENCY</span>
-            <SelectCurrency
-              v-model="form.currency"
+          <VCol cols="12">
+            <span class="text-sm font-weight-bold">COUNTRY</span>
+            <SelectCountry
+              v-model="form.country"
               label=""
+              :error-messages="errors.address"
             />
           </VCol>
-          <VCol 
-            cols="12"
-          >
-            <span class="text-sm font-weight-bold">AMOUNT</span>
-            <VTextField
-              v-model="form.value"
-              :rules="[moneyValidator]"
-              :error-messages="errors.value"
+          <VCol cols="12">
+            <span class="text-sm font-weight-bold">ADDRESS & LOCATION</span>
+            <VTextarea
+              v-model="form.address"
+              :rows="2"
+              :max-rows="5"
+              auto-grow
+              :error-messages="errors.address"
             />
           </VCol>
         </VRow>

@@ -65,8 +65,8 @@ async function onDelete(salary) {
         salaryStore.delete(salary)
       }
     } catch (error) {
-      console.log(error);
-      toast.error(error.message)
+      console.error(error)
+      toast.error("Failed to delete salary.")
     }
   })
 }
@@ -83,7 +83,8 @@ watch(companyContext, async (value) => {
       loaded.value = true
     }
   } catch (error) {
-    toast.error(error.message)
+    console.error(error)
+    toast.error("Failed to load salaries.")
   }
 }, { deep: true, immediate: true })
 
