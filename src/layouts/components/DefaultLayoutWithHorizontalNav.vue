@@ -14,7 +14,7 @@ import useAuthStore from '@/stores/auth.store'
 const { appRouteTransition } = useThemeConfig()
 
 const resolveRoot = computed(() => {
-  return useAuthStore().isAdmin ? '/admin' : '/'
+  return useAuthStore().isAdmin ? '/admin/companies' : '/'
 })
 
 </script>

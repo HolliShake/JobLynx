@@ -4,18 +4,17 @@ import PositionService from '@/service/position.service'
 import usePositionStore from '@/stores/position.store'
 import { EMPLOYEMENT_TYPE_ITEMS } from '@/views/pages/company/tabs/position/employment-type.map'
 import { PAYMENT_TYPE_ITEMS } from '@/views/pages/company/tabs/position/payment-type.map'
+import { watch } from 'vue'
 
 const positionStore = usePositionStore()
 const companyContext = inject('companyContext')
 const refVForm = ref()
 const submitted = ref(false)
-const form = ref({
-  position_id: -1,
-})
+const selectedPosition = ref(-1)
+const positionData = ref({})
+const form = ref({})
 const errors = ref({
-  title: [],
-  level: [],
-  value: []
+  
 })
 const currentStep = ref(1)
 const steps = ref([
@@ -112,6 +111,55 @@ async function update() {
   }
 }
 
+
+function isFinished(step, currentStep) {
+  if (step != currentStep) {
+    return false
+  }
+
+  switch (currentStep) {
+    case 1: {
+      return (selectedPosition.value > 0)
+    }
+    case 2:
+      return false
+    case 3:
+      return false
+    default:
+      return false
+  }  
+}
+
+function nextStep() {
+  if (currentStep.value >= steps.value.length) {
+    return
+  }
+
+  currentStep.value += 1
+}
+
+watch(selectedPosition, async (value) => {
+  positionData.value = {}
+
+  if (value <= 0) return
+
+  form.value.position_id = value
+
+  try
+  {
+    const { status: code, data: response } = await PositionService.getCascadedPositionById(value)
+
+    if (code == 200) {
+      console.log(response);
+      positionData.value = response
+    }
+  } catch (error) {
+    console.error(error)
+    toast.error("Failed to fetch position entries.")
+  }
+
+}, { deep: true })
+
 // 
 </script>
 
@@ -175,7 +223,7 @@ async function update() {
                   :key="step.title"
                   size="sm"
                   :dot-color="currentStep >= step.step ? 'primary' : 'info'"
-                  icon="mdi-check"
+                  :icon="isFinished(step.step, currentStep) ?'mdi-check' : 'mdi-circle-outline'"
                 >
                   <span class="font-weight-bold">{{ step.title }}</span>
                 </VTimelineItem>
@@ -205,21 +253,45 @@ async function update() {
                         <VCol cols="12">
                           <span class="text-sm font-weight-bold">Position</span>
                           <VSelect 
-                            v-model="form.position_id"
+                            v-model="selectedPosition"
                             :items="positionItems"
                           />
                         </VCol>
                         <VCol cols="12">
-                          <span class="text-sm font-weight-bold">Location</span>
+                          <span class="text-sm font-weight-bold">Country</span>
                           <VTextField 
-                            :model-value="form.address"
+                            :model-value="positionData.office?.country"
                             readonly
                           />
                         </VCol>
                         <VCol cols="12">
-                          <span class="text-sm font-weight-bold">EMPLOYEMENT TYPE</span>
+                          <span class="text-sm font-weight-bold">Address & Location</span>
+                          <VTextField 
+                            :model-value="positionData.office?.address"
+                            readonly
+                          />
+                        </VCol>
+                        <VCol cols="12">
+                          <div class="d-flex flex-row flex-nowrap w-100 justify-space-between align-center">
+                            <span class="text-sm font-weight-bold">EMPLOYEMENT TYPE</span>
+                            <VBtn
+                              icon=""
+                              variant="text"
+                              size="x-small"
+                              class="pa-0"
+                              color="error"
+                            >
+                              <VIcon
+                                size="21"
+                                icon="tabler-question-circle"
+                              />
+                              <VTooltip activator="parent">
+                                <span class="text-xs">This employment type will be based on selected position</span>
+                              </VTooltip>
+                            </VBtn>
+                          </div>
                           <VRadioGroup
-                            v-model="form.employment_type"
+                            v-model="positionData.employment_type"
                           >
                             <VRadio
                               v-for="et in EMPLOYEMENT_TYPE_ITEMS"
@@ -250,31 +322,87 @@ async function update() {
                     <VCardText>
                       <VRow>
                         <VCol cols="12">
-                          <span class="text-sm font-weight-bold">PAYMENT TYPE</span>
+                          <div class="d-flex flex-row flex-nowrap w-100 justify-space-between align-center">
+                            <span class="text-sm font-weight-bold">PAYMENT TYPE</span>
+                            <VBtn
+                              icon=""
+                              variant="text"
+                              size="x-small"
+                              class="pa-0"
+                              color="error"
+                            >
+                              <VIcon
+                                size="21"
+                                icon="tabler-question-circle"
+                              />
+                              <VTooltip activator="parent">
+                                <span class="text-xs">This payment type will be based on selected position</span>
+                              </VTooltip>
+                            </VBtn>
+                          </div>
                           <VRadioGroup
-                            v-model="form.payment_type"
+                            v-model="positionData.payment_type"
                           >
                             <VRadio
                               v-for="pt in PAYMENT_TYPE_ITEMS"
                               :key="pt.value"
                               :label="pt.title"
                               :value="pt.value"
+                              readonly
                             />
                           </VRadioGroup>
-                        </VCol>
-                        <VCol cols="12">
-                          <span class="text-sm font-weight-bold">Position</span>
-                          <VTextField />
-                        </VCol>
-                        <VCol cols="12">
-                          <span class="text-sm font-weight-bold">Location</span>
-                          <VTextField />
                         </VCol>
                       </VRow>
                     </VCardText>
                   </VCard>
                 </VCol>
+                <VCol 
+                  cols="12"
+                  class="py-0"
+                />
+                <VCol 
+                  cols="12"
+                  md="5"
+                >
+                  <VCard flat>
+                    <template #prepend>
+                      <span class="font-weight-bold">Advertise privately</span>
+                    </template>
+                    <VCardText>
+                      <VRow>
+                        <VCol cols="12">
+                          <VSwitch 
+                            v-model="form.is_hide_company_info"
+                            label="Hide company rating/review, and comments" 
+                            class="text-xs text-disabled"
+                          />
+                        </VCol>
+                      </VRow>
+                    </VCardText>
+                  </VCard>
+                </VCol>
+                <VCol 
+                  cols="12"
+                  class="py-0"
+                />
+                <VCol cols="12">
+                  <div class="d-flex flex-row gap-2">
+                    <VBtn
+                      color="primary"
+                      :disabled="!isFinished(1, currentStep)"
+                      @click="nextStep"
+                    >
+                      Continue
+                    </VBtn>
+                  </div>
+                </VCol>
               </VRow>
+            </VWindowItem>
+            <!--  -->
+            <VWindowItem 
+              :value="2"
+            >
+              asdasd
             </VWindowItem>
           </VWindow>
         </VCol>

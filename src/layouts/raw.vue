@@ -17,7 +17,7 @@ const { appRouteTransition } = useThemeConfig()
 injectSkinClasses()
 
 const resolveRoot = computed(() => {
-  return useAuthStore().isAdmin ? '/admin' : '/'
+  return useAuthStore().isAdmin ? '/admin/companies' : '/'
 })
 </script>
 

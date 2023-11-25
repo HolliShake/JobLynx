@@ -5,6 +5,9 @@ const PositionService = new (class {
     async getPositionByCompanyId(companyId) {
         return await axiosIns.get(`/Position/Company/${companyId}`)
     }
+    async getCascadedPositionById(positionId) {
+        return await axiosIns.get(`/Position/cascade/${positionId}`)
+    }
     async createPosition(payload) {
         return await axiosIns.post("/Position/create", payload)
     }

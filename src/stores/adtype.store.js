@@ -1,0 +1,56 @@
+import { defineStore } from "pinia";
+import { merge, cloneDeep } from "lodash";
+
+const defaultModel = () => ({
+    type: "",
+    price: 0,
+    post_date: "",
+    duration: 0,
+    max_skills_matching: 0,
+    is_search_priority: false,
+    is_featured: false,
+    is_analytics_available: false,
+    is_editable: false,
+})
+
+const useAdTypeStore = defineStore("AdType", {
+    state: () => ({
+        adtypes: [],
+        adtypeModel: {},
+    }),
+
+    getters: {
+        getAdTypes() {
+            return this.adtypes;
+        },
+        getAdTypeModel() {
+            return cloneDeep(this.adtypeModel);
+        },
+    },
+
+    actions: {
+        initialize(addtypesArray) {
+            this.adtypes = addtypesArray;
+        },
+        add(adtype) {
+            this.adtypes.push(adtype);
+        },
+        update(adtype) {
+            merge(
+                this.adtypes.find((item) => item.id == adtype.id),
+                adtype
+            )
+        },
+        delete(id) {
+            this.adtypes = this.adtypes.filter((item) => item.id != id);
+        },
+        setField(field) {
+            this.adtypeModel = field;
+        },
+        resetField() {
+            this.adtypeModel = defaultModel();
+        },
+    },
+})
+
+export default useAdTypeStore;

@@ -8,7 +8,7 @@ import miscMaskLight from '@images/pages/misc-mask-light.png'
 const authThemeMask = useGenerateImageVariant(miscMaskLight, miscMaskDark)
 
 const resolveRoot = computed(() => {
-  return useAuthStore().isAdmin ? '/admin' : '/'
+  return useAuthStore().isAdmin ? '/admin/companies' : '/'
 })
 </script>
 
