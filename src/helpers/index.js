@@ -38,13 +38,23 @@ const formater = ({
 
     return `${MONTHS[date.getMonth()]} ${dd}, ${date.getFullYear()}`
   },
-  toPhpDate(dateString) {
+  toPhpDate: (dateString) => {
     return new Date(dateString).toISOString().slice(0, 19).replace('T', ' ')
+  },
+  numberToMoney: (number) => {
+    return parseFloat(number).toFixed(2).toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,")
   }
+})
+
+const resolver = ({
+  getImagePath: (filePath) => {
+    return `${import.meta.env.VITE_APP_UPLOADS_FOLDER}/${filePath}`
+  },
 })
 
 export const helpers = Object.freeze({
   security,
   formater,
+  resolver,
 })
 

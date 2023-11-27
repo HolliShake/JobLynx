@@ -100,6 +100,8 @@ onMounted(async () => {
         class="h-100"
       >
         <VCard
+          rounded="0"
+          flat
           class="company-nav-card"
         >
           <VCardText class="pa-4">

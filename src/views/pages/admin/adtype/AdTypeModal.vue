@@ -1,17 +1,23 @@
 
 <script setup>
+import AdTypeService from '@/service/adtype.service'
 import OfficeService from '@/service/office.service'
-import useOfficeStore from '@/stores/office.store'
+import useAdTypeStore from '@/stores/adtype.store'
 
 
-const officeStore = useOfficeStore()
+const adTypeStore = useAdTypeStore()
 const refVForm = ref()
 const submitted = ref(false)
 const form = ref({})
 const errors = ref({
-  title: [],
-  level: [],
-  value: []
+  type: [],
+  price: [],
+  duration: [],
+  max_skills_matching: [],
+  is_search_priority: [],
+  is_featured: [],
+  is_analytics_available: [],
+  is_editable: [],
 })
 const modalRef = ref()
 const toast = inject("toast")
@@ -19,12 +25,16 @@ const toast = inject("toast")
 defineExpose({
     open() {
       modalRef.value.open()
+      adTypeStore.resetField()
+      form.value = adTypeStore.getAdTypeModel
     },
     openAsUpdateMode() {
       modalRef.value.openAsUpdateMode()
+      form.value = adTypeStore.getAdTypeModel
     },
     close() {
       modalRef.value.close()
+      adTypeStore.resetField()
     },
 })
 
@@ -36,12 +46,12 @@ async function onSubmit() {
 async function create() {
   try
   {
-    const { status: code, data: response } = await OfficeService.createOffice(form.value)
+    const { status: code, data: response } = await AdTypeService.createAdtype(form.value)
 
     if (code == 201) {
-      toast.success("Office created successfully")
+      toast.success("AdType created successfully")
       modalRef.value.close()
-      officeStore.add(response)
+      adTypeStore.add(response)
     }
   } catch (err) {
     if ((err.response?.data?.errors) ?? false) {
@@ -53,12 +63,12 @@ async function create() {
 async function update() {
   try
   {
-    const { status: code, data: response } = await OfficeService.updateOffice(form.value.id, form.value)
+    const { status: code, data: response } = await AdTypeService.updateAdtype(form.value.id, form.value)
 
     if (code == 200) {
-      toast.success("Office update successfully")
+      toast.success("AdType update successfully")
       modalRef.value.close()
-      officeStore.update(response)
+      adTypeStore.update(response)
     }
   } catch (err) {
     if ((err.response?.data?.errors) ?? false) {
@@ -71,9 +81,9 @@ async function update() {
 </script>
 
 <template>
-  <AppDialog ref="modalRef" :max-width="420">
+  <AppDialog ref="modalRef" :max-width="430">
     <template #title>
-      Office Details
+      Ad Details
     </template>
 
     <template #content>
@@ -83,36 +93,79 @@ async function update() {
       >
         <VRow>
           <VCol cols="12">
-            <span class="text-sm font-weight-bold">NAME</span>
+            <span class="text-sm font-weight-bold">TYPE</span>
             <VTextField
-              v-model="form.name"
-              :error-messages="errors.name"
+              v-model="form.type"
+              :error-messages="errors.type"
             />
           </VCol>
           <VCol cols="12">
-            <span class="text-sm font-weight-bold">CONTACT NUMBER</span>
+            <span class="text-sm font-weight-bold">PRICE</span>
             <VTextField
-              v-model="form.mobile_number"
-              :error-messages="errors.mobile_number"
+              v-model="form.price"
+              :error-messages="errors.price"
             />
           </VCol>
           <VCol cols="12">
-            <span class="text-sm font-weight-bold">COUNTRY</span>
-            <SelectCountry
-              v-model="form.country"
-              label=""
-              :error-messages="errors.address"
+            <span class="text-sm font-weight-bold">MAX SKILLS MATCHING</span>
+            <VTextField
+              v-model="form.max_skills_matching"
+              :error-messages="errors.max_skills_matching"
             />
           </VCol>
           <VCol cols="12">
-            <span class="text-sm font-weight-bold">ADDRESS & LOCATION</span>
-            <VTextarea
-              v-model="form.address"
-              :rows="2"
-              :max-rows="5"
-              auto-grow
-              :error-messages="errors.address"
-            />
+            <span class="text-sm font-weight-bold">DURATION</span>
+            <VRadioGroup
+              v-model="form.duration"
+              inline
+              class="gap-1"
+            >
+              <VRadio 
+                label="1 Day"
+                :value="1"
+              />
+              <VRadio 
+                label="7 Days" 
+                :value="7"
+              />
+              <VRadio 
+                label="14 Days" 
+                :value="14"
+              />
+              <VRadio 
+                label="30 Days" 
+                :value="30"
+              />
+            </VRadioGroup>
+          </VCol>
+          <VCol 
+            cols="12"
+            class="py-0"
+          >
+            <LabeledDivider title="Ad Option" />
+          </VCol>
+          <VCol cols="12">
+            <div class="d-flex flex-row flex-wrap gap-3">
+              <VCheckbox 
+                label="Featured"
+                v-model="form.is_featured"
+              />
+
+              <VCheckbox 
+                label="Search Priority"
+                v-model="form.is_search_priority"
+              />
+
+              <VCheckbox 
+                label="Editable"
+                v-model="form.is_editable"
+              />
+
+              <VCheckbox 
+                label="Enable Analytics"
+                v-model="form.is_analytics_available"
+              />
+            </div>
           </VCol>
         </VRow>
       </VForm>

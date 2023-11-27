@@ -1,5 +1,8 @@
 <template>
-  <VCard>
+  <VCard
+    rounded="0"
+    flat
+  >
     <VCardText>
       Dashboard
     </VCardText>

@@ -5,6 +5,7 @@ const defaultModel = () => ({
     title: "",
     level: "",
     value: 0,
+    currency: "",
     company_id: null
 })
 

@@ -5,7 +5,7 @@ const defaultModel = () => ({
     type: "",
     price: 0,
     post_date: "",
-    duration: 0,
+    duration: 1,
     max_skills_matching: 0,
     is_search_priority: false,
     is_featured: false,
@@ -41,8 +41,8 @@ const useAdTypeStore = defineStore("AdType", {
                 adtype
             )
         },
-        delete(id) {
-            this.adtypes = this.adtypes.filter((item) => item.id != id);
+        delete(adtype) {
+            this.adtypes = this.adtypes.filter((item) => item.id != adtype.id);
         },
         setField(field) {
             this.adtypeModel = field;

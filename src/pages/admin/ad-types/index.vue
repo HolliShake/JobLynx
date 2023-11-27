@@ -1,5 +1,10 @@
 <script setup>
+import AdTypeService from '@/service/adtype.service';
+import useAdTypeStore from '@/stores/adtype.store';
+import AdTypeModal from '@/views/pages/admin/adtype/AdTypeModal.vue';
+import { inject } from 'vue';
 
+const adtypeStore = useAdTypeStore()
 const search = ref('')
 const itemsPerPage = ref(10)
 
@@ -13,12 +18,80 @@ const tableHeader = ref([
     key: "price",
   },
   {
+    title: "SKILLS MATCHING",
+    key: "max_skills_matching",
+  },
+  {
+    title: "DURATION",
+    key: "duration",
+  },
+  {
+    title: "MORE",
+    key: "",
+  },
+  {
     title: "ACTION",
     key: "action",
     width: '150',
     align: 'center',
   }
 ])
+const modalRef = ref()
+const loaded = ref(false)
+const toast = inject("toast")
+const swal = inject("swal")
+
+const items = computed(() => {
+  return adtypeStore.getAdTypes
+    .filter((item) => {
+      return item.type.toLowerCase().includes(search.value.toLowerCase())
+    })
+})
+
+async function onCreate() {
+  modalRef.value.open()
+}
+
+async function onUpdate(adtype) {
+  adtypeStore.setField(adtype.raw)
+  modalRef.value.openAsUpdateMode()
+}
+
+async function onDelete(adtype) {
+  swal.value.fire({
+    question: "Are you sure you want to delete this adtype?",
+    dangerMode: true,
+  }).then(async (result) => {
+    if (!result) return
+
+    try
+    {
+      const { status: code } = await AdTypeService.deleteAdtype(adtype.id)
+
+      if (code == 204) {
+        toast.success("AdType deleted successfully")
+        adtypeStore.delete(adtype)
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to delete adtype")
+    }
+  })
+}
+
+onMounted(async () => {
+  try
+  {
+    const { status: code, data: response } = await AdTypeService.getAllAdtypes()
+
+    if (code == 200) {
+      adtypeStore.initialize(response)
+      loaded.value = true
+    }
+  } catch (err) {
+    toast.error("Failed to fetch ad types")
+  }
+})
 
 // 
 </script>
@@ -53,6 +126,7 @@ const tableHeader = ref([
           >
             <VBtn
               block
+              @click="onCreate"
             >
               <VIcon
                 start
@@ -65,8 +139,40 @@ const tableHeader = ref([
       </VCardText>
       <AppTable
         :headers="tableHeader"
+        :items="items"
         :items-per-page="itemsPerPage"
-      />
+        :loading="!loaded"
+        @click:row="onUpdate"
+      >
+        <template #item.type="{ item }">
+          <VChip
+            variant="tonal"
+            rounded="sm"
+            size="small"
+            color="primary"
+          >
+            <span class="text-sm text-uppercase">{{ item.raw.type }}</span>
+          </VChip>
+        </template>
+
+        <template #item.action="{ item }">
+          <VBtn
+            icon=""
+            variant="text"
+            color="error"
+            size="small"
+            @click.stop="onDelete(item.raw)"
+          >
+            <VIcon
+              icon="tabler-trash"
+            />
+            <VTooltip activator="parent">Delete adtype</VTooltip>
+          </VBtn>
+        </template>
+      </AppTable>
     </VCard>
+
+    <AdTypeModal ref="modalRef" />
+
   </section>
 </template>

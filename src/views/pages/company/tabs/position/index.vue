@@ -112,7 +112,10 @@ watch(companyContext, async (value) => {
 </script>
 
 <template>
-  <VCard>
+  <VCard 
+    rounded="0"
+    flat
+  >
     <VCardText class="pa-4">
       <VRow>
         <VCol 
