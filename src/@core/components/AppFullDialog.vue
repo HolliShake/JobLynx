@@ -65,7 +65,7 @@ defineExpose({
     >
       <slot name="header" :isUpdateMode="updateMode" />  
       <VCardText>
-        <slot :isUpdateMode="updateMode" />
+        <slot name="content" :isUpdateMode="updateMode" />
       </VCardText>
     </VCard>
   </VDialog>

@@ -77,6 +77,10 @@ async function onDelete(company) {
   })
 }
 
+async function onSelectCompany(company) {
+  localStorage.setItem("selectedCompany", helpers.security.encrypt(company.id))
+}
+
 onMounted(async () => {
   companyStore.setUser(authStore.getUserData.id)
 
@@ -219,6 +223,7 @@ onMounted(async () => {
                     },
                     props: true,
                   }"
+                  @click="onSelectCompany(item)"
                 >
                   <VBtn
                     icon=""

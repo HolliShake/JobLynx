@@ -64,7 +64,7 @@ async function onPay() {
     const { error } = await stripe.value.confirmPayment({
       elements,
       confirmParams: {
-        return_url: window.location.href,
+        return_url: window.location.origin + "/company/payment",
       }
     });
 

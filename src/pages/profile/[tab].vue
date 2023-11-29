@@ -7,6 +7,7 @@ import OtherTab from "@/views/pages/profile/tabs/other/index.vue";
 import { h } from 'vue';
 import { watch } from 'vue';
 import { useRouter } from 'vue-router';
+import { onMounted } from 'vue';
 
 const props = defineProps({
   tab: {
@@ -16,7 +17,6 @@ const props = defineProps({
 })
 
 const router = useRouter()
-
 const currentTab = ref(props.tab)
 
 const tabs = ref([
@@ -70,6 +70,8 @@ watch(currentTab, (val) => {
     }
   })
 }, { deep: true })
+
+
 
 // 
 </script>

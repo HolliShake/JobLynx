@@ -21,8 +21,6 @@ export function make(arrayOfPath) {
 
         const subject = SUBJECT[s]
 
-        console.log(subject);
-
         for (let i = 0; i < arrayOfPath.length; i ++) {
             newPath.push({
                 ...arrayOfPath[i],

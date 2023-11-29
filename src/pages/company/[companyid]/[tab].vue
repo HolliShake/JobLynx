@@ -27,7 +27,7 @@ const tabs = ref([
     icon: "mdi-view-dashboard",
   },
   {
-    title: "Offices",
+    title: "My Offices",
     key: "offices",
     icon: "mdi-office-building",
   },
@@ -42,12 +42,12 @@ const tabs = ref([
     icon: "mdi-toolbox",
   },
   {
-    title: "Position",
+    title: "Job Position",
     key: "position",
     icon: "mdi-briefcase",
   },
   {
-    title: "Salary",
+    title: "Salary item",
     key: "salary",
     icon: "mdi-cash-multiple",
   }
@@ -108,7 +108,8 @@ onMounted(async () => {
             <VTabs
               v-model="currentTab"
               :direction="$vuetify.display.lgAndUp ? 'vertical' : 'horizontal'"
-              class="v-tabs-vertical v-tabs-pill"
+              class="v-tabs-vertical v-tabs-pill rounded-0"
+            
             >
               <VTab
                 v-for="t in tabs"
@@ -156,6 +157,8 @@ onMounted(async () => {
   }
 }
 </style>
+
+
 
 <route lang="yaml">
   meta:
