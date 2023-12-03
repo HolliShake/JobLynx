@@ -13,6 +13,7 @@ const props = defineProps({
   },
 })
 
+const authContext = inject("authContext")
 const companyStore = useCompanyStore()
 const loaded = ref(false)
 const toast = inject("toast")
@@ -24,6 +25,8 @@ const companyContext = computed(() => {
 provide("companyContext", companyContext)
 
 onMounted(async () => {
+  companyStore.setUser(authContext.value.id)
+
   try {
     const { status: code, data: response } = await CompanyService.getCompanyById(helpers.security.decrypt(props.companyid))
 

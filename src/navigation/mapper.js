@@ -1,4 +1,7 @@
 
+
+const COMPANY_PATTERN = new RegExp('/company/.*/.*')
+
 export const SUBJECT = Object.freeze([
     "admin",
     "user",
@@ -22,13 +25,22 @@ export function make(arrayOfPath) {
         const subject = SUBJECT[s]
 
         for (let i = 0; i < arrayOfPath.length; i ++) {
-            newPath.push({
-                ...arrayOfPath[i],
-                subject: subject,
-                action: "read"
-            })
+
+            if (arrayOfPath[i].type === "divider") {
+                newPath.push(arrayOfPath[i])
+                
+            } else {
+                newPath.push({
+                    ...arrayOfPath[i],
+                    hidden: () => (!COMPANY_PATTERN.test(window.location.pathname)),
+                    subject: subject,
+                    action: "read"
+                })
+            }
         }
     }
+
+    console.log(newPath);
 
     return newPath;
 }

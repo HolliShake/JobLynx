@@ -4,6 +4,7 @@ import { inject } from 'vue';
 import { onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import AuthService from '@/service/auth.service'
+import { computed } from 'vue';
 
 // 👉 Route
 const route = useRoute()
@@ -16,6 +17,12 @@ const authService = AuthService
 
 // 👉 Auth Store
 const authStore = useAuthStore()
+
+const authContext = computed(() => {
+  return authStore.getUserData
+})
+
+provide("authContext", authContext)
 
 onMounted(async() => {
   if (route.fullPath?.toLowerCase() == "/login" ) {

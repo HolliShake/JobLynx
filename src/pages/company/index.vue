@@ -216,12 +216,10 @@ onMounted(async () => {
               <div class="d-flex flex-row flex-nowrap w-100 gap-2">
                 <!-- create -->
                 <RouterLink :to="{
-                    name: 'company-companyid-tab',
+                    name: 'company-companyid-dashboard',
                     params: {
                       companyid: helpers.security.encrypt(item.id),
-                      tab: 'dashboard'
                     },
-                    props: true,
                   }"
                   @click="onSelectCompany(item)"
                 >

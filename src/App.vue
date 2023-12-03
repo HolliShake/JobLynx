@@ -27,6 +27,8 @@ provide("toast", toast)
 
 //👉 Pass to children
 provide("swal", swal)
+
+// 
 </script>
 
 <template>

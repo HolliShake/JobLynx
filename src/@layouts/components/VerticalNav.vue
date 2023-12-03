@@ -12,6 +12,8 @@ import {
 } from '@layouts/components'
 import { config } from '@layouts/config'
 import useAuthStore from '@/stores/auth.store'
+import { watch } from 'vue'
+import { nextTick } from 'vue'
 
 const props = defineProps({
   tag: {
@@ -76,6 +78,16 @@ const handleNavScroll = evt => {
 const resolveRoot = computed(() => {
   return useAuthStore().isAdmin ? '/admin/companies' : '/'
 })
+
+const isShown = (item) => {
+  if (!item.hidden) return true
+
+  if (item.hidden instanceof Function) {
+    return !item.hidden()
+  }
+
+  return false
+}
 </script>
 
 <template>
@@ -152,12 +164,17 @@ const resolveRoot = computed(() => {
         :options="{ wheelPropagation: false }"
         @ps-scroll-y="handleNavScroll"
       >
-        <Component
-          :is="resolveNavItemComponent(item)"
+        <template
           v-for="(item, index) in navItems"
           :key="index"
-          :item="item"
-        />
+        >
+          <Component
+            :item="item"
+            :is="resolveNavItemComponent(item)"
+            v-if="isShown(item)"
+          />
+        </template>
+        
       </PerfectScrollbar>
     </slot>
   </Component>

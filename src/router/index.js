@@ -10,20 +10,5 @@ const router = createRouter({
   ],
 })
 
-const COMPANY_PATTERN = new RegExp('/company/.*/.*')
-
-router.beforeEach((to, from, next) => {
-  if (COMPANY_PATTERN.test(to.fullPath)) {
-    setTimeout(() => {
-      useRawLayout().setLayoutFluid(true);
-    }, 300)
-  } else {
-    setTimeout(() => {
-      useRawLayout().setLayoutFluid(false);
-    }, 1000)
-  }
-  next()
-})
-
 // Docs: https://router.vuejs.org/guide/advanced/navigation-guards.html#global-before-guards
 export default router

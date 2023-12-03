@@ -51,10 +51,8 @@ const resolveRoot = computed(() => {
       <VCol 
         cols="12"
         :lg="rawLayoutStore.isLayoutFluid ? '*' : 10"
-        :xl="rawLayoutStore.isLayoutFluid ? '*' :  8"
         offset="0"
         :offset-lg="rawLayoutStore.isLayoutFluid ? 0 : 1"
-        :offset-xl="rawLayoutStore.isLayoutFluid ? 0 : 2"
       >
         <RouterView v-slot="{ Component }">
           <Transition

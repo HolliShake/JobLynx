@@ -9,25 +9,7 @@ const rawLayout = useRawLayout()
 <template>
   <div>
     <VRow>
-      <!--  -->
-      <VCol 
-        cols="12"
-        :lg="rawLayout.isLayoutFluid ? 2 : 'auto'"
-        class="h-100"
-      >
-        <VCard
-          class="company-nav-card"
-        >
-          <VCardText class="pa-4">
-            <VSkeletonLoader type="list-item@5" />
-          </VCardText>
-        </VCard>
-      </VCol>
-      <!--  -->
-      <VCol 
-        cols="12"
-        lg="10"
-      >
+      <VCol cols="12">
        <VSkeletonLoader type="table" />
       </VCol>
     </VRow>

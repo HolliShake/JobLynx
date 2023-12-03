@@ -17,16 +17,30 @@ const resolveNavItemComponent = item => {
   
   return HorizontalNavLink
 }
+
+const isShown = (item) => {
+  if (!item.hidden) return true
+
+  if (item.hidden instanceof Function) {
+    return !item.hidden()
+  }
+
+  return false
+}
 </script>
 
 <template>
   <ul class="nav-items">
-    <Component
-      :is="resolveNavItemComponent(item)"
+    <template
       v-for="(item, index) in navItems"
       :key="index"
-      :item="item"
-    />
+    >
+      <Component
+        :is="resolveNavItemComponent(item)"
+        :item="item"
+        v-if="isShown(item)"
+      />
+    </template>
   </ul>
 </template>
 

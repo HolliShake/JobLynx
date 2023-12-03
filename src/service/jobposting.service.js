@@ -17,6 +17,10 @@ const JobPostingService = new (class {
     async markAsPaid(jobPostingId) {
         return await axiosIns.patch(`/JobPosting/status/${jobPostingId}`, { id: jobPostingId , paid: true })
     }
+    // 
+    async getSampleFeaturedJobPosting() {
+        return await axiosIns.get('/JobPosting/Public/featured/sample')
+    }
 })
 
 export default JobPostingService

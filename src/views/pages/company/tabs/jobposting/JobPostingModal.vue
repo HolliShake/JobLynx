@@ -217,6 +217,42 @@ async function payJobPost() {
   stripeRef.value.pay(selectedAdType.value)
 }
 
+async function createAndPayJobPost() {
+  try
+  {
+    form.value = {
+      ...form.value,
+      date_posted: helpers.formater.toPhpDate(form.value.date_posted),
+      paid: selectedAdType.value.price <= 0,
+    }
+
+    const formData = new FormData()
+    if (bannerFiles.value.length > 0) formData.append('banner', bannerFiles.value[0])
+    if (samplePhotos.value.length > 0) {
+
+      for (let i = 0; i < samplePhotos.value.length; i++) {
+        formData.append(`file-${i + 1}`, samplePhotos.value[i])
+      }
+    }
+
+    const keys = Object.keys(form.value)
+    for (let i = 0; i < keys.length; i++) {
+      formData.append(keys[i], form.value[keys[i]])
+    }
+
+    const { status: code, data: response } = await JobPostingService.createJobPosting(formData)
+
+    if (code == 201) {
+      await payJobPost()
+    }
+  } catch (err) {
+    console.log(err);
+    if ((err.response?.data?.errors) ?? false) {
+      errors.value = err.response?.data?.errors
+    }
+  }
+}
+
 function isFinished(step, currentStep) {
   if (modalRef.value.isUpdateMode()) return true
 
@@ -578,7 +614,17 @@ watch(samplePhotos, files => {
                 <VRow>
                   <VCol cols=12>
                     <VRow>
+                      <template v-if="adtypeStore.getAdTypes.length <= 0">
+                        <VCol 
+                          v-for="_ in [1,2,3]"
+                          cols="12"
+                          md="4"
+                        >
+                          <VSkeletonLoader type="card" />
+                        </VCol>
+                      </template>
                       <VCol 
+                        v-else
                         v-for="adtype in adtypeStore.getAdTypes"
                         :key="`adtype-${adtype.id}`"
                         cols="12"

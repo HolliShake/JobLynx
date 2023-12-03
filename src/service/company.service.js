@@ -23,6 +23,13 @@ const CompanyService = new (class {
     async deleteCompany(companyId) {
         return await axiosIns.delete(`/Company/delete/${companyId}`)
     }
+    // 
+    async getAllPublicCompanies() {
+        return await axiosIns.get('/Company/Public/all')
+    }
+    async getSampleCompanies() {
+        return await axiosIns.get('/Company/Public/sample')
+    }
 })
 
 export default CompanyService

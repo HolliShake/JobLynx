@@ -71,8 +71,6 @@ watch(currentTab, (val) => {
   })
 }, { deep: true })
 
-
-
 // 
 </script>
 
