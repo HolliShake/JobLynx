@@ -1,6 +1,8 @@
 <script setup>
+import { helpers } from '@/helpers';
 import useAuthStore from '@/stores/auth.store';
 import avatar1 from '@images/avatars/avatar-1.png'
+import DefaultProfileImg from '@/assets/images/download/default-avatar.png';
 
 const authStore = useAuthStore()
 
@@ -25,7 +27,7 @@ async function onLogout() {
       color="primary"
       variant="tonal"
     >
-      <VImg :src="avatar1" />
+      <VImg cover :src="(authStore.getUserData.profile_image) ? helpers.resolver.getImagePath(authStore.getUserData.profile_image.file_name) : DefaultProfileImg" />
 
       <!-- SECTION Menu -->
       <VMenu
@@ -50,7 +52,10 @@ async function onLogout() {
                     color="primary"
                     variant="tonal"
                   >
-                    <VImg :src="avatar1" />
+                    <VImg 
+                      cover
+                      :src="(authStore.getUserData.profile_image) ? helpers.resolver.getImagePath(authStore.getUserData.profile_image.file_name) : DefaultProfileImg" 
+                    />
                   </VAvatar>
                 </VBadge>
               </VListItemAction>
@@ -60,6 +65,22 @@ async function onLogout() {
               {{ authStore.getUserData.first_name }} {{ authStore.getUserData.last_name }}
             </VListItemTitle>
             <VListItemSubtitle v-if="authStore.isAdmin">Admin</VListItemSubtitle>
+          </VListItem>
+
+          <!-- 👉 My Application -->
+          <VListItem link :to="{
+              name: 'application',
+            }"
+          >
+            <template #prepend>
+              <VIcon
+                class="me-2"
+                icon="tabler-id-badge-2"
+                size="22"
+              />
+            </template>
+
+            <VListItemTitle>My Applications</VListItemTitle>
           </VListItem>
 
           <!-- 👉 My Companies -->

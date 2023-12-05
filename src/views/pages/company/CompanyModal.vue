@@ -27,8 +27,8 @@ defineExpose({
       form.value = companyStore.getCompanyModel
     },
     openAsUpdateMode() {
-      modalRef.value.openAsUpdateMode()
       form.value = companyStore.getCompanyModel
+      modalRef.value.openAsUpdateMode()
     },
     close() {
       modalRef.value.close()

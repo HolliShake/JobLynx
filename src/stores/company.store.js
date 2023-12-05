@@ -29,9 +29,10 @@ const useCompanyStore = defineStore("Company", {
 
             if (!this.userId) {
                 console.warn('No userId set in Company store')
+            } else {
+                model.user_id = this.userId
             }
 
-            model.user_id = this.userId
             return model
         },
         getCompanyModelAsContext() {

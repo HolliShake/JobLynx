@@ -204,17 +204,27 @@ watch(() => companyStore.companyModel, async (company) => {
                 </VCol>
                 <VCol cols="12">
                   <div class="d-flex flex-row align-center gap-2">
-                    <VBtn
-                      size="small"
-                      color="success"
-                      @click="onDelete(jp)"
+                    <RouterLink
+                      :to="{
+                        name: 'company-companyid-job-posting-jobpostingid',
+                        params: {
+                          jobpostingid: helpers.security.encrypt(jp.id),
+                        },
+                        props: true,
+                      }"
                     >
-                      <VIcon 
-                        start 
-                        icon="tabler-users-group"
-                      />
-                      View applicant
-                    </VBtn>
+                      <VBtn
+                        size="small"
+                        color="success"
+                        @click.stop="$event => null"
+                      >
+                        <VIcon 
+                          start 
+                          icon="tabler-users-group"
+                        />
+                        View applicant
+                      </VBtn>
+                    </RouterLink>
 
                     <VBtn
                       size="small"

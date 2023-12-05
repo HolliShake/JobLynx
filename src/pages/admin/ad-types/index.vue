@@ -27,7 +27,7 @@ const tableHeader = ref([
   },
   {
     title: "MORE",
-    key: "",
+    key: "more",
   },
   {
     title: "ACTION",
@@ -153,6 +153,64 @@ onMounted(async () => {
           >
             <span class="text-sm text-uppercase">{{ item.raw.type }}</span>
           </VChip>
+        </template>
+
+        <template #item.more="{ item }">
+          <VMenu
+            open-on-hover
+          >
+            <template #activator="{ props }">
+              <VBtn 
+                v-bind="props"
+                variant="text"
+                density="compact"
+                @click.stop="$event => null"
+              >
+                More
+              </VBtn>
+            </template>
+
+            <VCard>
+              <VCardText class="pa-3">
+                <div class="d-flex flex-nowrap flex-row align-center">
+                  <VIcon 
+                    start
+                    size="12"
+                    :icon="item.raw.is_featured ? 'mdi-check-circle' : 'mdi-close-circle'"
+                    :color="item.raw.is_featured ? 'success' : 'error'"
+                  />
+                  <span class="text-xs">Featured</span>
+                </div>
+                <div class="d-flex flex-nowrap flex-row align-center">
+                  <VIcon 
+                    start
+                    size="12"
+                    :icon="item.raw.is_search_priority ? 'mdi-check-circle' : 'mdi-close-circle'"
+                    :color="item.raw.is_search_priority ? 'success' : 'error'"
+                  />
+                  <span class="text-xs">Search Priority</span>
+                </div>
+                <div class="d-flex flex-nowrap flex-row align-center">
+                  <VIcon 
+                    start
+                    size="12"
+                    :icon="item.raw.is_editable ? 'mdi-check-circle' : 'mdi-close-circle'"
+                    :color="item.raw.is_editable ? 'success' : 'error'"
+                  />
+                  <span class="text-xs">Editable</span>
+                </div>
+                <div class="d-flex flex-nowrap flex-row align-center">
+                  <VIcon 
+                    start
+                    size="12"
+                    :icon="item.raw.is_analytics_available ? 'mdi-check-circle' : 'mdi-close-circle'"
+                    :color="item.raw.is_analytics_available ? 'success' : 'error'"
+                  />
+                  <span class="text-xs">Analytics</span>
+                </div>
+              </VCardText>
+            </VCard>
+          </VMenu>
         </template>
 
         <template #item.action="{ item }">

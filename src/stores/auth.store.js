@@ -72,6 +72,10 @@ const useAuthStore = defineStore("Auth", {
             localStorage.removeItem("accessToken")
             localStorage.removeItem("userAbilities")
             localStorage.removeItem("userData")
+        },
+        patch(payload) {
+            this.userData = { ...this.userData, ...payload }
+            localStorage.setItem("userData", JSON.stringify(this.userData))
         }
     }
 })

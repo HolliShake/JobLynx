@@ -50,6 +50,7 @@ const getSkills = (skills) => {
       props: true,
     }"
     :ripple="false"
+    @click.stop="$event => null"
   >
     <VImg 
       :src="helpers.resolver.getImagePath(props.data.banner.file_name)"
@@ -98,6 +99,7 @@ const getSkills = (skills) => {
           <VBtn
             block
             color="mgreen"
+            @click.stop="$event => null"
           >
             APPLY NOW
           </VBtn>

@@ -31,13 +31,12 @@ onMounted(async() => {
 
   try
   {
-    if (!authStore.isLoggedIn) {
+    if (authStore.isLoggedIn) {
       const object = await authService.authenticate()
       if (!object) return
 
       const { status: code, data: respose } = object
-      if (code == 200)
-      {
+      if (code == 200) {
         authStore.update(respose)
       }
     }

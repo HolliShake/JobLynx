@@ -1,77 +1,32 @@
 <script setup>
-import { avatarText } from '@/@core/utils/formatters';
 import { helpers } from '@/helpers';
-import Footer from '@/layouts/components/Footer.vue';
 import JobApplicationService from '@/service/job-application.service';
-import JobPostingService from '@/service/jobposting.service';
-import RatingService from '@/service/rating.service';
-import { inject } from 'vue';
-import { watch } from 'vue';
 import { onMounted } from 'vue';
-import { useRouter } from 'vue-router';
 
 const props = defineProps({
-  id: {
+  jobapplicantid: {
     type: String,
     required: true
   }
 })
 
-const router = useRouter()
 const pageData = ref({})
 const comments = ref([])
 const loaded = ref(false)
-const toast = inject('toast')
-
-watch(pageData, async (value) => {
-  if (value.is_hide_company_info) return
-
-  try
-  {
-    const { status: code, data: response } = await RatingService.getSampleRatingByCompanyId(value.position.company_id)
-
-    if (code == 200) {
-      comments.value = response
-    }
-  } catch (error) {
-    console.error(error)
-  }
-}, { deep: true })
 
 onMounted(async () => {
-  try
-  {
-    const { status: code, data: response } = await JobPostingService.getJobPostingById(helpers.security.decrypt(props.id))
+  try {
+    const { status: code, data: response } = await JobApplicationService.getById(helpers.security.decrypt(props.jobapplicantid))
 
     if (code == 200) {
+      console.log(response);
       pageData.value = response
       loaded.value = true
-
-      console.log(response);
     }
   } catch (error) {
     console.error(error)
   }
 })
-
-async function onApply() {
-  try
-  {
-    const { status: code, data: response } = await JobApplicationService.applyJobPost(pageData.value.id)
-
-    if (code == 204) {
-      toast.success('Successfully applied to this job post.')
-    }
-  } catch (error) {
-    console.error(error)
-
-    if (error.status == 401) {
-      router.push({
-        name: 'login'
-      })
-    }
-  }
-}
 
 // 
 </script>
@@ -126,7 +81,7 @@ async function onApply() {
           rounded="0"
         >
           <VImg 
-            :src="helpers.resolver.getImagePath(pageData.banner.file_name)" 
+            :src="helpers.resolver.getImagePath(pageData.job_posting.banner.file_name)" 
             alt="Banner"
             cover
             :max-height="430"
@@ -148,7 +103,7 @@ async function onApply() {
                   color="mgreen"
                 >
                   <VCardText class="pa-3">
-                    <h3 class="text-white">{{ pageData.position.title }}</h3>
+                    <h3 class="text-white">{{ pageData.job_posting.position.title }}</h3>
                   </VCardText>
                 </VCard>
               </VCol>
@@ -157,9 +112,9 @@ async function onApply() {
                   <VIcon 
                     icon="tabler-map-pin-filled" 
                     size="18" 
-                    color="error" 
+                    color="error"
                   />
-                  <span class="text-body-1">{{ pageData.position.office.address }}, {{ pageData.position.office.country }} ({{ pageData.position.employment_type }})</span>
+                  <span class="text-body-1">{{ pageData.job_posting.position.office.address }}, {{ pageData.job_posting.position.office.country }} ({{ pageData.job_posting.position.employment_type }})</span>
                 </div>
               </VCol>
               <VCol cols="12" class="py-0" />
@@ -183,7 +138,7 @@ async function onApply() {
 
                 <VList>
                   <VListItem
-                    v-for="item in pageData.position.skills.split(' ')" 
+                    v-for="item in pageData.job_posting.position.skills.split(' ')" 
                     :key="`skill-${item.id}`"
                   >
                     <template #prepend>
@@ -194,7 +149,7 @@ async function onApply() {
                 </VList>
               </VCol>
               <VCol 
-                v-if="pageData.sample_photos.length > 0"
+                v-if="pageData.job_posting.sample_photos.length > 0"
                 cols="12" 
                 md="4"
                 offset="0"
@@ -208,45 +163,24 @@ async function onApply() {
                   border
                 >
                   <VImg 
-                    :src="helpers.resolver.getImagePath(pageData.sample_photos[0].file_name)"
+                    :src="helpers.resolver.getImagePath(pageData.job_posting.sample_photos[0].file_name)"
                     cover
                   />
                   <div 
-                    v-if="pageData.sample_photos.length > 1" 
+                    v-if="pageData.job_posting.sample_photos.length > 1" 
                     class="d-flex flex-row flex-nowrap w-100"
                     style="border-top: 4px solid rgb(var(--v-theme-background));"
                   >
                     <VImg
-                      v-for="(item, index) in pageData.sample_photos.slice(1, 4)"
-                      :width="`calc(100% / ${pageData.sample_photos.length - 1})`"
-                      :src="helpers.resolver.getImagePath(pageData.sample_photos[index].file_name)"
+                      v-for="(item, index) in pageData.job_posting.sample_photos.slice(1, 4)"
+                      :width="`calc(100% / ${pageData.job_posting.sample_photos.length - 1})`"
+                      :src="helpers.resolver.getImagePath(pageData.job_posting.sample_photos[index].file_name)"
                       cover
-                      :style=" (index < (pageData.sample_photos.slice(1, 4).length - 1)) ? 'border-right: 4px solid rgb(var(--v-theme-background));' : ''"
+                      :style=" (index < (pageData.job_posting.sample_photos.slice(1, 4).length - 1)) ? 'border-right: 4px solid rgb(var(--v-theme-background));' : ''"
                     />
                   </div>
                 </VCard>
-              </VCol>
-              <VCol cols="12" class="py-0" />
-              <VCol 
-                cols="12" 
-                md="6"
-              >
-                <div class="d-inline text-end">
-                  <span class="text-h4 font-weight-thin">{{ pageData.position.salary.currency }} {{ helpers.formater.numberToMoney(pageData.position.salary.value) }}</span> / <span>{{ pageData.position.payment_type }}</span>
-                </div>
-              </VCol>
-              <VCol cols="12" class="py-0" />
-              <VCol cols="12" md="2">
-                <VBtn
-                  block
-                  color="mgreen"
-                  rounded="sm"
-                  depressed
-                  @click="onApply"
-                >
-                  Apply Now
-                </VBtn>
-              </VCol>
+              </VCol>             
               <template v-if="comments.length > 0">
                 <VCol cols="12" class="mt-10">
                   <h4 class="text-h4 font-weight-thin mb-3">Comments</h4>
@@ -317,5 +251,5 @@ async function onApply() {
 
 <route lang="yaml">
   meta:
-    layout: raw
+    navActiveLink: company-companyid-job-posting
 </route>

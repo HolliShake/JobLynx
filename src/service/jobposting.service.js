@@ -4,6 +4,9 @@ const JobPostingService = new (class {
     async getJobPostingByCompanyId(companyId) {
         return await axiosIns.get(`/JobPosting/Company/${companyId}`)
     }
+    async getJobPostingById(jobPostingId) { 
+        return await axiosIns.get(`/JobPosting/Public/${jobPostingId}`)
+    }
     async createJobPosting(payload) {
         return await axiosIns.post('/JobPosting/create', payload)
     }
