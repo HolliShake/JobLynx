@@ -6,6 +6,7 @@ import { watch } from 'vue';
 import SalaryService from '@/service/salary.service';
 import useCompanyStore from '@/stores/company.store';
 import CompanyContext from '@/context/CompanyContext.vue';
+import { helpers } from '@/helpers';
 
 const salaryStore = useSalaryStore()
 const companyStore = useCompanyStore()
@@ -23,6 +24,7 @@ const tableHeader = ref([
   {
     title: "AMOUNT",
     key: "value",
+    value: v => `${v.currency} ${helpers.formater.numberToMoney(v.value)}`
   },
   {
     title: "ACTION",

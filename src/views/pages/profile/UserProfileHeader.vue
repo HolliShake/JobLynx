@@ -60,7 +60,7 @@ watch(dpImage, async image => {
 
 watch(cvImage, async image => {
   const formData = new FormData()
-  formData.append('profile', image)
+  formData.append('cover', image)
   formData.append('user_id', data.getUserData.id)
 
   try

@@ -16,7 +16,7 @@ const props = defineProps({
 
 <template>
   <VCard
-    style="background-color: rgb(var(--v-theme-background));"
+    style="background-color: rgb(var(--v-theme-surface));"
     width="300"
   >
     <div style="background-color: #F3EEEA; width: 100%; height: 160px;" />

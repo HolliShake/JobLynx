@@ -50,6 +50,55 @@ const resolver = ({
   getImagePath: (filePath) => {
     return `${import.meta.env.VITE_APP_UPLOADS_FOLDER}/${filePath}`
   },
+  naiveSearch: (requiredSkills, currentSkill) => {
+    let M = currentSkill.length;
+    let N = requiredSkills.length;
+  
+    /* A loop to slide pat one by one */
+    for (let i = 0; i <= N - M; i++) 
+    {
+      let j;
+
+      /* For current index i, check for pattern 
+      match */
+      for (j = 0; j < M; j++) {
+        if (requiredSkills[i + j] != currentSkill[j]) {
+          break
+        }
+      }
+
+      // if pat[0...M-1] = txt[i, i+1, ...i+M-1]
+      if (j == M) {
+        return true;
+      }
+    }
+
+    return false;
+  },
+  getQualification: (skillsArray, requiredSkillsText) => {
+    let match = 0;
+    let skillCount = requiredSkillsText.split(" ").length;
+
+    for (let i=0; i < skillsArray.length; i++) {
+      if (resolver.naiveSearch(requiredSkillsText, skillsArray[i])) {
+        match++;
+      }
+    }
+
+    if (match >= skillCount) {
+      return 100;
+    }
+
+    return (Math.round((match / skillCount) * 100)).toFixed(1);
+  },
+  resolveColor: (progress) => {
+    if (progress >= 0 && progress <= 20) return "error"
+    else if (progress >= 21 && progress <= 40) return "warning"
+    else if (progress >= 41 && progress <= 60) return "info"
+    else if (progress >= 61 && progress <= 80) return "primary"
+    else if (progress >= 81 && progress <= 100) return "success"
+    return "black"
+  }
 })
 
 export const helpers = Object.freeze({

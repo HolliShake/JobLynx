@@ -1,9 +1,11 @@
 <script setup>
 import PageHeader from '@/@core/components/PageHeader.vue';
+import { helpers } from '@/helpers';
 import JobApplicationService from '@/service/job-application.service';
 import useJobApplicationStore from '@/stores/job-application.store';
 import { computed } from 'vue';
 import { inject, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
 
 const breadCrumb = ref([
   {
@@ -31,8 +33,10 @@ const tableHeader = ref([
   }
 ])
 
+const router = useRouter()
 const jobApplicationStore = useJobApplicationStore()
 const search = ref('')
+const itemsPerPage = ref(10)
 const loaded = ref(false)
 const toast = inject('toast')
 
@@ -40,6 +44,16 @@ const myApplications = computed(() => {
   return jobApplicationStore.getJobApplications
     .filter(ja => ja.job_posting.position.title.toLowerCase().includes(search.value.toLowerCase()))
 })
+
+async function onVisit(application) {
+  router.push({
+    name: 'application-jobapplicationid',
+    params: {
+      jobapplicationid: helpers.security.encrypt(application.raw.id)
+    },
+    props: true
+  })
+}
 
 onMounted(async () => {
   try {
@@ -77,12 +91,23 @@ onMounted(async () => {
               label="Search"
             />
           </VCol>
+          <VCol 
+            cols="12"
+            md="auto"
+          >
+            <ItemsPerPage
+              v-model="itemsPerPage"
+              style="width: auto;"
+            />
+          </VCol>
         </VRow>
       </VCardText>
       <AppTable 
         :headers="tableHeader"
         :items="myApplications"
         :loading="!loaded"
+        :items-per-page="itemsPerPage"
+        @click:row="onVisit"
       >
         <template #item.status="{ item }">
           <VChip

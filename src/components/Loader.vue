@@ -68,13 +68,13 @@ const loader = useLoading()
   }
 
   #loading-bg {
-    position: absolute;
+    position: fixed;
     z-index: 1000000;
     display: block;
     backdrop-filter: blur(2px);
     background: transparent !important;
-    block-size: 100%;
-    inline-size: 100%;
+    width: 100vw !important;
+    height: 100vh !important;
   }
 
   .loading-logo {

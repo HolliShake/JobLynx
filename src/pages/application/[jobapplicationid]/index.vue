@@ -1,77 +1,79 @@
 <script setup>
-import { avatarText } from '@/@core/utils/formatters';
 import { helpers } from '@/helpers';
-import Footer from '@/layouts/components/Footer.vue';
 import JobApplicationService from '@/service/job-application.service';
-import JobPostingService from '@/service/jobposting.service';
 import RatingService from '@/service/rating.service';
 import { inject } from 'vue';
-import { watch } from 'vue';
 import { onMounted } from 'vue';
-import { useRouter } from 'vue-router';
 
 const props = defineProps({
-  id: {
+  jobapplicationid: {
     type: String,
     required: true
   }
 })
 
-const router = useRouter()
 const pageData = ref({})
 const comments = ref([])
 const loaded = ref(false)
-const toast = inject('toast')
-
-watch(pageData, async (value) => {
-  if (value.is_hide_company_info) return
-
-  try
-  {
-    const { status: code, data: response } = await RatingService.getSampleRatingByCompanyId(value.position.company_id)
-
-    if (code == 200) {
-      comments.value = response
-    }
-  } catch (error) {
-    console.error(error)
-  }
-}, { deep: true })
-
-onMounted(async () => {
-  try
-  {
-    const { status: code, data: response } = await JobPostingService.getJobPostingById(helpers.security.decrypt(props.id))
-
-    if (code == 200) {
-      pageData.value = response
-      loaded.value = true
-
-      console.log(response);
-    }
-  } catch (error) {
-    console.error(error)
-  }
+const commentLoaded = ref(false)
+const commentForm = ref({
+  rating: 1,
+  comment: ""
 })
 
-async function onApply() {
-  try
-  {
-    const { status: code, data: response } = await JobApplicationService.applyJobPost(pageData.value.id)
+const toast = inject('toast')
 
-    if (code == 204) {
-      toast.success('Successfully applied to this job post.')
+const loadComments = async () => {
+  try {
+    const { status: code, data: response } = await RatingService.getMyRatingByCompanyId(pageData.value.job_posting.position.company_id)
+
+    if (code == 200) {
+      console.log(">>", response);
+      comments.value = response
+      commentLoaded.value = true
     }
   } catch (error) {
     console.error(error)
-
-    if (error.status == 401) {
-      router.push({
-        name: 'login'
-      })
-    }
+    toast.error("Failed to load comments.")
   }
 }
+
+async function onComment() {
+  try {
+    const { status: code, data: response } = await RatingService.submitMyComment({
+      ...commentForm.value,
+      company_id: pageData.value.job_posting.position.company_id
+    })
+
+    if (code == 201) {
+      toast.success("Comment submitted.")
+      await loadComments()
+      commentForm.value = {
+        rating: 1,
+        comment: ""
+      }
+    }
+  } catch (error) {
+    console.error(error)
+    toast.error("Failed to comment.")
+  }
+}
+
+onMounted(async () => {
+  try {
+    const { status: code, data: response } = await JobApplicationService.getById(helpers.security.decrypt(props.jobapplicationid))
+
+    if (code == 200) {
+      console.log(response);
+      pageData.value = response
+      loaded.value = true
+      await loadComments()
+    }
+  } catch (error) {
+    console.error(error)
+    toast.error("Failed to load application data.")
+  }
+})
 
 // 
 </script>
@@ -125,8 +127,8 @@ async function onApply() {
           flat
           rounded="0"
         >
-          <VImg 
-            :src="helpers.resolver.getImagePath(pageData.banner.file_name)" 
+          <VImg
+            :src="helpers.resolver.getImagePath(pageData.job_posting.banner.file_name)" 
             alt="Banner"
             cover
             :max-height="430"
@@ -141,7 +143,7 @@ async function onApply() {
                   color="mgreen"
                 >
                   <VCardText class="pa-3">
-                    <h3 class="text-white">{{ pageData.position.title }}</h3>
+                    <h3 class="text-white">{{ pageData.job_posting.position.title }}</h3>
                   </VCardText>
                 </VCard>
               </VCol>
@@ -150,11 +152,11 @@ async function onApply() {
                   <VIcon 
                     icon="tabler-map-pin-filled" 
                     size="18" 
-                    color="error" 
+                    color="error"
                   />
-                  <span class="text-body-1">{{ pageData.position.office.address }}, {{ pageData.position.office.country }} ({{ pageData.position.employment_type }})</span>
-                
-                  &nbsp; <span v-if="!pageData.is_hide_company_info">Posted by {{ pageData.position.company.company_name }}</span>
+                  <span class="text-body-1">{{ pageData.job_posting.position.office.address }}, {{ pageData.job_posting.position.office.country }} ({{ pageData.job_posting.position.employment_type }})</span>
+
+                  &nbsp; <span v-if="!pageData.job_posting.is_hide_company_info">Posted by {{ pageData.job_posting.position.company.company_name }}</span>
                 </div>
               </VCol>
               <VCol cols="12" class="py-0" />
@@ -165,7 +167,7 @@ async function onApply() {
               >
                 <h4 class="text-h4 font-weight-thin mb-3">Description</h4>
                 <p>
-                  {{ pageData.description }}
+                  {{ pageData.job_posting.description }}
                 </p>
               </VCol>
               <VCol cols="12" class="py-0" />
@@ -178,7 +180,7 @@ async function onApply() {
 
                 <VList>
                   <VListItem
-                    v-for="item in pageData.position.skills.split(' ')" 
+                    v-for="item in pageData.job_posting.position.skills.split(' ')" 
                     :key="`skill-${item.id}`"
                   >
                     <template #prepend>
@@ -189,7 +191,7 @@ async function onApply() {
                 </VList>
               </VCol>
               <VCol 
-                v-if="pageData.sample_photos.length > 0"
+                v-if="pageData.job_posting.sample_photos.length > 0"
                 cols="12" 
                 md="4"
                 offset="0"
@@ -203,46 +205,42 @@ async function onApply() {
                   border
                 >
                   <VImg 
-                    :src="helpers.resolver.getImagePath(pageData.sample_photos[0].file_name)"
+                    :src="helpers.resolver.getImagePath(pageData.job_posting.sample_photos[0].file_name)"
                     cover
                   />
                   <div 
-                    v-if="pageData.sample_photos.length > 1" 
+                    v-if="pageData.job_posting.sample_photos.length > 1" 
                     class="d-flex flex-row flex-nowrap w-100"
                     style="border-top: 4px solid rgb(var(--v-theme-background));"
                   >
                     <VImg
-                      v-for="(item, index) in pageData.sample_photos.slice(1, 4)"
-                      :width="`calc(100% / ${pageData.sample_photos.length - 1})`"
-                      :src="helpers.resolver.getImagePath(pageData.sample_photos[index].file_name)"
+                      v-for="(item, index) in pageData.job_posting.sample_photos.slice(1, 4)"
+                      :width="`calc(100% / ${pageData.job_posting.sample_photos.length - 1})`"
+                      :src="helpers.resolver.getImagePath(item.file_name)"
                       cover
-                      :style=" (index < (pageData.sample_photos.slice(1, 4).length - 1)) ? 'border-right: 4px solid rgb(var(--v-theme-background));' : ''"
+                      :style=" (index < (pageData.job_posting.sample_photos.slice(1, 4).length - 1)) ? 'border-right: 4px solid rgb(var(--v-theme-background));' : ''"
                     />
                   </div>
                 </VCard>
               </VCol>
-              <VCol cols="12" class="py-0" />
-              <VCol 
-                cols="12" 
-                md="6"
-              >
-                <div class="d-inline text-end">
-                  <span class="text-h4 font-weight-thin">{{ pageData.position.salary.currency }} {{ helpers.formater.numberToMoney(pageData.position.salary.value) }}</span> / <span>{{ pageData.position.payment_type }}</span>
-                </div>
-              </VCol>
-              <VCol cols="12" class="py-0" />
-              <VCol cols="12" md="2">
-                <VBtn
-                  block
-                  color="mgreen"
-                  rounded="sm"
-                  depressed
-                  @click="onApply"
+              <!--  -->
+              <template v-if="!commentLoaded">
+                <VCol cols="12" class="mt-10">
+                  <h4 class="text-h4 font-weight-thin mb-3">Comments</h4>
+                </VCol>
+                <VCol 
+                  v-for="item in 3"
+                  :key="`item-${item.id}`"
+                  cols="12"
+                  md="4"
                 >
-                  Apply Now
-                </VBtn>
-              </VCol>
-              <template v-if="comments.length > 0">
+                  <VSkeletonLoader 
+                    type="card"
+                    :loading="!commentLoaded"
+                  />
+                </VCol>
+              </template>
+              <template v-else>
                 <VCol cols="12" class="mt-10">
                   <h4 class="text-h4 font-weight-thin mb-3">Comments</h4>
                 </VCol>
@@ -270,7 +268,6 @@ async function onApply() {
                             />
                           </VAvatar>
                         </div>
-
                         
                         <div>
                           <span class="d-block font-weight-bold">{{ item.user.last_name }}, {{ item.user.first_name }}</span>
@@ -299,18 +296,83 @@ async function onApply() {
                   </VCard>
                 </VCol>
               </template>
+              <!--  -->
+              <VCol cols="12"
+              >
+                <VDivider />
+              </VCol>
+              <!--  -->
+              <VCol 
+                cols="12"
+                md="6"
+                offset="0"
+                offset-md="3"
+              >
+                <VCard
+                  color="rgb(var(--v-theme-background))"
+                >
+                  <template #title>
+                    <h4 class="text-h4 font-weight-thin mb-3">Leave a comment</h4>
+                  </template>
+                  <VCardText>
+                    <VTextarea
+                      v-model="commentForm.comment"
+                      label="Description"
+                      :rows="4"
+                      :max-rows="8"
+                      auto-grow
+                    />
+                    <VRadioGroup
+                      inline
+                      class="mt-5"
+                      v-model="commentForm.rating"
+                    >
+                      <VRadio 
+                        v-for="item in 5"
+                        :key="`rating-${item}`"
+                        density="compact"
+                        :value="item"
+                      >
+                        <template #label>
+                          <VIcon 
+                            v-for="i in item"
+                            icon="tabler-star-filled"
+                            size="12"
+                            color="warning"
+                          />
+
+                          <VIcon 
+                            v-for="i in (5 - item)"
+                            icon="tabler-star"
+                            size="12"
+                          />
+                        </template>
+                      </VRadio>
+                    </VRadioGroup>
+
+                    <div class="mt-5">
+                      <VBtn
+                        variant="elevated"
+                        block
+                        color="success"
+                        @click="onComment"
+                      >
+                        COMMENT
+                      </VBtn>
+                    </div>
+                  </VCardText>
+                </VCard>
+              </VCol>
             </VRow>
           </VCardText>
         </VCard>
       </VCol>
     </VRow>
-    <VContainer>
-      <Footer />
-    </VContainer>
   </section>
 </template>
 
 <route lang="yaml">
   meta:
     layout: raw
+    navActiveLink: application
 </route>

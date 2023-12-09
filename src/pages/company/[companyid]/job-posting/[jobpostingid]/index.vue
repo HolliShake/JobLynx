@@ -25,9 +25,9 @@ const tableHeaders = ref([
     key: "job_posting.position.title",
   },
   {
-    title: "QUALIFIED",
-    key: "qualified",
-    value:() =>  300
+    title: "SKILL QUALIFICATION",
+    key: "qualification",
+    align: 'center',
   },
   {
     title: "STATUS",
@@ -70,6 +70,13 @@ const items = computed(() => {
     ))
     .filter(ja => (status.value == 'all') ? true : ja.status == status.value)
 })
+
+const computedQualification = (item) => {
+  return helpers.resolver.getQualification(
+    item.raw.user.personal_data.skill.map(s => s.title.toLowerCase()),
+    item.raw.job_posting.position.skills.toLowerCase()
+  )
+}
 
 async function onView(data) {
   router.push({
@@ -134,21 +141,27 @@ onMounted(async () => {
       >
         <template #item.user="{ item }">
           <div class="d-flex flex-row flex-nowrap gap-2 align-center">
-            <VAvatar
-              variant="elevated"
+            <div 
+              class="d-inline-block rounded-circle elevation-3"
+              style="border: 3px solid rgb(var(--v-theme-background));"
             >
-              <span 
-                v-if="!item.raw.user.profile_image"
-                class="text-uppercase font-weight-bold"
+              <VAvatar
+                variant="elevated"
               >
-                {{ avatarText(`${item.raw.user.last_name}, ${item.raw.user_first_name}`) }}
-              </span>
-              <VImg 
-                v-else
-                :src="helpers.resolver.getImagePath(item.raw.user.profile_image.file_name)"
-                alt="Profile"
-              />
-            </VAvatar>
+                <span 
+                  v-if="!item.raw.user.profile_image"
+                  class="text-uppercase font-weight-bold"
+                >
+                  {{ avatarText(`${item.raw.user.last_name}, ${item.raw.user_first_name}`) }}
+                </span>
+                <VImg 
+                  v-else
+                  :src="helpers.resolver.getImagePath(item.raw.user.profile_image.file_name)"
+                  cover
+                  alt="Profile"
+                />
+              </VAvatar>
+            </div>
             <span class="font-weight-bold text-sm">{{ item.raw.user.last_name }}, {{ item.raw.user.first_name }}</span>
           </div>
         </template>
@@ -162,6 +175,19 @@ onMounted(async () => {
             {{ item.raw.status.toUpperCase() }}
           </VChip>
         </template>
+
+        <template #item.qualification="{ item }">
+          <VProgressCircular
+            :model-value="computedQualification(item)"
+            :color="helpers.resolver.resolveColor(computedQualification(item))"
+            size="40"
+          >
+            <span class="text-xs">
+              {{ computedQualification(item) }}
+            </span>
+          </VProgressCircular>
+        </template>
+      
       </AppTable>
     </VCard>
   </section>

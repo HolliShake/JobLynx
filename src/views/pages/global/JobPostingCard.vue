@@ -101,7 +101,7 @@ const getSkills = (skills) => {
             color="mgreen"
             @click.stop="$event => null"
           >
-            APPLY NOW
+            Read More
           </VBtn>
         </VCol>
       </VRow>

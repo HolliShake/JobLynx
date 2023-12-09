@@ -13,8 +13,20 @@ const JobApplicationService = new (class {
         return await axiosIns.get(`/JobApplication/JobPosting/${jobPostingId}`)
     }
 
+    async getJobApplicantsByCompanyId(companyId) {
+        return await axiosIns.get(`/JobApplication/Dashboard/Company/${companyId}`)
+    }
+
     async myJobApplications() {
         return await axiosIns.get('/JobApplication/Applications/My')
+    }
+
+    async approve(jobApplicationId) {
+        return await axiosIns.patch(`/JobApplication/approve/${jobApplicationId}`, { id: jobApplicationId, status: 'accepted' })
+    }
+    
+    async reject(jobApplicationId) {
+        return await axiosIns.patch(`/JobApplication/reject/${jobApplicationId}`, { id: jobApplicationId, status: 'rejected' })
     }
 })
 

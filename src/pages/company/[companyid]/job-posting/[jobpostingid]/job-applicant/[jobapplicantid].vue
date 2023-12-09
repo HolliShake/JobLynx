@@ -1,6 +1,7 @@
 <script setup>
 import { helpers } from '@/helpers';
 import JobApplicationService from '@/service/job-application.service';
+import { inject } from 'vue';
 import { onMounted } from 'vue';
 
 const props = defineProps({
@@ -11,8 +12,36 @@ const props = defineProps({
 })
 
 const pageData = ref({})
-const comments = ref([])
 const loaded = ref(false)
+const toast = inject('toast')
+
+async function onApprove() {
+  try {
+    const { status: code, data: response } = await JobApplicationService.approve(helpers.security.decrypt(props.jobapplicantid))
+
+    if (code == 204) {
+      toast.success("Job application approved.")
+      pageData.value.status = 'accepted'
+    }
+  } catch (error) {
+    console.error(error)
+    toast.error("Failed to approve job application.")
+  }
+}
+
+async function onReject() {
+  try {
+    const { status: code, data: response } = await JobApplicationService.reject(helpers.security.decrypt(props.jobapplicantid))
+
+    if (code == 204) {
+      toast.success("Job application rejected.")
+      pageData.value.status = 'rejected'
+    }
+  } catch (error) {
+    console.error(error)
+    toast.error("Failed to reject job application.")
+  }
+}
 
 onMounted(async () => {
   try {
@@ -75,6 +104,45 @@ onMounted(async () => {
   </template>
   <section v-else>
     <VRow>
+      <VCol 
+        cols="12"
+        md="auto"
+      >
+        <VCard>
+          <VCardText
+            class="pa-4 px-6"
+          >
+            <div class="d-flex flex-row gap-3 align-center">
+              <div 
+                class="d-inline elevated-3"
+                style="border: 3px solid #fff;border-radius: 360px;"
+              >
+                <VAvatar
+                  size="64"
+                >
+                  <h3 v-if="!pageData.user.profile_image">
+                    {{ avatarText(`${pageData.user.last_name}, ${pageData.user.first_name}`) }}
+                  </h3>
+                  <VImg
+                    v-else
+                    cover
+                    :src="helpers.resolver.getImagePath(pageData.user.profile_image.file_name)"
+                  />
+                </VAvatar>
+              </div>
+              <div>
+                <h3>{{ pageData.user.last_name }}, {{ pageData.user.first_name }}</h3>
+                <VChip
+                  color="success"
+                  rounded="sm"
+                >
+                  <span class="text-sm">Applicant</span>
+                </VChip>
+              </div>
+            </div>
+          </VCardText>
+        </VCard>
+      </VCol>
       <VCol cols="12">
         <VCard 
           flat
@@ -87,13 +155,6 @@ onMounted(async () => {
             :max-height="430"
             eager
           />
-        </VCard>
-      </VCol>
-      <VCol cols="12">
-        <VCard 
-          flat
-          rounded="0"
-        >
           <VCardText>
             <VRow>
               <VCol cols="auto">
@@ -125,7 +186,7 @@ onMounted(async () => {
               >
                 <h4 class="text-h4 font-weight-thin mb-3">Description</h4>
                 <p>
-                  {{ pageData.description }}
+                  {{ pageData.job_posting.description }}
                 </p>
               </VCol>
               <VCol cols="12" class="py-0" />
@@ -181,71 +242,40 @@ onMounted(async () => {
                   </div>
                 </VCard>
               </VCol>             
-              <template v-if="comments.length > 0">
-                <VCol cols="12" class="mt-10">
-                  <h4 class="text-h4 font-weight-thin mb-3">Comments</h4>
-                </VCol>
-                <VCol
-                  v-for="item in comments"
-                  :key="`comment-${item.id}`"
-                  cols="12"
-                  md="4"
-                >
-                  <VCard border flat>
-                    <VCardText class="pa-4">
-                      <div class="d-flex flex-row flex-nowrap gap-2 align-center">
-                        <div class="d-inline elevation-2"
-                          style="border: 2px solid #fff;border-radius: 360px;"
-                        >
-                          <VAvatar
-                            variant="tonal"
-                            color="mgreen"
-                          >
-                            <span v-if="!item.user.profile_image">{{ avatarText(`${item.user.last_name}, ${item.user.first_name}`) }}</span>
-                            <VImg
-                              v-else
-                              cover
-                              :src="helpers.resolver.getImagePath(item.user.profile_image.file_name)"
-                            />
-                          </VAvatar>
-                        </div>
+              <VCol cols="auto">
+                <div 
+                  v-if="pageData.status == 'pending'"
+                  class="d-flex flex-row flex-nowrap gap-3">
+                  <VBtn
+                    color="success"
+                    rounded="sm"
+                    @click="onApprove"
+                  >
+                    <VIcon 
+                      start
+                      icon="mdi-check-circle"
+                    />
+                    Approve
+                  </VBtn>
 
-                        
-                        <div>
-                          <span class="d-block font-weight-bold">{{ item.user.last_name }}, {{ item.user.first_name }}</span>
-                          <div class="d-flex flex-row flex-nowrap gap-1 mt-n1">
-                            <VIcon
-                              v-for="i in item.rating"
-                              :key="`rating-${i}`" 
-                              icon="tabler-star-filled" 
-                              size="12"
-                              color="warning"
-                            />
-                            <VIcon
-                              v-for="i in (5 - item.rating)"
-                              :key="`rating-${i}`" 
-                              icon="tabler-star" 
-                              size="12"
-                              color="warning"
-                            />
-                          </div>
-                        </div>
-                      </div>
-                      <p class="mt-3">
-                        {{ item.comment }}
-                      </p>
-                    </VCardText>
-                  </VCard>
-                </VCol>
-              </template>
+                  <VBtn
+                    rounded="sm"
+                    color="error"
+                    @click="onReject"
+                  >
+                    <VIcon 
+                      start
+                      icon="mdi-close-circle"
+                    />
+                    Reject
+                  </VBtn>
+                </div>
+              </VCol>
             </VRow>
           </VCardText>
         </VCard>
       </VCol>
     </VRow>
-    <VContainer>
-      <Footer />
-    </VContainer>
   </section>
 </template>
 
