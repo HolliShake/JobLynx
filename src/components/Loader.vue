@@ -2,14 +2,13 @@
 import useLoading from './useLoading'
 
 const loader = useLoading()
-
 // 
 </script>
 
 <template>
   <div
-    v-show="loader.isLoading"
-    id="loading-bg"
+    v-if="loader.isLoading"
+    id="action-loading-bg"
   >
     <div class="loading-logo">
       <!-- SVG Logo -->
@@ -48,7 +47,7 @@ const loader = useLoading()
         />
       </svg>
     </div>
-    <div class=" loading">
+    <div class="loading">
       <div class="effect-1 effects" />
       <div class="effect-2 effects" />
       <div class="effect-3 effects" />
@@ -67,9 +66,9 @@ const loader = useLoading()
     overflow-y: scroll;
   }
 
-  #loading-bg {
+  #action-loading-bg {
     position: fixed;
-    z-index: 1000000;
+    z-index: 100000000;
     display: block;
     backdrop-filter: blur(2px);
     background: transparent !important;

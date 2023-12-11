@@ -47,7 +47,20 @@ onMounted(async () => {
             label="Search company"
           />
         </VCol>
+        <VCol
+          v-if="data.length <= 0" 
+          cols="12">
+          <VCard
+            flat
+            border
+          >
+            <VCardText class="text-center">
+              No Data Available
+            </VCardText>
+          </VCard>
+        </VCol>
         <VCol 
+          v-else
           v-for="(item, idx) in data"
           :key="item.id"
           cols="12"

@@ -169,13 +169,17 @@ onMounted(async () => {
           v-if="items.length <= 0"
           cols="12"
         >
-          <VImg 
-            class="d-block mx-auto"
-            :src="EmptyResult" 
-            alt="Empty" 
-            max-width="800"
-          />
-          <h2 class="text-h2 text-center font-weight-thin">Nothing To Show</h2>
+          <VCard>
+            <VCardText>
+              <VImg 
+                class="d-block mx-auto"
+                :src="EmptyResult" 
+                alt="Empty" 
+                max-width="800"
+              />
+              <h2 class="text-h2 text-center font-weight-thin">Nothing To Show</h2>
+            </VCardText>
+          </VCard>
         </VCol>
         <VCol
           v-else
@@ -279,4 +283,5 @@ onMounted(async () => {
 <route lang="yaml">
   meta:
     layout: raw
+    requiresAuth: true
 </route>

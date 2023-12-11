@@ -7,6 +7,8 @@ const defaultModel = () => ({
     middle_name: "",
     suffix: "",
     gender: "male",
+    country: "Philippines",
+    address: "",
     birth_date: "",
     mobile_number: "",
     email: "",
@@ -50,7 +52,12 @@ const useAuthStore = defineStore("Auth", {
                 return false
             }
 
-            return !!access.find(a => a.action == "all")
+            return !!all
+        },
+        isAccountsetuped() {
+            if (!this.isLoggedIn) return false
+
+            return !!this.userData.personal_data
         },
         getUserModel() {
             return this.userModel

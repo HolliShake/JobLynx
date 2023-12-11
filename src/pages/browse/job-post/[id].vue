@@ -8,7 +8,7 @@ import RatingService from '@/service/rating.service';
 import { inject } from 'vue';
 import { watch } from 'vue';
 import { onMounted } from 'vue';
-import { useRouter } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 
 const props = defineProps({
   id: {
@@ -18,6 +18,7 @@ const props = defineProps({
 })
 
 const router = useRouter()
+const route = useRoute()
 const pageData = ref({})
 const comments = ref([])
 const loaded = ref(false)
@@ -57,13 +58,23 @@ onMounted(async () => {
 async function onApply() {
   try
   {
-    const { status: code, data: response } = await JobApplicationService.applyJobPost(pageData.value.id)
+    const data = await JobApplicationService.applyJobPost(pageData.value.id)
+    if (!data)
+    {
+      return  router.push({
+        name: 'login',
+        query: {
+          to: route.fullPath
+        }
+      })
+    }
+    const { status: code, data: response } = data
 
     if (code == 204) {
       toast.success('Successfully applied to this job post.')
     }
   } catch (error) {
-    console.error(error)
+    console.error(">>>>>", error)
 
     if (error.status == 401) {
       router.push({
@@ -154,7 +165,7 @@ async function onApply() {
                   />
                   <span class="text-body-1">{{ pageData.position.office.address }}, {{ pageData.position.office.country }} ({{ pageData.position.employment_type }})</span>
                 
-                  &nbsp; <span v-if="!pageData.is_hide_company_info">Posted by {{ pageData.position.company.company_name }}</span>
+                  &nbsp; <span v-if="!pageData.is_hide_company_info">Posted by <RouterLink :to="{ name: 'browse-company-id', params: { id: helpers.security.encrypt( pageData.position.company.id) }, props: true }">{{ pageData.position.company.company_name }}</RouterLink></span>
                 </div>
               </VCol>
               <VCol cols="12" class="py-0" />
@@ -246,7 +257,22 @@ async function onApply() {
                 <VCol cols="12" class="mt-10">
                   <h4 class="text-h4 font-weight-thin mb-3">Comments</h4>
                 </VCol>
+                <VCol 
+                  v-if="comments.length <= 0"
+                  cols="12"
+                >
+                  <VCard
+                    color="rgb(var(--v-theme-background))"
+                    flat
+                    border
+                  >
+                    <VCardText class="text-center">
+                      No Rating/Comments Yet.
+                    </VCardText>
+                  </VCard>
+                </VCol>
                 <VCol
+                  v-else
                   v-for="item in comments"
                   :key="`comment-${item.id}`"
                   cols="12"

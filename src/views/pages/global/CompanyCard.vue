@@ -49,12 +49,22 @@ const props = defineProps({
           <h3 class="text-center text-truncate text-no-wrap">{{ props.data.company_name }}</h3>
         </VCol>
         <VCol cols="12">
-          <VBtn
-            block
-            color="mblack"
+          <RouterLink
+            :to="{
+              name: 'browse-company-id',
+              params: {
+                id: helpers.security.encrypt(props.data.id)
+              },
+              props: true
+            }"
           >
-            <span>Visit</span>
-          </VBtn>
+            <VBtn
+              block
+              color="mblack"
+            >
+              <span>Visit</span>
+            </VBtn>
+          </RouterLink>
         </VCol>
       </VRow>
     </VCardText>

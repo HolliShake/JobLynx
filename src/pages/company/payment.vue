@@ -81,4 +81,5 @@ onMounted(async () => {
 <route lang="yaml">
   meta:
     layout: raw
+    requiresAuth: true
 </route>

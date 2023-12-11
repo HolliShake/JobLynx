@@ -1,8 +1,11 @@
 <script setup>
 import { helpers } from '@/helpers';
+import ApplicationLogService from '@/service/application-log.service';
 import JobApplicationService from '@/service/job-application.service';
+import EventModal from '@/views/pages/company/EventModal.vue';
 import { inject } from 'vue';
 import { onMounted } from 'vue';
+import { merge } from "lodash"
 
 const props = defineProps({
   jobapplicantid: {
@@ -11,9 +14,11 @@ const props = defineProps({
   }
 })
 
+const modalRef = ref()
 const pageData = ref({})
 const loaded = ref(false)
 const toast = inject('toast')
+const swal = inject('swal')
 
 async function onApprove() {
   try {
@@ -40,6 +45,68 @@ async function onReject() {
   } catch (error) {
     console.error(error)
     toast.error("Failed to reject job application.")
+  }
+}
+
+// ========================
+
+async function onCreateEvent() {
+  modalRef.value.open(helpers.security.decrypt(props.jobapplicantid))
+}
+
+function created(data) {
+  pageData.value.application_logs.push(data)
+}
+
+async function onUpdateEvent(applicationLog) {
+  modalRef.value.openAsUpdateMode(applicationLog)
+}
+
+function updated(data) {
+  merge(
+    pageData.value.application_logs.find(log => log.id == data.id),
+    data,
+  )
+}
+
+async function onDeleteEvent(applicationLog) {
+  swal.value.fire({
+    question: "Are you sure you want to delete this event?",
+    dangerMode: true,
+  })
+    .then(async result => {
+      if (!result) return
+
+      try {
+        const { status: code, data: response } = await ApplicationLogService.deleteLog(applicationLog.id)
+
+        if (code == 204) {
+          toast.success("Event deleted.")
+          pageData.value.application_logs = pageData.value.application_logs.filter(log => log.id != applicationLog.id)
+        }
+      } catch (error) {
+        console.error(error)
+        toast.error("Failed to delete event.")
+      }
+    })
+}
+
+async function submitScore(applicationLog) {
+  try {
+    const { status: code, data: response } = await ApplicationLogService.score(applicationLog.id, {
+      id: applicationLog.id,
+      score: applicationLog.score
+    })
+
+    if (code == 200) {
+      toast.success("Score updated.")
+      merge(
+        pageData.value.application_logs.find(log => log.id == applicationLog.id),
+        response,
+      )
+    }
+  } catch (error) {
+    console.error(error)
   }
 }
 
@@ -114,8 +181,8 @@ onMounted(async () => {
           >
             <div class="d-flex flex-row gap-3 align-center">
               <div 
-                class="d-inline elevated-3"
-                style="border: 3px solid #fff;border-radius: 360px;"
+                class="d-inline elevated-3 rounded-circle"
+                style="border: 3px solid rgb(var(--v-theme-background));"
               >
                 <VAvatar
                   size="64"
@@ -131,13 +198,42 @@ onMounted(async () => {
                 </VAvatar>
               </div>
               <div>
-                <h3>{{ pageData.user.last_name }}, {{ pageData.user.first_name }}</h3>
-                <VChip
-                  color="success"
-                  rounded="sm"
+                <h2>{{ pageData.user.last_name }}, {{ pageData.user.first_name }}</h2>
+                <div class="d-flex flex-row flex-nowrap gap-2">
+                  <VChip
+                    color="success"
+                    rounded="sm"
+                  >
+                    <span class="text-sm">Applicant</span>
+                  </VChip>
+                  <!--  -->
+                </div>
+              </div>
+            </div>
+            <div class="mt-3">
+              <div class="d-flex flex-row flex-nowrap align-center">
+                <VProgressCircular 
+                  :model-value="helpers.resolver.getQualification(
+                    pageData.user.personal_data.skill.map(s => s.title.toLowerCase()),
+                    pageData.job_posting.position.skills.toLowerCase()
+                  )"
+                  size="30"
+                  :color="helpers.resolver.resolveColor(helpers.resolver.getQualification(
+                    pageData.user.personal_data.skill.map(s => s.title.toLowerCase()),
+                    pageData.job_posting.position.skills.toLowerCase()
+                  ))"
                 >
-                  <span class="text-sm">Applicant</span>
-                </VChip>
+                  <small class="text-xs">
+                    {{
+                      helpers.resolver.getQualification(
+                        pageData.user.personal_data.skill.map(s => s.title.toLowerCase()),
+                        pageData.job_posting.position.skills.toLowerCase()
+                      )
+                    }}
+                  </small>
+                </VProgressCircular>
+
+                <span class="d-block ms-2 font-weight-bold">QUALIFIED</span>
               </div>
             </div>
           </VCardText>
@@ -241,14 +337,124 @@ onMounted(async () => {
                     />
                   </div>
                 </VCard>
-              </VCol>             
-              <VCol cols="auto">
+              </VCol>          
+              <VCol 
+                cols="12"
+                class="py-0"
+              />
+              <!-- Timeline -->
+              <VCol cols="12">
+                <div class="d-flex flex-row flex-nowrap w-100 align-center justify-space-between">
+                  <h4 class="text-h3 font-weight-thin mb-4">Events</h4>
+                  <VBtn
+                    size="small"
+                    @click="onCreateEvent"
+                  >
+                    <VIcon 
+                      start
+                      icon="tabler-location-plus"
+                    />
+                    CREATE EVENT
+                  </VBtn>
+                </div>
+
+                <VCard
+                  v-if="pageData.application_logs.length <= 0"
+                  flat
+                  border
+                >
+                  <VCardText 
+                    class="pa-4 text-center"
+                  >
+                    No Events Found.
+                  </VCardText>
+                </VCard>
+                <VTimeline
+                  v-else
+                  side="end"
+                  align="start"
+                  line-inset="8"
+                  truncate-line="both"
+                  density="compact"
+                >
+                  <!--  -->
+                  <VTimelineItem
+                    v-for="(log, index) in pageData.application_logs"
+                    :key="`item-${index}`"
+                    size="x-small"
+                    dot-color="success"
+                  >
+                    <!-- 👉 Header -->
+                    <div class="d-flex justify-space-between align-center gap-2 flex-wrap">
+                      <div>
+                        <span class="app-timeline-title text-uppercase">
+                          {{ log.event_title }}
+                        </span>
+                        <i class="d-block app-timeline-meta">{{ helpers.formater.dateToWord(log.event_date) }}</i>  
+                      </div>
+
+                      <div class="d-flex flex-row gap-1 align-center">
+                        <VBtn
+                          icon=""
+                          variant="text"
+                          size="x-small"
+                          color="success"
+                          @click.stop="$event => onUpdateEvent(log)"
+                        >
+                          <VIcon icon="tabler-edit" />
+                        </VBtn>
+                        <VBtn
+                          icon=""
+                          variant="text"
+                          size="x-small"
+                          color="error"
+                          @click.stop="$event => onDeleteEvent(log)"
+                        >
+                          <VIcon icon="tabler-trash" />
+                        </VBtn>
+                      </div>
+                    </div>
+
+                    <!-- 👉 Content -->
+                    <div class="app-timeline-text mt-1">
+                      {{ log.event_description }}
+                    </div>
+
+                    <!--  -->
+                    <div 
+                      class="d-flex flex-row flex-nowrap align-center gap-2 py-3"
+                      style="min-width: 150px !important; width: fit-content;"
+                    >
+                      <VTextField 
+                        v-model="log.score"
+                        label="Score"
+                      />
+                      <VBtn
+                        icon=""
+                        rounded="lg"
+                        size="small"
+                        @click="submitScore(log)"
+                      >
+                        <VIcon 
+                          icon="mdi-paper-plane"
+                        />
+                        <VTooltip activator="parent">Update Score</VTooltip>
+                      </VBtn>
+                    </div>
+                  </VTimelineItem>
+                </VTimeline>
+              </VCol>
+              <VCol 
+                cols="12" 
+                md="auto"
+              >
                 <div 
                   v-if="pageData.status == 'pending'"
-                  class="d-flex flex-row flex-nowrap gap-3">
+                  class="d-flex flex-column flex-md-row flex-nowrap gap-3">
                   <VBtn
                     color="success"
                     rounded="sm"
+                    :block="$vuetify.display.mdAndDown"
                     @click="onApprove"
                   >
                     <VIcon 
@@ -261,6 +467,7 @@ onMounted(async () => {
                   <VBtn
                     rounded="sm"
                     color="error"
+                    :block="$vuetify.display.mdAndDown"
                     @click="onReject"
                   >
                     <VIcon 
@@ -276,10 +483,17 @@ onMounted(async () => {
         </VCard>
       </VCol>
     </VRow>
+
+    <EventModal 
+      ref="modalRef"
+      @create="created"
+      @update="updated"
+    />
   </section>
 </template>
 
 <route lang="yaml">
   meta:
     navActiveLink: company-companyid-job-posting
+    requiresAuth: true
 </route>

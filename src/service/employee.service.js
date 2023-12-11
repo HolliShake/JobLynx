@@ -9,6 +9,10 @@ const EmployeeService = new (class {
     async deleteEmployee(hiredApplicantId) {
         return await axiosIns.delete(`/Employee/Delete/${hiredApplicantId}`)
     }
+
+    async getMyWork() {
+        return await axiosIns.get('/Employee/My')
+    }
 })
 
 export default EmployeeService

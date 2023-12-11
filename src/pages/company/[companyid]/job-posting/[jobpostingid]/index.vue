@@ -28,6 +28,11 @@ const tableHeaders = ref([
     title: "SKILL QUALIFICATION",
     key: "qualification",
     align: 'center',
+    value: v => helpers.resolver.getQualification(
+      v.user.personal_data.skill.map(s => s.title.toLowerCase()),
+      v.job_posting.position.skills.toLowerCase()
+    ),
+    sortable: true,
   },
   {
     title: "STATUS",
@@ -196,4 +201,5 @@ onMounted(async () => {
 <route lang="yaml">
   meta:
     navActiveLink: company-companyid-job-posting
+    requiresAuth: true
 </route>

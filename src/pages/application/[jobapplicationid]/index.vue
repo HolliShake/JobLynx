@@ -223,6 +223,54 @@ onMounted(async () => {
                   </div>
                 </VCard>
               </VCol>
+              <VCol cols="12" class="py-0" />
+              <!-- Timeline -->
+              <VCol cols="12">
+                <h4 class="text-h3 font-weight-thin mb-4">Events</h4>
+
+                <VCard
+                  v-if="pageData.application_logs.length <= 0"
+                  flat
+                  border
+                >
+                  <VCardText 
+                    class="pa-4 text-center"
+                  >
+                    No Events Found.
+                  </VCardText>
+                </VCard>
+                <VTimeline
+                  v-else
+                  side="end"
+                  align="start"
+                  line-inset="8"
+                  truncate-line="both"
+                  density="compact"
+                >
+                  <!--  -->
+                  <VTimelineItem
+                    v-for="(log, index) in pageData.application_logs"
+                    :key="`item-${index}`"
+                    size="x-small"
+                    dot-color="success"
+                  >
+                    <!-- 👉 Header -->
+                    <div class="d-flex justify-space-between align-center gap-2 flex-wrap">
+                      <div>
+                        <span class="app-timeline-title text-uppercase">
+                          {{ log.event_title }}
+                        </span>
+                        <i class="d-block app-timeline-meta">{{ helpers.formater.dateToWord(log.event_date) }}</i>  
+                      </div>
+                    </div>
+
+                    <!-- 👉 Content -->
+                    <div class="app-timeline-text mt-1">
+                      {{ log.event_description }}
+                    </div>
+                  </VTimelineItem>
+                </VTimeline>
+              </VCol>
               <!--  -->
               <template v-if="!commentLoaded">
                 <VCol cols="12" class="mt-10">
@@ -244,7 +292,28 @@ onMounted(async () => {
                 <VCol cols="12" class="mt-10">
                   <h4 class="text-h4 font-weight-thin mb-3">Comments</h4>
                 </VCol>
+                <VCol 
+                  v-if="comments.length <= 0"
+                  cols="12"
+                >
+                  <VCard
+                    color="rgb(var(--v-theme-background))"
+                    border
+                    flat
+                  >
+                    <VCardText class="text-center">
+                        <VIcon 
+                          icon="mdi-ghost"
+                          size="90"
+                        />
+                      <span class="d-block mt-10 font-weight-bold text-h4">
+                        No Review Or Comments Yet.
+                      </span>
+                    </VCardText>
+                  </VCard>
+                </VCol>
                 <VCol
+                  v-else
                   v-for="item in comments"
                   :key="`comment-${item.id}`"
                   cols="12"
@@ -375,4 +444,5 @@ onMounted(async () => {
   meta:
     layout: raw
     navActiveLink: application
+    requiresAuth: true
 </route>

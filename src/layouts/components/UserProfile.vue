@@ -62,13 +62,15 @@ async function onLogout() {
             </template>
 
             <VListItemTitle class="font-weight-semibold">
-              {{ authStore.getUserData.first_name }} {{ authStore.getUserData.last_name }}
+              {{ authStore.isLoggedIn ? `${authStore.getUserData.first_name} ${authStore.getUserData.last_name }` : 'Guest' }}
             </VListItemTitle>
             <VListItemSubtitle v-if="authStore.isAdmin">Admin</VListItemSubtitle>
           </VListItem>
 
           <!-- 👉 My Application -->
-          <VListItem link :to="{
+          <VListItem 
+            v-if="authStore.isLoggedIn"
+            link :to="{
               name: 'application',
             }"
           >
@@ -84,7 +86,9 @@ async function onLogout() {
           </VListItem>
 
           <!-- 👉 My Companies -->
-          <VListItem link :to="{
+          <VListItem 
+            v-if="authStore.isLoggedIn"
+            link :to="{
               name: 'company',
             }"
           >
@@ -100,7 +104,9 @@ async function onLogout() {
           </VListItem>
 
           <!-- 👉 Profile -->
-          <VListItem link :to="{
+          <VListItem 
+            v-if="authStore.isLoggedIn"
+            link :to="{
               name: 'profile-tab',
               params: { tab: 'profile' },
               props: true,
@@ -118,10 +124,12 @@ async function onLogout() {
           </VListItem>
 
           <!-- Divider -->
-          <VDivider class="my-2" />
+          <VDivider v-if="authStore.isLoggedIn" class="my-2" />
 
           <!-- 👉 Logout -->
-          <VListItem to="/login" @click="onLogout">
+          <VListItem 
+            v-if="authStore.isLoggedIn"
+            to="/login" @click="onLogout">
             <template #prepend>
               <VIcon
                 class="me-2"

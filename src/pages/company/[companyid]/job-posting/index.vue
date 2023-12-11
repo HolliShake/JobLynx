@@ -2,6 +2,7 @@
 import CompanyContext from "@/context/CompanyContext.vue";
 import StripeContext from "@/context/StripeContext.vue";
 import ActiveTab from "@/views/pages/company/tabs/jobposting/ActiveTab.vue"
+import HistoryTab from "@/views/pages/company/tabs/jobposting/HistoryTab.vue";
 import { provide } from "vue";
 
 const currentTab = ref("active")
@@ -37,7 +38,7 @@ provide("stripeRef", stripeRef)
             <ActiveTab />
           </VWindowItem>
           <VWindowItem value="history">
-            b
+            <HistoryTab />
           </VWindowItem>
         </VWindow>
       </VCard>
@@ -48,4 +49,5 @@ provide("stripeRef", stripeRef)
 <route lang="yaml">
   meta:
     layout: default
+    requiresAuth: true
 </route>

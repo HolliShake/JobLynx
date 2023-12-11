@@ -176,7 +176,6 @@ async function update() {
     form.value = {
       ...form.value,
       date_posted: helpers.formater.toPhpDate(form.value.date_posted),
-      paid: selectedAdType.value.price <= 0,
     }
 
     const formData = new FormData()

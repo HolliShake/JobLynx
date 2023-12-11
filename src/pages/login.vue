@@ -31,7 +31,14 @@ async function onSubmit() {
 
   try
   {
-    const { status: code, data: respose } = await authService.login({ email: email.value, password: password.value })
+    const data = await authService.login({ email: email.value, password: password.value })
+
+    if (!data) {
+      error.value = "Invalid username or password"
+      return
+    }
+
+    const { status: code, data: respose } = data
     if (!respose.user_access) return (submitted.value = false)
 
     if (code == 200) {
@@ -45,10 +52,10 @@ async function onSubmit() {
     }
   } catch (err) {
     console.log(err);
-    if ((err.response?.data?.error) ?? false) {
-      errors.value = err.response?.data?.error
+    if ((err.response?.data?.errors) ?? false) {
+      errors.value = err.response?.data?.errors
     } else {
-      error.value = err.response?.data?.errors ?? err.message
+      error.value = err.response?.data?.error ?? err.message
     }
   }
 }

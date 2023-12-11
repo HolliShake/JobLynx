@@ -63,13 +63,13 @@ const getSkills = (skills) => {
       <VRow>
         <VCol cols="12">
           <h2 class="card-title">{{ props.data.position.title }}</h2>
-          <small class="d-block mt-n1 text-xs text-disabled">
+          <small class="d-block mt-n1 text-xs text-disabled text-truncate text-no-wrap">
             <VIcon 
               icon="tabler-map-pin-filled"
               color="error"
               size="14"
             />
-            {{ props.data.position.office.name }} {{ props.data.position.office.address }}, {{ props.data.position.office.country }}
+            {{ props.data.position.office.name }} {{ props.data.position.office.address.substring(0, 22) + '...' }}, {{ props.data.position.office.country }}
           </small>
         </VCol>
         <VCol cols="12">

@@ -40,8 +40,6 @@ export function make(arrayOfPath) {
         }
     }
 
-    console.log(newPath);
-
     return newPath;
 }
 

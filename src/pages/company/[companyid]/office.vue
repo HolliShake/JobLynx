@@ -188,4 +188,5 @@ watch(() => companyStore.companyModel, async (company) => {
 <route lang="yaml">
   meta:
     layout: default
+    requiresAuth: true
 </route>

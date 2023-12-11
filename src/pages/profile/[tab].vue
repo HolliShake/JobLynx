@@ -4,10 +4,12 @@ import ProfileTab from "@/views/pages/profile/tabs/profile/index.vue";
 import SkillTab from "@/views/pages/profile/tabs/skill/index.vue";
 import EducationTab from "@/views/pages/profile/tabs/education/index.vue";
 import OtherTab from "@/views/pages/profile/tabs/other/index.vue";
+import WorkTab from "@/views/pages/profile/tabs/work/index.vue";
 import { h } from 'vue';
 import { watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { onMounted } from 'vue';
+import useAuthStore from '@/stores/auth.store';
 
 const props = defineProps({
   tab: {
@@ -18,6 +20,7 @@ const props = defineProps({
 
 const router = useRouter()
 const currentTab = ref(props.tab)
+const authStore = useAuthStore()
 
 const tabs = ref([
   {
@@ -57,6 +60,8 @@ function getTab(tab) {
       return h(SkillTab)
     case 'education':
       return h(EducationTab)
+    case 'work':
+      return h(WorkTab)
     default:
       return h('h1', 'Invalid Tab!!!')
   }
@@ -77,6 +82,17 @@ watch(currentTab, (val) => {
 <template>
   <section>
     <VRow>
+      <VCol 
+        v-if="!authStore.isAccountsetuped"
+        cols="12"
+      >
+        <VAlert
+          variant="tonal"
+          type="warning"
+        >
+          Add Addtional Information to your profile to get more job opportunities. example: Skills, Education, Work Experience, etc.
+        </VAlert>
+      </VCol>
       <VCol cols="12">
         <UserProfileHeader />
       </VCol>
@@ -120,4 +136,5 @@ watch(currentTab, (val) => {
 <route lang="yaml">
   meta:
     layout: raw
+    requiresAuth: true
 </route>

@@ -141,7 +141,7 @@ async function update() {
 
     <template #actions="{ isUpdateMode }">
       <VBtn
-        :block="$vuetify.display.mdAndDown"
+        block
         type="submit"
         color="success"
         :prepend-icon="(isUpdateMode)? 'tabler-check' : 'tabler-location-plus'"

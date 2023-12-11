@@ -12,11 +12,17 @@ import useCompanyStore from "@/stores/company.store"
 import CompanyCard from "@/views/pages/global/CompanyCard.vue"
 import Footer from "@/layouts/components/Footer.vue"
 import EmptyJobPost from "@/views/pages/global/EmptyJobPost.vue"
+import useAuthStore from "@/stores/auth.store"
+import { helpers } from "@/helpers"
 
 
+const authStore = useAuthStore()
 const jobPostingStore = useJobPostingStore()
 const companyStore = useCompanyStore()
 const searchQuery = ref('')
+const stars = ref(-1)
+const featured = ref(false)
+const recommended = ref(false)
 const slides = ref([
   Meeting,
   Design,
@@ -25,9 +31,32 @@ const slides = ref([
 const jobPostingLoaded = ref(false)
 const toast = inject('toast')
 
+
+function isRecommended(data) {
+  if (!recommended.value) return true
+
+  // Always return true if not logged In
+  if (!authStore.isLoggedIn) return true
+
+  // Logged In
+  if (!authStore.isAccountsetuped) return true
+
+  const tresh = parseInt(import.meta.env.VITE_APP_RECOMMENDATION_TRESHOLD)
+
+  const myQualification = helpers.resolver.getQualification(
+    authStore.getUserData.personal_data.skill.map(s => s.title.toLowerCase()),
+    data.position.skills.toLowerCase()
+  )
+
+  return myQualification >= tresh
+}
+
 const jobPostings = computed(() => {
   let items = jobPostingStore.getJobPostings
     .filter(jp => jp.position.title.toLowerCase().includes(searchQuery.value.toLowerCase()))
+    .filter(jp => (stars.value == -1) ? true : (jp.position.company.average == stars.value))
+    .filter(jp => (!featured.value) ? true : (jp.adtype.is_featured == featured.value))
+    .filter(jp => isRecommended(jp))
 
   return items
 })
@@ -35,7 +64,8 @@ const jobPostings = computed(() => {
 const loadSampleJobPosting = async () => {
   try
   {
-    const { status: code, data: response } = await JobPostingService.getSampleFeaturedJobPosting()
+    const { status: code, data: response } = await JobPostingService.getAllJobPosting()
+    console.log(">>", response);
     if (code == 200) {
       jobPostingStore.initialize(response)
       jobPostingLoaded.value = true
@@ -121,13 +151,16 @@ onMounted(async () => {
               <VCol cols="12">
                 <div class="d-flex flex-row gap-2 w-100 align-center">
                   <VCheckbox 
-                    label="featured"
+                    v-model="featured"
+                    label="Featured"
                   />
                   <VCheckbox 
-                    label="Recommended"
+                    v-model="recommended"
+                    label="Recommended For My Skills"
                   />
                   <VRadioGroup
                     inline
+                    v-model="stars"
                   >
                     <VRadio 
                       label="All"

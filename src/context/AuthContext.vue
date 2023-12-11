@@ -24,7 +24,7 @@ const authContext = computed(() => {
 
 provide("authContext", authContext)
 
-onMounted(async() => {
+watch(() => authStore, async() => {
   if (route.fullPath?.toLowerCase() == "/login" ) {
     return console.log("Auth context: Login page, no need to fetch data")
   }
@@ -35,19 +35,27 @@ onMounted(async() => {
       const object = await authService.authenticate()
       if (!object) return
 
+      if (!object.data.personal_data) {
+        return router.replace({
+          name: 'profile-tab',
+          params: { tab: 'profile' },
+          props: true,
+        })
+      }
+
       const { status: code, data: respose } = object
       if (code == 200) {
         authStore.update(respose)
       }
     }
   } catch (error) {
-    if (authStore.isLoggedIn) {
-      router.replace("/login")
-      /** cleanup */
-      authStore.clearCache()
-    }
+    // if (authStore.isLoggedIn) {
+    //   router.replace("/login")
+    //   /** cleanup */
+    //   authStore.clearCache()
+    // }
   }
-})
+}, { deep: true })
 
 // 
 </script>

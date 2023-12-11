@@ -49,7 +49,9 @@ onMounted(async () => {
 </script>
 
 <template>
-  <section>
+  <section
+    style="scroll-behavior: smooth !important;"
+  >
     <div 
       id="global-banner-color"
       class="d-block py-16"
@@ -104,7 +106,7 @@ onMounted(async () => {
             <p class="mt-3">
               Your Gateway to Personalized Career Success, Matching Your Unique Interests and Abilities with the Perfect Job Fit!
             </p>
-            <RouterLink to="#">
+            <RouterLink :to="{ path: './', hash: '#explore-more' }">
               <VBtn
                 rounded="sm"
                 size="large"
@@ -172,7 +174,7 @@ onMounted(async () => {
       </VContainer>
     </div>
     <div 
-      id="explore-more"
+      id="job-post"
       class="d-block"
     >
       <VContainer>

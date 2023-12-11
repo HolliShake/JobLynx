@@ -13,7 +13,6 @@ import CustomRadios from '@/@core/components/app-form-elements/CustomRadios.vue'
 import { watch } from 'vue'
 
 const router = useRouter()
-const ability = useAppAbility()
 const authService = AuthService
 const authStore = useAuthStore()
 const isPasswordVisible = ref(false)
@@ -25,6 +24,8 @@ const errors = ref({
   first_name: [],
   middle_name: [],
   gender: [],
+  country: [],
+  address: [],
   suffix: [],
   birth_date: [],
   mobile_number: [],
@@ -155,6 +156,31 @@ async function onSubmit() {
                     ]" 
                   />
                   
+                </VCol>
+                
+                <!-- Country -->
+                <VCol 
+                  cols="12" 
+                  md="6"
+                >
+                  <span class="text-xs font-weight-thin">Country</span>
+                  <SelectCountry
+                    v-model="form.country"
+                    label=""
+                  />
+                  <small v-if="errors.country" class="text-xs text-error">{{ errors.country.pop() }}</small>
+                </VCol>
+
+                <!-- Address -->
+                <VCol 
+                  cols="12" 
+                  md="6"
+                >
+                  <span class="text-xs font-weight-thin">Address</span>
+                  <VTextField
+                    v-model="form.address"
+                  />
+                  <small v-if="errors.address" class="text-xs text-error">{{ errors.address.pop() }}</small>
                 </VCol>
 
                 <!-- mobile -->

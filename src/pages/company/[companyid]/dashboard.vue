@@ -1,4 +1,5 @@
 <script setup>
+import { avatarText } from '@/@core/utils/formatters';
 import CompanyContext from '@/context/CompanyContext.vue';
 import { helpers } from '@/helpers';
 import JobApplicationService from '@/service/job-application.service';
@@ -52,7 +53,6 @@ watch(() => companyStore.companyModel, async (company) => {
       const { status: code, data: response } = await JobApplicationService.getJobApplicantsByCompanyId(company.id)
 
       if (code == 200) {
-        console.log(response);
         jobApplicationStore.initialize(response)
         loaded.value = true
       }
@@ -122,7 +122,8 @@ watch(() => companyStore.companyModel, async (company) => {
                   style="border: 3px solid rgb(var(--v-theme-background));"
                 >
                   <VAvatar
-                    variant="elevated"
+                    variant="tonal"
+                    color="success"
                   >
                     <span 
                       v-if="!item.raw.user.profile_image"
@@ -174,4 +175,5 @@ watch(() => companyStore.companyModel, async (company) => {
 <route lang="yaml">
   meta:
     layout: default
+    requiresAuth: true
 </route>

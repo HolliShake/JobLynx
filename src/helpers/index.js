@@ -89,7 +89,7 @@ const resolver = ({
       return 100;
     }
 
-    return (Math.round((match / skillCount) * 100)).toFixed(1);
+    return parseInt(Math.round((match / skillCount) * 100));
   },
   resolveColor: (progress) => {
     if (progress >= 0 && progress <= 20) return "error"

@@ -23,12 +23,13 @@ const items = computed(() => {
   return jobPostingStore.getJobPostings
     .filter(jp => jp.position.title.toLowerCase().includes(search.value.toLowerCase()))
     .filter(jp => {
-      const date = new Date(Date.parse(jp.date_posted))
-      date.setDate(date.getDate() + jp.adtype.duration)
+      const date_posted = new Date(Date.parse(jp.date_posted))
+      
+      const expired_date = new Date(date_posted.getTime() + (jp.adtype.duration * 24 * 60 * 60 * 1000))
 
       const now = new Date(Date.now())
 
-      return date.getTime() >= now.getTime()
+      return date_posted.getTime() <= now.getTime() && expired_date.getTime() >= now.getTime()
     })
 })
 
@@ -194,13 +195,30 @@ watch(() => companyStore.companyModel, async (company) => {
                   </VChip>
                 </VCol>
                 <VCol cols="12" class="py-0">
-                  <VChip
-                    :color="jp.paid ? 'success' : 'error'"
-                    rounded="pill"
-                    size="small"
-                  >
-                    <small class="text-xs">{{ jp.paid ? 'paid' : 'unpaid' }}</small>
-                  </VChip>
+                  <div class="d-flex flex-row flex-wrap gap-1">
+                    <VChip
+                      :color="jp.paid ? 'success' : 'error'"
+                      rounded="pill"
+                      size="small"
+                    >
+                      <small class="text-xs">{{ jp.paid ? 'paid' : 'unpaid' }}</small>
+                    </VChip>
+
+                    <VChip
+                      :color="jp.paid ? 'success' : 'error'"
+                      rounded="pill"
+                      size="small"
+                    >
+                      <small class="text-xs">{{ jp.adtype.duration }} Day(s)</small>
+                    </VChip>
+
+                    <VChip
+                      rounded="pill"
+                      size="small"
+                    >
+                      <small class="text-xs">{{ helpers.formater.dateToWord(jp.date_posted) }} to {{ helpers.formater.dateToWord(new Date((new Date(jp.date_posted)).getTime() + (jp.adtype.duration * 24 * 60 * 60 * 1000))) }}</small>
+                    </VChip>
+                  </div>
                 </VCol>
                 <VCol cols="12">
                   <div class="d-flex flex-row align-center gap-2">
