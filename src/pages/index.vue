@@ -170,7 +170,17 @@ onMounted(async () => {
             </div>
           </VCol>
           <VCol cols="12">
+            <VCard
+              v-if="companyStore.getCompanies.length <= 0"
+              flat
+              border
+            >
+              <VCardText class="text-center">
+                No Data Available
+              </VCardText>
+            </VCard>
             <VSlideGroup
+              v-else
               show-arrows
               class="pa-5"
             >
@@ -221,7 +231,19 @@ onMounted(async () => {
             <h3 class="text-center text-h3 font-weight-bold">Featured Job posts</h3>
           </VCol>
           <VCol cols="12">
-            <div class="d-flex flex-row flex-wrap w-100 gap-5 justify-space-evenly">
+            <VCard
+              v-if="jobPostingStore.getJobPostings.length <= 0"
+              flat
+              border
+            >
+              <VCardText class="text-center">
+                No Data Available
+              </VCardText>
+            </VCard>
+            <div 
+              v-else
+              class="d-flex flex-row flex-wrap w-100 gap-5 justify-space-evenly"
+            >
               <JobPostingCard 
                 v-for="jobPosting in jobPostingStore.getJobPostings"
                 :key="`job-posting-${jobPosting.id}`"

@@ -226,7 +226,17 @@ onMounted(async () => {
       <!--  -->
       <VCol cols="12">
         <span class="text-h3 font-weight-bold">Top Companies</span>
+        <VCard 
+          v-if="companyStore.getCompanies <= 0"
+          flat
+          border
+        >
+          <VCardText class="text-center">
+            No companies available.
+          </VCardText>
+        </VCard>
         <VSlideGroup
+          v-else
           show-arrows
           class="pa-5"
         >
