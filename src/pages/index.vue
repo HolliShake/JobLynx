@@ -52,6 +52,44 @@ onMounted(async () => {
   <section
     style="scroll-behavior: smooth !important;"
   >
+    <nav>
+      <VAppBar
+        app
+        color="white"
+        elevation="0"
+      >
+        <VToolbarTitle>
+          <span class="text-h4 font-weight-bold">
+            {{ themeConfig.app.title }}
+          </span>
+        </VToolbarTitle>
+        <VSpacer />
+        <VBtn
+          variant="text"
+          rounded="sm"
+          color="mgreen"
+          to="/browse"
+        >
+          Browse
+        </VBtn>
+        <VBtn
+          variant="text"
+          rounded="sm"
+          color="mgreen"
+          to="/login"
+        >
+          Login
+        </VBtn>
+        <VBtn
+          variant="text"
+          rounded="sm"
+          color="mgreen"
+          to="/register"
+        >
+          Register
+        </VBtn>
+      </VAppBar>
+    </nav>
     <div 
       id="global-banner-color"
       class="d-block py-16"
@@ -202,7 +240,7 @@ onMounted(async () => {
 
 <style lang="scss">
 #global-banner-color {
-  background-color: #ecebf8 !important;
+  background-color: rgb(var(--v-theme-surface)) !important;
 }
 </style>
 

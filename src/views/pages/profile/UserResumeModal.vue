@@ -1,4 +1,5 @@
 <script setup>
+import { avatarText } from '@/@core/utils/formatters'
 import { helpers } from '@/helpers'
 import UserService from '@/service/user.service'
 import { inject } from 'vue'
@@ -34,7 +35,6 @@ async function onOpen() {
 }
 
 </script>
-
 
 <template>
   <AppFullDialog 
@@ -96,9 +96,17 @@ async function onOpen() {
                   variant="tonal"
                 >
                   <VImg 
+                    v-if="pageData.profile_image"
                     :src="helpers.resolver.getImagePath(pageData.profile_image.file_name)"
                     alt="Profile"
+                    cover
                   />
+                  <span 
+                    v-else
+                    class="text-uppercase font-weight-bold"
+                  >
+                    {{ avatarText(`${pageData.first_name}, ${pageData.last_name}`) }}
+                  </span>
                 </VAvatar>
               </div>
 

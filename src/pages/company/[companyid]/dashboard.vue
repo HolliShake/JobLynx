@@ -2,14 +2,31 @@
 import { avatarText } from '@/@core/utils/formatters';
 import CompanyContext from '@/context/CompanyContext.vue';
 import { helpers } from '@/helpers';
+import ApplicationLogService from '@/service/application-log.service';
 import JobApplicationService from '@/service/job-application.service';
 import useAuthStore from '@/stores/auth.store';
 import useCompanyStore from '@/stores/company.store';
-import useEmployees from '@/stores/employees.store';
 import useJobApplicationStore from '@/stores/job-application.store';
 import { inject } from 'vue';
+import { useRouter } from 'vue-router';
 
-const tableHeaders = ref([
+const eventTableHeaders = ref([
+  {
+    title: "EVENT",
+    key: "event_title",
+  },
+  {
+    title: "WHEN",
+    key: "when",
+    value: v => helpers.formater.dateToWord(v.event_date)
+  },
+  {
+    title: "DESCRIPTION",
+    key: "event_description",
+  },
+])
+
+const applicantTableHeaders = ref([
   {
     title: "APPLICANT",
     key: "user",
@@ -30,10 +47,13 @@ const tableHeaders = ref([
   }
 ])
 
+const router = useRouter()
 const companyStore = useCompanyStore()
 const authStore = useAuthStore()
 const jobApplicationStore = useJobApplicationStore()
 const loaded = ref(false)
+const events = ref([])
+const eventLoaded = ref(false)
 const toast = inject('toast')
 
 const items = computed(() => {
@@ -47,19 +67,62 @@ const computedQualification = (item) => {
   )
 }
 
-watch(() => companyStore.companyModel, async (company) => {
+const loadUpcomingEvents = async (company) => {
   try
-    {
-      const { status: code, data: response } = await JobApplicationService.getJobApplicantsByCompanyId(company.id)
+  {
+    const { status: code, data: response } = await ApplicationLogService.getDashboardLogsByCompanyId(company.id)
 
-      if (code == 200) {
-        jobApplicationStore.initialize(response)
-        loaded.value = true
-      }
-    } catch (error) {
-        console.log(error);
-        toast.error("Failed to load employees")
+    if (code == 200) {
+      console.log(response);
+      events.value = response
+      eventLoaded.value = true
     }
+  } catch (error) {
+    console.log(error);
+    toast.error("Failed to load events")
+  }
+}
+
+const loadApplications = async (company) => {
+  try
+  {
+    const { status: code, data: response } = await JobApplicationService.getJobApplicantsByCompanyId(company.id)
+
+    if (code == 200) {
+      jobApplicationStore.initialize(response)
+      loaded.value = true
+    }
+  } catch (error) {
+    console.log(error);
+    toast.error("Failed to load applicants")
+  }
+}
+
+async function onClickEvent(applicantRaw) {
+  router.push({
+    name: 'company-companyid-job-posting-jobpostingid-job-applicant-jobapplicantid',
+    params: {
+      jobpostingid: helpers.security.encrypt(applicantRaw.raw.job_applicant.job_posting_id),
+      jobapplicantid: helpers.security.encrypt(applicantRaw.raw.job_applicant_id)
+    },
+    props: true,
+  })
+}
+
+async function onClickApplicant(applicantRaw) {
+  router.push({
+    name: 'company-companyid-job-posting-jobpostingid-job-applicant-jobapplicantid',
+    params: {
+      jobpostingid: helpers.security.encrypt(applicantRaw.raw.job_posting_id),
+      jobapplicantid: helpers.security.encrypt(applicantRaw.raw.id)
+    },
+    props: true,
+  })
+}
+
+watch(() => companyStore.companyModel, async (company) => {
+  await loadUpcomingEvents(company)
+  await loadApplications(company)
 }, { deep: true })
 
 // 
@@ -108,12 +171,36 @@ watch(() => companyStore.companyModel, async (company) => {
       <VCol cols="12">
         <VCard>
           <template #title>
+            <h4 class="text-h4 card-title">Upcoming Events</h4>
+          </template>
+          <AppTable 
+            :headers="eventTableHeaders"
+            :items="events"
+            :loading="!eventLoaded"
+            @click:row="onClickEvent"
+          >
+            <template #item.when="{ item }">
+              <VChip
+                color="success"
+                text-color="white"
+                rounded="sm"
+              >
+                {{ helpers.formater.dateToWord(item.raw.event_date) }}
+              </VChip>
+            </template>
+          </AppTable>
+        </VCard>
+      </VCol>
+      <VCol cols="12">
+        <VCard>
+          <template #title>
             <h4 class="text-h4 card-title">Applicants</h4>
           </template>
           <AppTable 
-            :headers="tableHeaders"
+            :headers="applicantTableHeaders"
             :items="items"
             :loading="!loaded"
+            @click:row="onClickApplicant"
           >
             <template #item.user="{ item }">
               <div class="d-flex flex-row flex-nowrap gap-2 align-center">

@@ -87,6 +87,7 @@ async function onView(data) {
   router.push({
     name: 'company-companyid-job-posting-jobpostingid-job-applicant-jobapplicantid',
     params: {
+      jobpostingid: helpers.security.encrypt(props.jobpostingid),
       jobapplicantid: helpers.security.encrypt(data.raw.id)
     },
     props: true,

@@ -14,6 +14,10 @@ const ApplicationLogService = new (class {
     async score(applicationLogId, payload) {
         return await axiosIns.patch(`/ApplicationLogs/score/${applicationLogId}`, payload)
     }
+
+    async getDashboardLogsByCompanyId(companyId) {
+        return await axiosIns.get(`/ApplicationLogs/Dashboard/Company/${companyId}`)
+    }
 })
 
 

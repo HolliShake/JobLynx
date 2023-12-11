@@ -1,5 +1,6 @@
 <script setup>
 import Empty from "@/assets/images/download/empty.png"
+import { helpers } from "@/helpers"
 import CompanyService from "@/service/company.service"
 
 const search = ref('')
@@ -66,7 +67,15 @@ onMounted(async () => {
           cols="12"
           class="py-2"
         >
-          <VCard>
+          <VCard
+            :to="{
+              name: 'browse-company-id',
+              params: {
+                id: helpers.security.encrypt(item.id)
+              },
+              props: true
+            }"
+          >
             <VCardText class="pa-4">
               <div class="d-flex flex-row w-100 align-center justify-space-between">
                 <h4>{{ item.company_name }}</h4>
