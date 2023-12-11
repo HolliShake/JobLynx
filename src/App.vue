@@ -28,6 +28,9 @@ provide("toast", toast)
 //👉 Pass to children
 provide("swal", swal)
 
+console.log(import.meta.env.VITE_APP_API_URL);
+console.log(import.meta.env.VITE_APP_LOCAL_STRIPE_SERVER);
+
 // 
 </script>
 

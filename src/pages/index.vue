@@ -9,7 +9,9 @@ import JobPostingService from "@/service/jobposting.service";
 import useJobPostingStore from "@/stores/job-posting.store";
 import JobPostingCard from "@/views/pages/global/JobPostingCard.vue";
 import Footer from "@/layouts/components/Footer.vue";
+import useAuthStore from "@/stores/auth.store";
 
+const authStore = useAuthStore()
 const companyStore = useCompanyStore()
 const jobPostingStore = useJobPostingStore()
 
@@ -73,6 +75,7 @@ onMounted(async () => {
           Browse
         </VBtn>
         <VBtn
+          v-if="!authStore.isLoggedIn"
           variant="text"
           rounded="sm"
           color="mgreen"
@@ -81,12 +84,22 @@ onMounted(async () => {
           Login
         </VBtn>
         <VBtn
+          v-if="!authStore.isLoggedIn"
           variant="text"
           rounded="sm"
           color="mgreen"
           to="/register"
         >
           Register
+        </VBtn>
+        <VBtn
+          v-if="authStore.isLoggedIn"
+          variant="text"
+          rounded="sm"
+          color="mgreen"
+          to="/profile/profile"
+        >
+          Profile
         </VBtn>
       </VAppBar>
     </nav>
