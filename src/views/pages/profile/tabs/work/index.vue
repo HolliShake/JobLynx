@@ -73,8 +73,6 @@ onMounted(async () => {
                 <i class="d-block app-timeline-meta">{{ helpers.formater.dateToWord(work.hired_date) }} &nbsp;-&nbsp; {{ (!work.isActive) ? helpers.formater.dateToWord(work.updated_at) : "Present" }}</i>  
               </div>
             </div>
-
-         
           </VTimelineItem>
         </VTimeline>
       </template>

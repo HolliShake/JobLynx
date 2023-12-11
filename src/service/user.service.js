@@ -8,6 +8,9 @@ const UserService = new (class {
     async deleteuser(userId) {
         return await axiosIns.delete(`/User/delete/${userId}`);
     }
+    async getResumeById(userId) {
+        return await axiosIns.get(`/User/Resume/${userId}`);
+    }
 })
 
 export default UserService

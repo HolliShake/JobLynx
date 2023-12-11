@@ -45,7 +45,7 @@ async function onSubmit() {
       ability.update(respose.user_access.map(ua => ({ subject: ua.subject, action: ua.action })))
       authStore.save(respose)
       if (authStore.isAdmin) {
-        router.push("/admin")
+        router.push("/admin/companies")
       } else {
         router.push("/")
       }

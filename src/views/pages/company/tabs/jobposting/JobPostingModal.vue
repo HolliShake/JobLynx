@@ -386,24 +386,24 @@ watch(samplePhotos, files => {
     style="background-color: rgb(var(--v-theme-background));"
   >
 
-  <template #header>
-    <div>
-      <VToolbar color="primary">
-        <VBtn
-          icon
-          variant="plain"
-          @click="$event => modalRef.close()"
-        >
-          <VIcon
-            color="white"
-            icon="tabler-x"
-          />
-        </VBtn>
+    <template #header>
+      <div>
+        <VToolbar color="primary">
+          <VBtn
+            icon
+            variant="plain"
+            @click="$event => modalRef.close()"
+          >
+            <VIcon
+              color="white"
+              icon="tabler-x"
+            />
+          </VBtn>
 
-        <VToolbarTitle>Post A Job</VToolbarTitle>
-      </VToolbar>
-    </div>
-  </template>
+          <VToolbarTitle>Post A Job</VToolbarTitle>
+        </VToolbar>
+      </div>
+    </template>
 
     <template #content="{ isUpdateMode }">
       <VForm

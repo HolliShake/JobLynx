@@ -6,6 +6,7 @@ import EventModal from '@/views/pages/company/EventModal.vue';
 import { inject } from 'vue';
 import { onMounted } from 'vue';
 import { merge } from "lodash"
+import UserResumeModal from '@/views/pages/profile/UserResumeModal.vue';
 
 const props = defineProps({
   jobapplicantid: {
@@ -210,7 +211,7 @@ onMounted(async () => {
                 </div>
               </div>
             </div>
-            <div class="mt-3">
+            <div class="mt-3 d-flex flex-row gap-2">
               <div class="d-flex flex-row flex-nowrap align-center">
                 <VProgressCircular 
                   :model-value="helpers.resolver.getQualification(
@@ -235,6 +236,7 @@ onMounted(async () => {
 
                 <span class="d-block ms-2 font-weight-bold">QUALIFIED</span>
               </div>
+              <UserResumeModal :user-id="pageData.user.id" />
             </div>
           </VCardText>
         </VCard>
