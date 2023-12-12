@@ -95,8 +95,9 @@ async function onApply() {
     }
     const { status: code, data: response } = data
 
-    if (code == 204) {
+    if (code == 201) {
       toast.success('Successfully applied to this job post.')
+      myPending.value.push(response)
     }
   } catch (error) {
     console.error(">>>>>", error)
