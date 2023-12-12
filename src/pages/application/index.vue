@@ -30,6 +30,11 @@ const tableHeader = ref([
     title: "STATUS",
     key: "status",
     sortable: false,
+  },
+  {
+    title: "ACTION",
+    key: "action",
+    sortable: false,
   }
 ])
 
@@ -44,6 +49,20 @@ const myApplications = computed(() => {
   return jobApplicationStore.getJobApplications
     .filter(ja => ja.job_posting.position.title.toLowerCase().includes(search.value.toLowerCase()))
 })
+
+async function onCancel(application) {
+  try {
+    const { status: code } = await JobApplicationService.cancel(application.id)
+
+    if (code == 204) {
+      toast.success("Application cancelled.")
+      jobApplicationStore.delete(application)
+    }
+  } catch (error) {
+    console.error(error)
+    toast.error("Failed to cancel application.")
+  }
+}
 
 async function onVisit(application) {
   router.push({
@@ -117,6 +136,19 @@ onMounted(async () => {
           >
             {{ item.raw.status.toUpperCase() }}
           </VChip>
+        </template>
+
+        <template #item.action="{ item }">
+          <VBtn
+            icon=""
+            :color="(item.raw.status == 'pending') ? 'success' : 'error'"
+            variant="text"
+            size="small"
+            @click.stop="() => (item.raw.status == 'pending') ? onCancel(item.raw) : onVisit(item)"
+          >
+            <VIcon :icon="(item.raw.status == 'pending') ? 'tabler-location-cancel' : 'tabler-eye'" />
+            <VTooltip activator="parent">{{ (item.raw.status == 'pending') ? 'Cancel' : 'View' }}</VTooltip>
+          </VBtn>
         </template>
       </AppTable>
     </VCard>

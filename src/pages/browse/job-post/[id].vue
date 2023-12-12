@@ -21,8 +21,32 @@ const router = useRouter()
 const route = useRoute()
 const pageData = ref({})
 const comments = ref([])
+const myPending = ref([])
+const pendingLoaded = ref(false)
 const loaded = ref(false)
 const toast = inject('toast')
+
+
+const getMyApplication = async () => {
+  try {
+
+    const { status: code, data: response } = await JobApplicationService.myPendingJobApplicationsByJobPostingId(helpers.security.decrypt(props.id))
+
+    if (code == 200) {
+      myPending.value = response
+      pendingLoaded.value = true
+    }
+  } catch (error) {
+    console.error(error)
+    toast.error("Failed to load application data.")
+  }
+}
+
+const hasApplied = computed(() => {
+  if (!pendingLoaded.value) return true
+
+  return myPending.value.length > 0
+})
 
 watch(pageData, async (value) => {
   if (value.is_hide_company_info) return
@@ -45,6 +69,7 @@ onMounted(async () => {
     const { status: code, data: response } = await JobPostingService.getJobPostingById(helpers.security.decrypt(props.id))
 
     if (code == 200) {
+      await getMyApplication()
       pageData.value = response
       loaded.value = true
 
@@ -82,6 +107,18 @@ async function onApply() {
       })
     }
   }
+}
+
+async function onVisitApplication() {
+  if (myPending.value.length <= 0) return
+
+  router.push({
+    name: 'application-jobapplicationid',
+    params: {
+      jobapplicationid: helpers.security.encrypt(myPending.value[0].id)
+    },
+    props: true
+  })
 }
 
 // 
@@ -242,13 +279,23 @@ async function onApply() {
                 </div>
               </VCol>
               <VCol cols="12" class="py-0" />
-              <VCol cols="12" md="2">
+              <VCol cols="12" md="auto">
                 <VBtn
+                  v-if="hasApplied"
                   block
                   color="mgreen"
                   rounded="sm"
-                  depressed
+                  @click="onVisitApplication"
+                >
+                  View Application Status
+                </VBtn>
+                <VBtn
+                  v-else
+                  block
+                  color="mgreen"
+                  rounded="sm"
                   @click="onApply"
+                  :disabled="hasApplied"
                 >
                   Apply Now
                 </VBtn>
