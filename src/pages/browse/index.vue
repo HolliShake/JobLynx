@@ -32,6 +32,10 @@ const jobPostingLoaded = ref(false)
 const toast = inject('toast')
 
 
+
+
+// 
+
 function isRecommended(data) {
   if (!recommended.value) return true
 
