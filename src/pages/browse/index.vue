@@ -1,6 +1,6 @@
 <script setup>
 import Meeting from "@/assets/images/download/meeting.jpg"
-import Design from "@/assets/images/download/design.jpg"
+import Design from "@/assets/images/download/Design.jpg"
 import Writer from "@/assets/images/download/Writer.png"
 import JobPostingService from "@/service/jobposting.service"
 import useJobPostingStore from "@/stores/job-posting.store"
@@ -31,6 +31,10 @@ const slides = ref([
 const jobPostingLoaded = ref(false)
 const toast = inject('toast')
 
+
+
+
+// 
 
 function isRecommended(data) {
   if (!recommended.value) return true

@@ -9,7 +9,11 @@ import { AppContentLayoutNav, ContentWidth, FooterType, NavbarType } from '@layo
 
 export const { themeConfig, layoutConfig } = defineThemeConfig({
   app: {
+<<<<<<< HEAD
     title: 'Starboard Manpower Services Inc.',
+=======
+    title: 'Starboard Manpower Services',
+>>>>>>> 1829760b01389dd2941f656c637569a9dfcd1076
     logo: h('div', { innerHTML: logo, style: 'line-height:0; color: rgb(var(--v-global-theme-primary))' }),
     contentWidth: ContentWidth.Boxed,
     contentLayoutNav: AppContentLayoutNav.Vertical,

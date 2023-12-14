@@ -28,12 +28,11 @@ const companyId = computed(() => {
 onMounted(async () => {
   if (!jobPosting.value.id) {
     return router.push({
-      name: 'company-companyid-tab',
+      name: 'company-companyid-job-posting',
       params: {
         companyid: companyId.value,
-        tab: 'jobPosting'
       },
-      props: true,
+      props: true
     })
   }
 
@@ -59,12 +58,11 @@ onMounted(async () => {
       <VCardText>
         <h3 class="text-h3">{{ computedResult }}</h3>
         <RouterLink :to="{
-          name: 'company-companyid-tab',
+          name: 'company-companyid-job-posting',
           params: {
             companyid: companyId,
-            tab: 'jobPosting'
           },
-          props: true,
+          props: true
         }">
           <VBtn
             class="mt-2"
