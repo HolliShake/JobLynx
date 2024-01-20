@@ -6,9 +6,11 @@ import { inject } from 'vue'
 const personalDataService = PersonalDataService
 const personalDataStore = usePersonalDataStore()
 const form = ref({})
+
 const errors = ref({
 
 })
+
 const allowEdit = ref(false)
 const toast = inject('toast')
 
@@ -17,10 +19,10 @@ async function onClick() {
 }
 
 async function onUpdate() {
-  console.log(form.value);
+  console.log(form.value)
   try
   {
-    const { status: code, data: response } = await personalDataService.updatePersonalData(form.value.id, form.value);
+    const { status: code, data: response } = await personalDataService.updatePersonalData(form.value.id, form.value)
 
     if (code == 200) {
       personalDataStore.update(response)
@@ -55,7 +57,6 @@ onMounted(async () => {
 
 <template>
   <VCard>
-
     <template #prepend>
       <h3>Personal Information</h3>
     </template>
@@ -69,7 +70,11 @@ onMounted(async () => {
             type="warning"
             closable
           >
-            This fields are readonly by default. To edit, click <span type="button" @click="onClick" class="text-error">here</span>.
+            This fields are readonly by default. To edit, click <span
+              type="button"
+              class="text-error"
+              @click="onClick"
+            >here</span>.
           </VAlert>
         </VCol>
         <!--  -->
@@ -87,7 +92,10 @@ onMounted(async () => {
             v-model="form.religion"
             label="Religion"
           />
-          <small v-if="errors.religion" class="text-xs text-error">{{ errors.religion.pop() }}</small>
+          <small
+            v-if="errors.religion"
+            class="text-xs text-error"
+          >{{ errors.religion.pop() }}</small>
         </VCol>
         <VCol 
           cols="12"
@@ -102,7 +110,10 @@ onMounted(async () => {
               'Divorced/Separated',
             ]"
           />
-          <small v-if="errors.civil_status" class="text-xs text-error">{{ errors.civil_status.pop() }}</small>
+          <small
+            v-if="errors.civil_status"
+            class="text-xs text-error"
+          >{{ errors.civil_status.pop() }}</small>
         </VCol>
         <VCol 
           cols="12"
@@ -112,11 +123,12 @@ onMounted(async () => {
             v-model="form.citizenship"
             label="Citizenship"
           />
-          <small v-if="errors.citizenship" class="text-xs text-error">{{ errors.citizenship.pop() }}</small>
+          <small
+            v-if="errors.citizenship"
+            class="text-xs text-error"
+          >{{ errors.citizenship.pop() }}</small>
         </VCol>
-        <VCol 
-          cols="12" 
-        >
+        <VCol cols="12">
           <LabeledDivider title="Address & Location" />
         </VCol>
         <VCol 
@@ -127,7 +139,10 @@ onMounted(async () => {
             v-model="form.address"
             label="Address"
           />
-          <small v-if="errors.address" class="text-xs text-error">{{ errors.address.pop() }}</small>
+          <small
+            v-if="errors.address"
+            class="text-xs text-error"
+          >{{ errors.address.pop() }}</small>
         </VCol>
         <VCol 
           cols="12"
@@ -137,7 +152,10 @@ onMounted(async () => {
             v-model="form.municipality"
             label="Municipality"
           />
-          <small v-if="errors.municipality" class="text-xs text-error">{{ errors.municipality.pop() }}</small>
+          <small
+            v-if="errors.municipality"
+            class="text-xs text-error"
+          >{{ errors.municipality.pop() }}</small>
         </VCol>
         <VCol 
           cols="12"
@@ -147,7 +165,10 @@ onMounted(async () => {
             v-model="form.city"
             label="City"
           />
-          <small v-if="errors.city" class="text-xs text-error">{{ errors.city.pop() }}</small>
+          <small
+            v-if="errors.city"
+            class="text-xs text-error"
+          >{{ errors.city.pop() }}</small>
         </VCol>
         <VCol 
           cols="12"
@@ -157,11 +178,12 @@ onMounted(async () => {
             v-model="form.postal"
             label="Postal"
           />
-          <small v-if="errors.postal" class="text-xs text-error">{{ errors.postal.pop() }}</small>
+          <small
+            v-if="errors.postal"
+            class="text-xs text-error"
+          >{{ errors.postal.pop() }}</small>
         </VCol>
-        <VCol 
-          cols="12" 
-        >
+        <VCol cols="12">
           <LabeledDivider title="Mother Information" />
         </VCol>
         <VCol 
@@ -172,7 +194,10 @@ onMounted(async () => {
             v-model="form.mother_last_name"
             label="Last Name"
           />
-          <small v-if="errors.mother_last_name" class="text-xs text-error">{{ errors.mother_last_name.pop() }}</small>
+          <small
+            v-if="errors.mother_last_name"
+            class="text-xs text-error"
+          >{{ errors.mother_last_name.pop() }}</small>
         </VCol>
         <VCol 
           cols="12"
@@ -182,7 +207,10 @@ onMounted(async () => {
             v-model="form.mother_first_name"
             label="First Name"
           />
-          <small v-if="errors.mother_first_name" class="text-xs text-error">{{ errors.mother_first_name.pop() }}</small>
+          <small
+            v-if="errors.mother_first_name"
+            class="text-xs text-error"
+          >{{ errors.mother_first_name.pop() }}</small>
         </VCol>
         <VCol 
           cols="12"
@@ -192,11 +220,12 @@ onMounted(async () => {
             v-model="form.mother_middle_name"
             label="Middle Name"
           />
-          <small v-if="errors.mother_middle_name" class="text-xs text-error">{{ errors.mother_middle_name.pop() }}</small>
+          <small
+            v-if="errors.mother_middle_name"
+            class="text-xs text-error"
+          >{{ errors.mother_middle_name.pop() }}</small>
         </VCol>
-        <VCol 
-          cols="12" 
-        >
+        <VCol cols="12">
           <LabeledDivider title="Father Information" />
         </VCol>
         <VCol 
@@ -207,7 +236,10 @@ onMounted(async () => {
             v-model="form.father_last_name"
             label="Last Name"
           />
-          <small v-if="errors.father_last_name" class="text-xs text-error">{{ errors.father_last_name.pop() }}</small>
+          <small
+            v-if="errors.father_last_name"
+            class="text-xs text-error"
+          >{{ errors.father_last_name.pop() }}</small>
         </VCol>
         <VCol 
           cols="12"
@@ -217,7 +249,10 @@ onMounted(async () => {
             v-model="form.father_first_name"
             label="First Name"
           />
-          <small v-if="errors.father_first_name" class="text-xs text-error">{{ errors.father_first_name.pop() }}</small>
+          <small
+            v-if="errors.father_first_name"
+            class="text-xs text-error"
+          >{{ errors.father_first_name.pop() }}</small>
         </VCol>
         <VCol 
           cols="12"
@@ -227,7 +262,10 @@ onMounted(async () => {
             v-model="form.father_middle_name"
             label="Middle Name"
           />
-          <small v-if="errors.father_middle_name" class="text-xs text-error">{{ errors.father_middle_name.pop() }}</small>
+          <small
+            v-if="errors.father_middle_name"
+            class="text-xs text-error"
+          >{{ errors.father_middle_name.pop() }}</small>
         </VCol>
         <VCol 
           v-if="allowEdit"
@@ -237,10 +275,13 @@ onMounted(async () => {
         >
           <VBtn
             block
-            @click="onUpdate"
             color="success"
+            @click="onUpdate"
           >
-          <VIcon start icon="tabler-edit" />
+            <VIcon
+              start
+              icon="tabler-edit"
+            />
             UPDATE
           </VBtn>
         </VCol>

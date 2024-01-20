@@ -1,9 +1,9 @@
 <script setup>
-import CompanyContext from "@/context/CompanyContext.vue";
-import StripeContext from "@/context/StripeContext.vue";
+import CompanyContext from "@/context/CompanyContext.vue"
+import StripeContext from "@/context/StripeContext.vue"
 import ActiveTab from "@/views/pages/company/tabs/jobposting/ActiveTab.vue"
-import HistoryTab from "@/views/pages/company/tabs/jobposting/HistoryTab.vue";
-import { provide } from "vue";
+import HistoryTab from "@/views/pages/company/tabs/jobposting/HistoryTab.vue"
+import { provide } from "vue"
 
 const currentTab = ref("active")
 const stripeRef = ref()
@@ -17,23 +17,15 @@ provide("stripeRef", stripeRef)
   <CompanyContext>
     <StripeContext ref="stripeRef">
       <VCard>
-        <VTabs
-          v-model="currentTab"
-        >
-          <VTab
-            value="active"
-          >
+        <VTabs v-model="currentTab">
+          <VTab value="active">
             ACTIVE
           </VTab>
-          <VTab
-            value="history"
-          >
+          <VTab value="history">
             JOB POSTING HISTORY
           </VTab>
         </VTabs>
-        <VWindow
-          v-model="currentTab"
-        >
+        <VWindow v-model="currentTab">
           <VWindowItem value="active">
             <ActiveTab />
           </VWindowItem>
@@ -49,5 +41,7 @@ provide("stripeRef", stripeRef)
 <route lang="yaml">
   meta:
     layout: default
+    subject: company
+    action: read
     requiresAuth: true
 </route>

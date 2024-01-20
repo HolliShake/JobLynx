@@ -1,17 +1,17 @@
 <script setup>
-import SalaryModal from '@/views/pages/company/tabs/salary/SalaryModal.vue';
-import useSalaryStore from '@/stores/salary.store';
-import { inject } from 'vue';
-import { watch } from 'vue';
-import SalaryService from '@/service/salary.service';
-import useCompanyStore from '@/stores/company.store';
-import CompanyContext from '@/context/CompanyContext.vue';
-import { helpers } from '@/helpers';
+import CompanyContext from '@/context/CompanyContext.vue'
+import { helpers } from '@/helpers'
+import SalaryService from '@/service/salary.service'
+import useCompanyStore from '@/stores/company.store'
+import useSalaryStore from '@/stores/salary.store'
+import SalaryModal from '@/views/pages/company/tabs/salary/SalaryModal.vue'
+import { inject, watch } from 'vue'
 
 const salaryStore = useSalaryStore()
 const companyStore = useCompanyStore()
 const search = ref('')
 const itemsPerPage = ref(10)
+
 const tableHeader = ref([
   {
     title: "TITLE",
@@ -24,15 +24,16 @@ const tableHeader = ref([
   {
     title: "AMOUNT",
     key: "value",
-    value: v => `${v.currency} ${helpers.formater.numberToMoney(v.value)}`
+    value: v => `${v.currency} ${helpers.formater.numberToMoney(v.value)}`,
   },
   {
     title: "ACTION",
     key: "action",
     width: '150',
     align: 'center',
-  }
+  },
 ])
+
 const modalRef = ref()
 const loaded = ref(false)
 const toast = inject("toast")
@@ -56,7 +57,7 @@ async function onDelete(salary) {
   swal.value.fire({
     question: "Are you sure you want to delete salary entry?",
     dangerMode: true,
-  }).then(async (result) => {
+  }).then(async result => {
     if (!result) return
 
     try
@@ -74,7 +75,7 @@ async function onDelete(salary) {
   })
 }
 
-watch(() => companyStore.companyModel, async (company) => {
+watch(() => companyStore.companyModel, async company => {
   salaryStore.setCompany(company.id)
 
   try
@@ -159,10 +160,10 @@ watch(() => companyStore.companyModel, async (company) => {
             size="x-small"
             @click.stop="onDelete(item.raw)"
           >
-            <VTooltip activator="parent">Delete salary</VTooltip>
-            <VIcon
-              icon="tabler-trash"
-            />
+            <VTooltip activator="parent">
+              Delete salary
+            </VTooltip>
+            <VIcon icon="tabler-trash" />
           </VBtn>
         </template>
       </AppTable>
@@ -175,5 +176,7 @@ watch(() => companyStore.companyModel, async (company) => {
 <route lang="yaml">
   meta:
     layout: default
+    subject: company
+    action: read
     requiresAuth: true
 </route>

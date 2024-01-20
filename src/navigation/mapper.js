@@ -1,45 +1,53 @@
 
 
-const COMPANY_PATTERN = new RegExp('/company/.*/.*')
+// const COMPANY_PATTERN = new RegExp('/company/.*/.*')
 
-export const SUBJECT = Object.freeze([
-    "admin",
-    "user",
-])
 
-export const ACTIONS = Object.freeze(
-    [
-        "all",
-        "read",
-        "write",
-        "update",
-        "delete",
-    ]
-)
+// export const SUBJECT = Object.freeze([
+//     "admin",
+//     "user",
+// ])
 
-export function make(arrayOfPath) {
-    const newPath = []
+// export const ACTIONS = Object.freeze(
+//     [
+//         "all",
+//         "read",
+//         "write",
+//         "update",
+//         "delete",
+//     ]
+// )
 
-    for (let s = 0; s < SUBJECT.length; s++) {
+// export function make(arrayOfPath) {
+//     const newPath = []
 
-        const subject = SUBJECT[s]
+//     for (let s = 0; s < SUBJECT.length; s++) {
 
-        for (let i = 0; i < arrayOfPath.length; i ++) {
+//         const subject = SUBJECT[s]
 
-            if (arrayOfPath[i].type === "divider") {
-                newPath.push(arrayOfPath[i])
+//         for (let i = 0; i < arrayOfPath.length; i ++) {
+
+//             if (arrayOfPath[i].type === "divider") {
+//                 newPath.push(arrayOfPath[i])
                 
-            } else {
-                newPath.push({
-                    ...arrayOfPath[i],
-                    hidden: () => (!COMPANY_PATTERN.test(window.location.pathname)),
-                    subject: subject,
-                    action: "read"
-                })
-            }
-        }
-    }
+//             } else {
+//                 newPath.push({
+//                     ...arrayOfPath[i],
+//                     hidden: () => (!COMPANY_PATTERN.test(window.location.pathname)),
+//                     subject: subject,
+//                     action: "read"
+//                 })
+//             }
+//         }
+//     }
 
-    return newPath;
+//     return newPath;
+// }
+
+export function make(role, arrayOfPath) {
+  return arrayOfPath.map(ap => ({
+    ...ap,
+    subject: role,
+    action: 'read',
+  }))
 }
-

@@ -1,16 +1,17 @@
 
 <script setup>
-import { requiredValidator } from '@/@core/utils/validators';
-import EducationService from '@/service/education.service';
-import useEducationStore from '@/stores/education.store';
-import { EDUCATION_ITEMS } from './education.map';
-import { helpers } from '@/helpers';
+import { requiredValidator } from '@/@core/utils/validators'
+import { helpers } from '@/helpers'
+import EducationService from '@/service/education.service'
+import useEducationStore from '@/stores/education.store'
+import { EDUCATION_ITEMS } from './education.map'
 
-const educationService = EducationService;
+const educationService = EducationService
 const educationStore = useEducationStore()
 const refVForm = ref()
 const submitted = ref(false)
 const form = ref()
+
 const errors = ref({
   school_name: [],
   status: [],
@@ -19,23 +20,24 @@ const errors = ref({
   start_sy: [],
   end_sy: [],
 })
+
 const toast = inject("toast")
 const modalRef = ref()
 
 defineExpose({
-    open() {
-      modalRef.value.open()
-      educationStore.resetField()
-      form.value = educationStore.getEducationModel
-    },
-    openAsUpdateMode() {
-      modalRef.value.openAsUpdateMode()
-      form.value = educationStore.getEducationModel
-    },
-    close() {
-      modalRef.value.close()
-      educationStore.resetField()
-    },
+  open() {
+    modalRef.value.open()
+    educationStore.resetField()
+    form.value = educationStore.getEducationModel
+  },
+  openAsUpdateMode() {
+    modalRef.value.openAsUpdateMode()
+    form.value = educationStore.getEducationModel
+  },
+  close() {
+    modalRef.value.close()
+    educationStore.resetField()
+  },
 })
 
 
@@ -108,7 +110,10 @@ async function update() {
               label="School"
               :rules="[requiredValidator]"
             />
-            <small v-if="errors.school_name" class="text-xs text-error">{{ errors.school_name.pop() }}</small>
+            <small
+              v-if="errors.school_name"
+              class="text-xs text-error"
+            >{{ errors.school_name.pop() }}</small>
           </VCol>
           <VCol 
             cols="12"
@@ -119,7 +124,10 @@ async function update() {
               label="From"
               :rules="[requiredValidator]"
             />
-            <small v-if="errors.start_sy" class="text-xs text-error">{{ errors.start_sy.pop() }}</small>
+            <small
+              v-if="errors.start_sy"
+              class="text-xs text-error"
+            >{{ errors.start_sy.pop() }}</small>
           </VCol>
           <VCol 
             cols="12"
@@ -130,28 +138,33 @@ async function update() {
               label="To"
               :rules="[requiredValidator]"
             />
-            <small v-if="errors.end_sy" class="text-xs text-error">{{ errors.end_sy.pop() }}</small>
+            <small
+              v-if="errors.end_sy"
+              class="text-xs text-error"
+            >{{ errors.end_sy.pop() }}</small>
           </VCol>
-          <VCol 
-            cols="12"
-          >
+          <VCol cols="12">
             <AppTextField
               v-model="form.location"
               label="Location"
               :rules="[requiredValidator]"
             />
-            <small v-if="errors.location" class="text-xs text-error">{{ errors.location.pop() }}</small>
+            <small
+              v-if="errors.location"
+              class="text-xs text-error"
+            >{{ errors.location.pop() }}</small>
           </VCol>
-          <VCol 
-            cols="12"
-          >
+          <VCol cols="12">
             <AppSelect
               v-model="form.status"
               label="Status"
               :items="EDUCATION_ITEMS"
               :rules="[requiredValidator]"
             />
-            <small v-if="errors.status" class="text-xs text-error">{{ errors.status.pop() }}</small>
+            <small
+              v-if="errors.status"
+              class="text-xs text-error"
+            >{{ errors.status.pop() }}</small>
           </VCol>
           <VCol cols="12">
             <VTextarea
@@ -162,7 +175,10 @@ async function update() {
               auto-grow
               :rules="[requiredValidator]"
             />
-            <small v-if="errors.description" class="text-xs text-error">{{ errors.description.pop() }}</small>
+            <small
+              v-if="errors.description"
+              class="text-xs text-error"
+            >{{ errors.description.pop() }}</small>
           </VCol>
         </VRow>
       </VForm>

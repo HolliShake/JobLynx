@@ -1,20 +1,18 @@
 <script setup>
-import { avatarText } from '@/@core/utils/formatters';
-import { helpers } from '@/helpers';
-import Footer from '@/layouts/components/Footer.vue';
-import JobApplicationService from '@/service/job-application.service';
-import JobPostingService from '@/service/jobposting.service';
-import RatingService from '@/service/rating.service';
-import { inject } from 'vue';
-import { watch } from 'vue';
-import { onMounted } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
+import { avatarText } from '@/@core/utils/formatters'
+import { helpers } from '@/helpers'
+import Footer from '@/layouts/components/Footer.vue'
+import JobApplicationService from '@/service/job-application.service'
+import JobPostingService from '@/service/jobposting.service'
+import RatingService from '@/service/rating.service'
+import { inject, onMounted, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 
 const props = defineProps({
   id: {
     type: String,
-    required: true
-  }
+    required: true,
+  },
 })
 
 const router = useRouter()
@@ -48,7 +46,7 @@ const hasApplied = computed(() => {
   return myPending.value.length > 0
 })
 
-watch(pageData, async (value) => {
+watch(pageData, async value => {
   if (value.is_hide_company_info) return
 
   try
@@ -73,7 +71,7 @@ onMounted(async () => {
       pageData.value = response
       loaded.value = true
 
-      console.log(response);
+      console.log(response)
     }
   } catch (error) {
     console.error(error)
@@ -89,8 +87,8 @@ async function onApply() {
       return  router.push({
         name: 'login',
         query: {
-          to: route.fullPath
-        }
+          to: route.fullPath,
+        },
       })
     }
     const { status: code, data: response } = data
@@ -104,7 +102,7 @@ async function onApply() {
 
     if (error.status == 401) {
       router.push({
-        name: 'login'
+        name: 'login',
       })
     }
   }
@@ -116,9 +114,9 @@ async function onVisitApplication() {
   router.push({
     name: 'application-jobapplicationid',
     params: {
-      jobapplicationid: helpers.security.encrypt(myPending.value[0].id)
+      jobapplicationid: helpers.security.encrypt(myPending.value[0].id),
     },
-    props: true
+    props: true,
   })
 }
 
@@ -190,11 +188,16 @@ async function onVisitApplication() {
                   color="mgreen"
                 >
                   <VCardText class="pa-3">
-                    <h3 class="text-white">{{ pageData.position.title }}</h3>
+                    <h3 class="text-white">
+                      {{ pageData.position.title }}
+                    </h3>
                   </VCardText>
                 </VCard>
               </VCol>
-              <VCol cols="12" class="py-0">
+              <VCol
+                cols="12"
+                class="py-0"
+              >
                 <div class="d-inline">
                   <VIcon 
                     icon="tabler-map-pin-filled" 
@@ -206,24 +209,34 @@ async function onVisitApplication() {
                   &nbsp; <span v-if="!pageData.is_hide_company_info">Posted by <RouterLink :to="{ name: 'browse-company-id', params: { id: helpers.security.encrypt( pageData.position.company.id) }, props: true }">{{ pageData.position.company.company_name }}</RouterLink></span>
                 </div>
               </VCol>
-              <VCol cols="12" class="py-0" />
+              <VCol
+                cols="12"
+                class="py-0"
+              />
               <VCol 
                 cols="12" 
                 md="6"
                 class="mt-10"
               >
-                <h4 class="text-h4 font-weight-thin mb-3">Description</h4>
+                <h4 class="text-h4 font-weight-thin mb-3">
+                  Description
+                </h4>
                 <p>
                   {{ pageData.description }}
                 </p>
               </VCol>
-              <VCol cols="12" class="py-0" />
+              <VCol
+                cols="12"
+                class="py-0"
+              />
               <VCol 
                 cols="12" 
                 md="6"
                 class="mt-10"
               >
-                <h4 class="text-h4 font-weight-thin mb-3">Skills Required</h4>
+                <h4 class="text-h4 font-weight-thin mb-3">
+                  Skills Required
+                </h4>
 
                 <VList>
                   <VListItem
@@ -231,7 +244,10 @@ async function onVisitApplication() {
                     :key="`skill-${item.id}`"
                   >
                     <template #prepend>
-                      <VIcon icon="mdi-circle" size="9" />
+                      <VIcon
+                        icon="mdi-circle"
+                        size="9"
+                      />
                     </template>
                     <VListItemTitle>{{ item }}</VListItemTitle>
                   </VListItem>
@@ -245,7 +261,9 @@ async function onVisitApplication() {
                 offset-md="1"
                 class="mt-10"
               >
-                <h4 class="text-h4 font-weight-thin mb-3">Sample Photos</h4>
+                <h4 class="text-h4 font-weight-thin mb-3">
+                  Sample Photos
+                </h4>
                 <VCard
                   style="border: 4px solid rgb(var(--v-theme-background));"
                   rounded="xl"
@@ -270,7 +288,10 @@ async function onVisitApplication() {
                   </div>
                 </VCard>
               </VCol>
-              <VCol cols="12" class="py-0" />
+              <VCol
+                cols="12"
+                class="py-0"
+              />
               <VCol 
                 cols="12" 
                 md="6"
@@ -279,8 +300,14 @@ async function onVisitApplication() {
                   <span class="text-h4 font-weight-thin">{{ pageData.position.salary.currency }} {{ helpers.formater.numberToMoney(pageData.position.salary.value) }}</span> / <span>{{ pageData.position.payment_type }}</span>
                 </div>
               </VCol>
-              <VCol cols="12" class="py-0" />
-              <VCol cols="12" md="auto">
+              <VCol
+                cols="12"
+                class="py-0"
+              />
+              <VCol
+                cols="12"
+                md="auto"
+              >
                 <VBtn
                   v-if="hasApplied"
                   block
@@ -295,15 +322,20 @@ async function onVisitApplication() {
                   block
                   color="mgreen"
                   rounded="sm"
-                  @click="onApply"
                   :disabled="hasApplied"
+                  @click="onApply"
                 >
                   Apply Now
                 </VBtn>
               </VCol>
               <template v-if="comments.length > 0">
-                <VCol cols="12" class="mt-10">
-                  <h4 class="text-h4 font-weight-thin mb-3">Comments</h4>
+                <VCol
+                  cols="12"
+                  class="mt-10"
+                >
+                  <h4 class="text-h4 font-weight-thin mb-3">
+                    Comments
+                  </h4>
                 </VCol>
                 <VCol 
                   v-if="comments.length <= 0"
@@ -320,16 +352,20 @@ async function onVisitApplication() {
                   </VCard>
                 </VCol>
                 <VCol
-                  v-else
                   v-for="item in comments"
+                  v-else
                   :key="`comment-${item.id}`"
                   cols="12"
                   md="4"
                 >
-                  <VCard border flat>
+                  <VCard
+                    border
+                    flat
+                  >
                     <VCardText class="pa-4">
                       <div class="d-flex flex-row flex-nowrap gap-2 align-center">
-                        <div class="d-inline elevation-2"
+                        <div
+                          class="d-inline elevation-2"
                           style="border: 2px solid #fff;border-radius: 360px;"
                         >
                           <VAvatar
@@ -386,5 +422,8 @@ async function onVisitApplication() {
 
 <route lang="yaml">
   meta:
+    subject: auth
+    action: read
+    requiresAuth: true
     layout: raw
 </route>

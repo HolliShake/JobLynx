@@ -1,13 +1,13 @@
 <script setup>
-import { helpers } from '@/helpers';
-import useAuthStore from '@/stores/auth.store';
-import { computed } from 'vue';
+import { helpers } from '@/helpers'
+import useAuthStore from '@/stores/auth.store'
+import { computed } from 'vue'
 
 const data = useAuthStore()
 
 const computedCardData = computed(() => {
   return [
-  {
+    {
       title: "ADDRESS",
       icon: "mdi-home",
       color: "success",
@@ -43,7 +43,7 @@ const computedCardData = computed(() => {
       color: "success",
       value: (data.getUserData.birth_date && helpers.formater.dateToWord(data.getUserData.birth_date)) ?? "Not Set",
     },
-  ];
+  ]
 })
 
 // 
@@ -59,7 +59,6 @@ const computedCardData = computed(() => {
           cols="12"
           sm="6"
           md="4"
-          
         >
           <VCard style="border: 2px solid rgb(var(--v-theme-surface)); background-color: rgb(var(--v-theme-background));">
             <VCardText class="pa-3">

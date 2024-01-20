@@ -1,15 +1,16 @@
 <script setup>
-import useOfficeStore from '@/stores/office.store';
-import OfficeModal from '@/views/pages/company/tabs/office/OfficeModal.vue';
-import { inject } from 'vue';
-import OfficeService from '@/service/office.service';
-import CompanyContext from '@/context/CompanyContext.vue';
-import useCompanyStore from '@/stores/company.store';
+import CompanyContext from '@/context/CompanyContext.vue'
+import OfficeService from '@/service/office.service'
+import useCompanyStore from '@/stores/company.store'
+import useOfficeStore from '@/stores/office.store'
+import OfficeModal from '@/views/pages/company/tabs/office/OfficeModal.vue'
+import { inject } from 'vue'
 
 const officeStore = useOfficeStore()
 const companyStore = useCompanyStore()
 const search = ref('')
 const itemsPerPage = ref(10)
+
 const tableHeader = ref([
   {
     title: "OFFICE NAME",
@@ -28,8 +29,9 @@ const tableHeader = ref([
     key: "action",
     width: '150',
     align: 'center',
-  }
+  },
 ])
+
 const modalRef = ref()
 const loaded = ref(false)
 const toast = inject("toast")
@@ -53,7 +55,7 @@ async function onDelete(office) {
   swal.value.fire({
     question: "Are you sure you want to delete office entry?",
     dangerMode: true,
-  }).then(async (result) => {
+  }).then(async result => {
     if (!result) return
 
     try
@@ -71,7 +73,7 @@ async function onDelete(office) {
   })
 }
 
-watch(() => companyStore.companyModel, async (company) => {
+watch(() => companyStore.companyModel, async company => {
   officeStore.setCompany(company.id)
 
   try
@@ -94,9 +96,7 @@ watch(() => companyStore.companyModel, async (company) => {
 <template>
   <CompanyContext>
     <VCard>
-      <VCardText
-        class="pa-4"
-      >
+      <VCardText class="pa-4">
         <VRow>
           <VCol
             cols="12"
@@ -121,9 +121,7 @@ watch(() => companyStore.companyModel, async (company) => {
             md="auto"
             class="ms-auto"
           >
-            <VBtn
-              @click="onCreate"
-            >
+            <VBtn @click="onCreate">
               <VIcon 
                 start  
                 icon="tabler-location-plus"
@@ -172,10 +170,10 @@ watch(() => companyStore.companyModel, async (company) => {
             size="small"
             @click.stop="onDelete(item.raw)"
           >
-            <VIcon
-              icon="tabler-trash"
-            />
-            <VTooltip activator="parent">Delete office</VTooltip>
+            <VIcon icon="tabler-trash" />
+            <VTooltip activator="parent">
+              Delete office
+            </VTooltip>
           </VBtn>
         </template>
       </AppTable>
@@ -188,5 +186,7 @@ watch(() => companyStore.companyModel, async (company) => {
 <route lang="yaml">
   meta:
     layout: default
+    subject: company
+    action: read
     requiresAuth: true
 </route>

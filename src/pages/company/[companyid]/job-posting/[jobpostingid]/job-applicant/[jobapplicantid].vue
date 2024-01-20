@@ -1,18 +1,17 @@
 <script setup>
-import { helpers } from '@/helpers';
-import ApplicationLogService from '@/service/application-log.service';
-import JobApplicationService from '@/service/job-application.service';
-import EventModal from '@/views/pages/company/EventModal.vue';
-import { inject } from 'vue';
-import { onMounted } from 'vue';
+import { helpers } from '@/helpers'
+import ApplicationLogService from '@/service/application-log.service'
+import JobApplicationService from '@/service/job-application.service'
+import EventModal from '@/views/pages/company/EventModal.vue'
+import UserResumeModal from '@/views/pages/profile/UserResumeModal.vue'
 import { merge } from "lodash"
-import UserResumeModal from '@/views/pages/profile/UserResumeModal.vue';
+import { inject, onMounted } from 'vue'
 
 const props = defineProps({
   jobapplicantid: {
     type: String,
-    required: true
-  }
+    required: true,
+  },
 })
 
 const modalRef = ref()
@@ -96,7 +95,7 @@ async function submitScore(applicationLog) {
   try {
     const { status: code, data: response } = await ApplicationLogService.score(applicationLog.id, {
       id: applicationLog.id,
-      score: applicationLog.score
+      score: applicationLog.score,
     })
 
     if (code == 200) {
@@ -116,7 +115,7 @@ onMounted(async () => {
     const { status: code, data: response } = await JobApplicationService.getById(helpers.security.decrypt(props.jobapplicantid))
 
     if (code == 200) {
-      console.log(response);
+      console.log(response)
       pageData.value = response
       loaded.value = true
     }
@@ -177,17 +176,13 @@ onMounted(async () => {
         md="auto"
       >
         <VCard>
-          <VCardText
-            class="pa-4 px-6"
-          >
+          <VCardText class="pa-4 px-6">
             <div class="d-flex flex-row gap-3 align-center">
               <div 
                 class="d-inline elevated-3 rounded-circle"
                 style="border: 3px solid rgb(var(--v-theme-background));"
               >
-                <VAvatar
-                  size="64"
-                >
+                <VAvatar size="64">
                   <h3 v-if="!pageData.user.profile_image">
                     {{ avatarText(`${pageData.user.last_name}, ${pageData.user.first_name}`) }}
                   </h3>
@@ -262,11 +257,16 @@ onMounted(async () => {
                   color="mgreen"
                 >
                   <VCardText class="pa-3">
-                    <h3 class="text-white">{{ pageData.job_posting.position.title }}</h3>
+                    <h3 class="text-white">
+                      {{ pageData.job_posting.position.title }}
+                    </h3>
                   </VCardText>
                 </VCard>
               </VCol>
-              <VCol cols="12" class="py-0">
+              <VCol
+                cols="12"
+                class="py-0"
+              >
                 <div class="d-inline">
                   <VIcon 
                     icon="tabler-map-pin-filled" 
@@ -276,24 +276,34 @@ onMounted(async () => {
                   <span class="text-body-1">{{ pageData.job_posting.position.office.address }}, {{ pageData.job_posting.position.office.country }} ({{ pageData.job_posting.position.employment_type }})</span>
                 </div>
               </VCol>
-              <VCol cols="12" class="py-0" />
+              <VCol
+                cols="12"
+                class="py-0"
+              />
               <VCol 
                 cols="12" 
                 md="6"
                 class="mt-10"
               >
-                <h4 class="text-h4 font-weight-thin mb-3">Description</h4>
+                <h4 class="text-h4 font-weight-thin mb-3">
+                  Description
+                </h4>
                 <p>
                   {{ pageData.job_posting.description }}
                 </p>
               </VCol>
-              <VCol cols="12" class="py-0" />
+              <VCol
+                cols="12"
+                class="py-0"
+              />
               <VCol 
                 cols="12" 
                 md="6"
                 class="mt-10"
               >
-                <h4 class="text-h4 font-weight-thin mb-3">Skills Required</h4>
+                <h4 class="text-h4 font-weight-thin mb-3">
+                  Skills Required
+                </h4>
 
                 <VList>
                   <VListItem
@@ -301,7 +311,10 @@ onMounted(async () => {
                     :key="`skill-${item.id}`"
                   >
                     <template #prepend>
-                      <VIcon icon="mdi-circle" size="9" />
+                      <VIcon
+                        icon="mdi-circle"
+                        size="9"
+                      />
                     </template>
                     <VListItemTitle>{{ item }}</VListItemTitle>
                   </VListItem>
@@ -315,7 +328,9 @@ onMounted(async () => {
                 offset-md="1"
                 class="mt-10"
               >
-                <h4 class="text-h4 font-weight-thin mb-3">Sample Photos</h4>
+                <h4 class="text-h4 font-weight-thin mb-3">
+                  Sample Photos
+                </h4>
                 <VCard
                   style="border: 4px solid rgb(var(--v-theme-background));"
                   rounded="xl"
@@ -347,7 +362,9 @@ onMounted(async () => {
               <!-- Timeline -->
               <VCol cols="12">
                 <div class="d-flex flex-row flex-nowrap w-100 align-center justify-space-between">
-                  <h4 class="text-h3 font-weight-thin mb-4">Events</h4>
+                  <h4 class="text-h3 font-weight-thin mb-4">
+                    Events
+                  </h4>
                   <VBtn
                     size="small"
                     @click="onCreateEvent"
@@ -365,9 +382,7 @@ onMounted(async () => {
                   flat
                   border
                 >
-                  <VCardText 
-                    class="pa-4 text-center"
-                  >
+                  <VCardText class="pa-4 text-center">
                     No Events Found.
                   </VCardText>
                 </VCard>
@@ -437,10 +452,10 @@ onMounted(async () => {
                         size="small"
                         @click="submitScore(log)"
                       >
-                        <VIcon 
-                          icon="mdi-paper-plane"
-                        />
-                        <VTooltip activator="parent">Update Score</VTooltip>
+                        <VIcon icon="mdi-paper-plane" />
+                        <VTooltip activator="parent">
+                          Update Score
+                        </VTooltip>
                       </VBtn>
                     </div>
                   </VTimelineItem>
@@ -452,7 +467,8 @@ onMounted(async () => {
               >
                 <div 
                   v-if="pageData.status == 'pending'"
-                  class="d-flex flex-column flex-md-row flex-nowrap gap-3">
+                  class="d-flex flex-column flex-md-row flex-nowrap gap-3"
+                >
                   <VBtn
                     color="success"
                     rounded="sm"
@@ -497,5 +513,7 @@ onMounted(async () => {
 <route lang="yaml">
   meta:
     navActiveLink: company-companyid-job-posting
+    subject: company
+    action: read
     requiresAuth: true
 </route>

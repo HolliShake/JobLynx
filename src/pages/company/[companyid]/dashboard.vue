@@ -1,14 +1,14 @@
 <script setup>
-import { avatarText } from '@/@core/utils/formatters';
-import CompanyContext from '@/context/CompanyContext.vue';
-import { helpers } from '@/helpers';
-import ApplicationLogService from '@/service/application-log.service';
-import JobApplicationService from '@/service/job-application.service';
-import useAuthStore from '@/stores/auth.store';
-import useCompanyStore from '@/stores/company.store';
-import useJobApplicationStore from '@/stores/job-application.store';
-import { inject } from 'vue';
-import { useRouter } from 'vue-router';
+import { avatarText } from '@/@core/utils/formatters'
+import CompanyContext from '@/context/CompanyContext.vue'
+import { helpers } from '@/helpers'
+import ApplicationLogService from '@/service/application-log.service'
+import JobApplicationService from '@/service/job-application.service'
+import useAuthStore from '@/stores/auth.store'
+import useCompanyStore from '@/stores/company.store'
+import useJobApplicationStore from '@/stores/job-application.store'
+import { inject } from 'vue'
+import { useRouter } from 'vue-router'
 
 const eventTableHeaders = ref([
   {
@@ -18,7 +18,7 @@ const eventTableHeaders = ref([
   {
     title: "WHEN",
     key: "when",
-    value: v => helpers.formater.dateToWord(v.event_date)
+    value: v => helpers.formater.dateToWord(v.event_date),
   },
   {
     title: "DESCRIPTION",
@@ -44,7 +44,7 @@ const applicantTableHeaders = ref([
     title: "STATUS",
     key: "status",
     sortable: false,
-  }
+  },
 ])
 
 const router = useRouter()
@@ -60,30 +60,30 @@ const items = computed(() => {
   return jobApplicationStore.getJobApplications
 })
 
-const computedQualification = (item) => {
+const computedQualification = item => {
   return helpers.resolver.getQualification(
     item.raw.user.personal_data.skill.map(s => s.title.toLowerCase()),
-    item.raw.job_posting.position.skills.toLowerCase()
+    item.raw.job_posting.position.skills.toLowerCase(),
   )
 }
 
-const loadUpcomingEvents = async (company) => {
+const loadUpcomingEvents = async company => {
   try
   {
     const { status: code, data: response } = await ApplicationLogService.getDashboardLogsByCompanyId(company.id)
 
     if (code == 200) {
-      console.log(response);
+      console.log(response)
       events.value = response
       eventLoaded.value = true
     }
   } catch (error) {
-    console.log(error);
+    console.log(error)
     toast.error("Failed to load events")
   }
 }
 
-const loadApplications = async (company) => {
+const loadApplications = async company => {
   try
   {
     const { status: code, data: response } = await JobApplicationService.getJobApplicantsByCompanyId(company.id)
@@ -93,7 +93,7 @@ const loadApplications = async (company) => {
       loaded.value = true
     }
   } catch (error) {
-    console.log(error);
+    console.log(error)
     toast.error("Failed to load applicants")
   }
 }
@@ -103,7 +103,7 @@ async function onClickEvent(applicantRaw) {
     name: 'company-companyid-job-posting-jobpostingid-job-applicant-jobapplicantid',
     params: {
       jobpostingid: helpers.security.encrypt(applicantRaw.raw.job_applicant.job_posting_id),
-      jobapplicantid: helpers.security.encrypt(applicantRaw.raw.job_applicant_id)
+      jobapplicantid: helpers.security.encrypt(applicantRaw.raw.job_applicant_id),
     },
     props: true,
   })
@@ -114,13 +114,13 @@ async function onClickApplicant(applicantRaw) {
     name: 'company-companyid-job-posting-jobpostingid-job-applicant-jobapplicantid',
     params: {
       jobpostingid: helpers.security.encrypt(applicantRaw.raw.job_posting_id),
-      jobapplicantid: helpers.security.encrypt(applicantRaw.raw.id)
+      jobapplicantid: helpers.security.encrypt(applicantRaw.raw.id),
     },
     props: true,
   })
 }
 
-watch(() => companyStore.companyModel, async (company) => {
+watch(() => companyStore.companyModel, async company => {
   await loadUpcomingEvents(company)
   await loadApplications(company)
 }, { deep: true })
@@ -131,12 +131,12 @@ watch(() => companyStore.companyModel, async (company) => {
 <template>
   <CompanyContext>
     <VRow>
-      <VCol 
-        cols="12"
-      >
+      <VCol cols="12">
         <VCard>
           <template #title>
-            <h2 class="text-center text-md-start text-h2 font-weight-thin text-wrap">Welcome back to {{ companyStore.getCompanyModel.company_name }} 👋</h2>
+            <h2 class="text-center text-md-start text-h2 font-weight-thin text-wrap">
+              Welcome back to {{ companyStore.getCompanyModel.company_name }} 👋
+            </h2>
           </template>
           <VCardText>
             <div class="d-flex flex-column flex-md-row flex-nowrap gap-3 align-center">
@@ -144,18 +144,20 @@ watch(() => companyStore.companyModel, async (company) => {
                 class="d-inline-block elevated-3 rounded-circle"
                 style="border: 4px solid rgb(var(--v-theme-background));"
               >
-                <VAvatar
-                :size="$vuetify.display.mdAndDown ? 110 : 75"
-                >
+                <VAvatar :size="$vuetify.display.mdAndDown ? 110 : 75">
                   <VImg 
+                    v-if="authStore.getUserData.profile_image"
                     :src="helpers.resolver.getImagePath(authStore.getUserData.profile_image.file_name)"
                     cover
                     alt="Profile"
                   />
+                  <span v-else>{{ avatarText(authStore.getUserData.FullName) }}</span>
                 </VAvatar>
               </div>
               <div class="d-block text-center text-md-start">
-                <h2 class="text-h2 font-weight-thin">{{ authStore.getUserData.last_name }}, {{ authStore.getUserData.first_name }}</h2>
+                <h2 class="text-h2 font-weight-thin">
+                  {{ authStore.getUserData.last_name }}, {{ authStore.getUserData.first_name }}
+                </h2>
                 <VChip
                   variant="tonal"
                   rounded="sm"
@@ -171,7 +173,9 @@ watch(() => companyStore.companyModel, async (company) => {
       <VCol cols="12">
         <VCard>
           <template #title>
-            <h4 class="text-h4 card-title">Upcoming Events</h4>
+            <h4 class="text-h4 card-title">
+              Upcoming Events
+            </h4>
           </template>
           <AppTable 
             :headers="eventTableHeaders"
@@ -194,7 +198,9 @@ watch(() => companyStore.companyModel, async (company) => {
       <VCol cols="12">
         <VCard>
           <template #title>
-            <h4 class="text-h4 card-title">Applicants</h4>
+            <h4 class="text-h4 card-title">
+              Applicants
+            </h4>
           </template>
           <AppTable 
             :headers="applicantTableHeaders"
@@ -262,5 +268,7 @@ watch(() => companyStore.companyModel, async (company) => {
 <route lang="yaml">
   meta:
     layout: default
+    subject: company
+    action: read
     requiresAuth: true
 </route>

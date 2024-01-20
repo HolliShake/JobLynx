@@ -1,12 +1,12 @@
 <script setup>
-import { VForm } from 'vuetify/components/VForm'
+import { useAppAbility } from '@/plugins/casl/useAppAbility'
+import AuthService from '@/service/auth.service'
+import useAuthStore from '@/stores/auth.store'
 import AuthProvider from '@/views/pages/authentication/AuthProvider.vue'
 import { VNodeRenderer } from '@layouts/components/VNodeRenderer'
 import { themeConfig } from '@themeConfig'
-import AuthService from '@/service/auth.service'
-import useAuthStore from '@/stores/auth.store'
-import { useAppAbility } from '@/plugins/casl/useAppAbility'
 import { useRouter } from 'vue-router'
+import { VForm } from 'vuetify/components/VForm'
 
 const router = useRouter()
 const ability = useAppAbility()
@@ -35,6 +35,7 @@ async function onSubmit() {
 
     if (!data) {
       error.value = "Invalid username or password"
+      
       return
     }
 
@@ -42,16 +43,29 @@ async function onSubmit() {
     if (!respose.user_access) return (submitted.value = false)
 
     if (code == 200) {
+
+      console.log(respose)
+
+      if (!respose.IsVerified) {
+        error.value = "This account is not verified by admin"
+        
+        return
+      }
+
       ability.update(respose.user_access.map(ua => ({ subject: ua.subject, action: ua.action })))
       authStore.save(respose)
       if (authStore.isAdmin) {
         router.push("/admin/companies")
-      } else {
+      } else if (authStore.isCompany) {
+        router.push("/company")
+      } else if (authStore.isUser) {
         router.push("/")
+      } else {
+        router.push("404")
       }
     }
   } catch (err) {
-    console.log(err);
+    console.log(err)
     if ((err.response?.data?.errors) ?? false) {
       errors.value = err.response?.data?.errors
     } else {
@@ -116,7 +130,10 @@ async function onSubmit() {
                   type="email"
                   autofocus
                 />
-                <small v-if="errors.email" class="text-xs text-error">{{ errors.email.pop() }}</small>
+                <small
+                  v-if="errors.email"
+                  class="text-xs text-error"
+                >{{ errors.email.pop() }}</small>
               </VCol>
 
               <!-- password -->
@@ -157,9 +174,11 @@ async function onSubmit() {
               >
                 <span>New on our platform?</span>
 
-                <RouterLink :to="{
-                  name: 'register'
-                }">
+                <RouterLink
+                  :to="{
+                    name: 'register'
+                  }"
+                >
                   <span class="text-primary ms-2">
                     Create an account
                   </span>

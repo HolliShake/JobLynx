@@ -1,11 +1,9 @@
 <script setup>
-import useSkillStore from '@/stores/skill.store';
-import SkillModal from './SkillModal.vue';
-import useAuthStore from '@/stores/auth.store';
-import { onMounted } from 'vue';
-import SkillService from '@/service/skill.service';
-import { computed } from 'vue';
-import { inject } from 'vue';
+import SkillService from '@/service/skill.service'
+import useAuthStore from '@/stores/auth.store'
+import useSkillStore from '@/stores/skill.store'
+import { computed, inject, onMounted } from 'vue'
+import SkillModal from './SkillModal.vue'
 
 const authStore = useAuthStore()
 const skillStore = useSkillStore()
@@ -35,23 +33,23 @@ async function onDelete(skill) {
     question: "Are you sure you want to delete this skill?",
     dangerMode: true,
   })
-  .then(async (result) => {
-    if (!result) return
+    .then(async result => {
+      if (!result) return
     
-    try
-    {
-      const { status: code } = await SkillService.deleteSkill(skill.id)
+      try
+      {
+        const { status: code } = await SkillService.deleteSkill(skill.id)
 
-      if (code >= 200 && code <= 299) {
-        skillStore.delete(skill)
-        toast.success("Successfully deleted.")
+        if (code >= 200 && code <= 299) {
+          skillStore.delete(skill)
+          toast.success("Successfully deleted.")
+        }
+
+      } catch (error) {
+        console.error(error)
+        toast.error("Failed to delete skill.")
       }
-
-    } catch (error) {
-      console.error(error)
-      toast.error("Failed to delete skill.")
-    }
-  })
+    })
 }
 
 function resolveColor(progress) {
@@ -77,7 +75,6 @@ onMounted(async () => {
     toast.error("Failed to load skills.")
   }
 })
-
 </script>
 
 <template>
@@ -108,7 +105,8 @@ onMounted(async () => {
         </VCol>
       </VRow>
     </VCardText>
-    <AppTable :headers="[
+    <AppTable
+      :headers="[
         { title: '#', key: 'data-table-expand', align: 'center' },
         {
           title: 'SKILL',
@@ -162,7 +160,9 @@ onMounted(async () => {
           @click.stop="onDelete(item.raw)"
         >
           <VIcon icon="tabler-trash" />
-          <VTooltip activator="parent">Delete skill</VTooltip>
+          <VTooltip activator="parent">
+            Delete skill
+          </VTooltip>
         </VBtn>
       </template>
     </AppTable>

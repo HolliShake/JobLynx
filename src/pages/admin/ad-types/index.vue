@@ -1,12 +1,24 @@
 <script setup>
-import AdTypeService from '@/service/adtype.service';
-import useAdTypeStore from '@/stores/adtype.store';
-import AdTypeModal from '@/views/pages/admin/adtype/AdTypeModal.vue';
-import { inject } from 'vue';
+import AdTypeService from '@/service/adtype.service'
+import useAdTypeStore from '@/stores/adtype.store'
+import AdTypeModal from '@/views/pages/admin/adtype/AdTypeModal.vue'
+import { inject } from 'vue'
 
 const adtypeStore = useAdTypeStore()
 const search = ref('')
 const itemsPerPage = ref(10)
+
+const breadCrumbs = ref([
+  {
+    title: "Home",
+    to: "/",
+  },
+  {
+    title: "Ad Types",
+    disabled: true,
+    to: "#",
+  },
+])
 
 const tableHeader = ref([
   {
@@ -22,7 +34,7 @@ const tableHeader = ref([
     key: "max_skills_matching",
   },
   {
-    title: "DURATION",
+    title: "DURATION (Days)",
     key: "duration",
   },
   {
@@ -34,8 +46,9 @@ const tableHeader = ref([
     key: "action",
     width: '150',
     align: 'center',
-  }
+  },
 ])
+
 const modalRef = ref()
 const loaded = ref(false)
 const toast = inject("toast")
@@ -43,7 +56,7 @@ const swal = inject("swal")
 
 const items = computed(() => {
   return adtypeStore.getAdTypes
-    .filter((item) => {
+    .filter(item => {
       return item.type.toLowerCase().includes(search.value.toLowerCase())
     })
 })
@@ -61,7 +74,7 @@ async function onDelete(adtype) {
   swal.value.fire({
     question: "Are you sure you want to delete this adtype?",
     dangerMode: true,
-  }).then(async (result) => {
+  }).then(async result => {
     if (!result) return
 
     try
@@ -73,7 +86,7 @@ async function onDelete(adtype) {
         adtypeStore.delete(adtype)
       }
     } catch (err) {
-      console.error(err);
+      console.error(err)
       toast.error("Failed to delete adtype")
     }
   })
@@ -98,6 +111,12 @@ onMounted(async () => {
 
 <template>
   <section>
+    <PageHeader
+      title="Type of Job ads"
+      subtitle="list of ad types"
+      :breadcrumb="breadCrumbs"
+    />
+  
     <VCard>
       <VCardText class="pa-4">
         <VRow>
@@ -156,9 +175,7 @@ onMounted(async () => {
         </template>
 
         <template #item.more="{ item }">
-          <VMenu
-            open-on-hover
-          >
+          <VMenu open-on-hover>
             <template #activator="{ props }">
               <VBtn 
                 v-bind="props"
@@ -221,21 +238,22 @@ onMounted(async () => {
             size="small"
             @click.stop="onDelete(item.raw)"
           >
-            <VIcon
-              icon="tabler-trash"
-            />
-            <VTooltip activator="parent">Delete adtype</VTooltip>
+            <VIcon icon="tabler-trash" />
+            <VTooltip activator="parent">
+              Delete adtype
+            </VTooltip>
           </VBtn>
         </template>
       </AppTable>
     </VCard>
 
     <AdTypeModal ref="modalRef" />
-
   </section>
 </template>
 
 <route lang="yaml">
   meta:
     requiresAuth: true
+    subject: admin
+    action: read
 </route>

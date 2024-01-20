@@ -1,36 +1,38 @@
 
 <script setup>
-import { requiredValidator } from '@/@core/utils/validators';
-import SkillService from '@/service/skill.service';
-import useSkillStore from '@/stores/skill.store';
+import { requiredValidator } from '@/@core/utils/validators'
+import SkillService from '@/service/skill.service'
+import useSkillStore from '@/stores/skill.store'
 
-const skillService = SkillService;
+const skillService = SkillService
 const skillStore = useSkillStore()
 const refVForm = ref()
 const submitted = ref(false)
 const form = ref()
+
 const errors = ref({
   title: [],
   description: [],
   progress: [],
 })
+
 const toast = inject("toast")
 const modalRef = ref()
 
 defineExpose({
-    open() {
-      modalRef.value.open()
-      skillStore.resetField()
-      form.value = skillStore.getSkillModel
-    },
-    openAsUpdateMode() {
-      modalRef.value.openAsUpdateMode()
-      form.value = skillStore.getSkillModel
-    },
-    close() {
-      modalRef.value.close()
-      skillStore.resetField()
-    },
+  open() {
+    modalRef.value.open()
+    skillStore.resetField()
+    form.value = skillStore.getSkillModel
+  },
+  openAsUpdateMode() {
+    modalRef.value.openAsUpdateMode()
+    form.value = skillStore.getSkillModel
+  },
+  close() {
+    modalRef.value.close()
+    skillStore.resetField()
+  },
 })
 
 
@@ -43,7 +45,7 @@ async function create() {
   {
     const { status: code, data: response } = await skillService.createSkill({
       ...form.value,
-      progress: parseInt(form.value.progress)
+      progress: parseInt(form.value.progress),
     })
 
     if (code == 201) {
@@ -64,7 +66,7 @@ async function update() {
   {
     const { status: code, data: response } = await skillService.updateSkill(form.value.id, {
       ...form.value,
-      progress: parseInt(form.value.progress)
+      progress: parseInt(form.value.progress),
     })
 
     if (code == 200) {
@@ -101,7 +103,10 @@ async function update() {
               label="Skill"
               :rules="[requiredValidator]"
             />
-            <small v-if="errors.title" class="text-xs text-error">{{ errors.title.pop() }}</small>
+            <small
+              v-if="errors.title"
+              class="text-xs text-error"
+            >{{ errors.title.pop() }}</small>
           </VCol>
           <VCol cols="12">
             <VTextarea
@@ -112,7 +117,10 @@ async function update() {
               auto-grow
               :rules="[requiredValidator]"
             />
-            <small v-if="errors.description" class="text-xs text-error">{{ errors.description.pop() }}</small>
+            <small
+              v-if="errors.description"
+              class="text-xs text-error"
+            >{{ errors.description.pop() }}</small>
           </VCol>
           <VCol cols="12">
             <VSlider
@@ -122,7 +130,10 @@ async function update() {
               :max="100"
               :rules="[requiredValidator]"
             />
-            <small v-if="errors.name" class="text-xs text-error">{{ errors.name.pop() }}</small>
+            <small
+              v-if="errors.name"
+              class="text-xs text-error"
+            >{{ errors.name.pop() }}</small>
           </VCol>
         </VRow>
       </VForm>

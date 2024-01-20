@@ -1,6 +1,5 @@
 <script setup>
-import { PerfectScrollbar } from 'vue3-perfect-scrollbar'
-import { VNodeRenderer } from './VNodeRenderer'
+import { helpers } from '@/helpers'
 import {
   injectionKeyIsVerticalNavHovered,
   useLayouts,
@@ -11,9 +10,9 @@ import {
   VerticalNavSectionTitle,
 } from '@layouts/components'
 import { config } from '@layouts/config'
-import useAuthStore from '@/stores/auth.store'
 import { watch } from 'vue'
-import { nextTick } from 'vue'
+import { PerfectScrollbar } from 'vue3-perfect-scrollbar'
+import { VNodeRenderer } from './VNodeRenderer'
 
 const props = defineProps({
   tag: {
@@ -75,11 +74,7 @@ const handleNavScroll = evt => {
   isVerticalNavScrolled.value = evt.target.scrollTop > 0
 }
 
-const resolveRoot = computed(() => {
-  return useAuthStore().isAdmin ? '/admin/companies' : '/'
-})
-
-const isShown = (item) => {
+const isShown = item => {
   if (!item.hidden) return true
 
   if (item.hidden instanceof Function) {
@@ -108,7 +103,7 @@ const isShown = (item) => {
     <div class="nav-header">
       <slot name="nav-header">
         <RouterLink
-          :to="resolveRoot"
+          :to="helpers.resolver.resolveRoot()"
           class="app-logo d-flex align-center gap-x-3 app-title-wrapper"
         >
           <VNodeRenderer :nodes="config.app.logo" />
@@ -169,12 +164,11 @@ const isShown = (item) => {
           :key="index"
         >
           <Component
-            :item="item"
             :is="resolveNavItemComponent(item)"
             v-if="isShown(item)"
+            :item="item"
           />
         </template>
-        
       </PerfectScrollbar>
     </slot>
   </Component>

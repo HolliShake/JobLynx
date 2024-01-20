@@ -1,17 +1,17 @@
 <script setup>
-import { helpers } from '@/helpers';
-import Empty from "@/assets/images/download/empty.png"
-import CompanyService from '@/service/company.service';
-import JobPostingService from '@/service/jobposting.service';
-import useAuthStore from '@/stores/auth.store';
-import JobPostingCard from '@/views/pages/global/JobPostingCard.vue';
-import { computed } from 'vue';
+import { helpers } from '@/helpers'
+import CompanyService from '@/service/company.service'
+import JobPostingService from '@/service/jobposting.service'
+import useAuthStore from '@/stores/auth.store'
+import JobPostingCard from '@/views/pages/global/JobPostingCard.vue'
+import Empty from "@images/download/empty.png"
+import { computed } from 'vue'
 
 const props = defineProps({
   id: {
     type: String,
-    required: true
-  }
+    required: true,
+  },
 })
 
 const authStore = useAuthStore()
@@ -40,7 +40,7 @@ function isRecommended(data) {
 
   const myQualification = helpers.resolver.getQualification(
     authStore.getUserData.personal_data.skill.map(s => s.title.toLowerCase()),
-    data.position.skills.toLowerCase()
+    data.position.skills.toLowerCase(),
   )
 
   return myQualification >= tresh
@@ -105,13 +105,9 @@ onMounted(async () => {
       <VCard>
         <VCardText class="pa-4">
           <VRow no-gutters>
-            <VCol 
-              cols="12"
-            >
+            <VCol cols="12">
               <span class="font-weight-thin">Search</span>
-              <VTextField 
-                v-model="searchQuery"
-              />
+              <VTextField v-model="searchQuery" />
             </VCol>
             <VCol cols="12">
               <div class="d-flex flex-row gap-2 w-100 align-center">
@@ -124,8 +120,8 @@ onMounted(async () => {
                   label="Recommended For My Skills"
                 />
                 <VRadioGroup
-                  inline
                   v-model="stars"
+                  inline
                 >
                   <VRadio 
                     label="All"
@@ -140,12 +136,17 @@ onMounted(async () => {
                       <VIcon 
                         v-for="m in n"
                         :key="`star-icon-enable-${m}`"
-                        size="15" color="warning" icon="tabler-star-filled" 
+                        size="15"
+                        color="warning"
+                        icon="tabler-star-filled" 
                       />
                       <VIcon 
                         v-for="o in 5 - n"
                         :key="`star-icon-disable-${o}`"
-                        size="15" color="warning" icon="tabler-star" />
+                        size="15"
+                        color="warning"
+                        icon="tabler-star"
+                      />
                     </template>
                   </VRadio>
                 </VRadioGroup>
@@ -164,7 +165,10 @@ onMounted(async () => {
                 sm="6"
                 md="3"
               >
-                <VSkeletonLoader :loading="!jobPostingLoaded" type="card" />
+                <VSkeletonLoader
+                  :loading="!jobPostingLoaded"
+                  type="card"
+                />
               </VCol>
             </template>
             <template v-else>
@@ -178,11 +182,13 @@ onMounted(async () => {
                   max-width="60%"
                   class="mx-auto"
                 />
-                <h3 class="text-center text-h3 font-weight-thin">No Result Found</h3>
+                <h3 class="text-center text-h3 font-weight-thin">
+                  No Result Found
+                </h3>
               </VCol>
               <VCol
-                v-else
                 v-for="jobPosting in jobPostings"
+                v-else
                 :key="jobPosting.id"
                 cols="12"
                 sm="6"
@@ -205,5 +211,8 @@ onMounted(async () => {
 
 <route lang="yaml">
   meta:
+    subject: auth
+    action: read
+    requiresAuth: true
     layout: raw
 </route>

@@ -1,18 +1,16 @@
 <script setup>
-import { avatarText } from '@/@core/utils/formatters';
-import { helpers } from '@/helpers';
-import JobApplicationService from '@/service/job-application.service';
-import useJobApplicationStore from '@/stores/job-application.store';
-import { computed } from 'vue';
-import { inject } from 'vue';
-import { onMounted } from 'vue';
-import { useRouter } from 'vue-router';
+import { avatarText } from '@/@core/utils/formatters'
+import { helpers } from '@/helpers'
+import JobApplicationService from '@/service/job-application.service'
+import useJobApplicationStore from '@/stores/job-application.store'
+import { computed, inject, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 
 const props = defineProps({
   jobpostingid: {
     type: String,
-    required: true
-  }
+    required: true,
+  },
 })
 
 const tableHeaders = ref([
@@ -30,7 +28,7 @@ const tableHeaders = ref([
     align: 'center',
     value: v => helpers.resolver.getQualification(
       v.user.personal_data.skill.map(s => s.title.toLowerCase()),
-      v.job_posting.position.skills.toLowerCase()
+      v.job_posting.position.skills.toLowerCase(),
     ),
     sortable: true,
   },
@@ -38,13 +36,14 @@ const tableHeaders = ref([
     title: "STATUS",
     key: "status",
     sortable: false,
-  }
+  },
 ])
 
 const router = useRouter()
 const jobApplicationStore = useJobApplicationStore()
 const search = ref('')
 const status = ref('all')
+
 const statusFilter = ref([
   {
     title: 'All',
@@ -61,8 +60,9 @@ const statusFilter = ref([
   {
     title: 'Rejected',
     value: 'rejected',
-  }
+  },
 ])
+
 const itemsPerPage = ref(10)
 const loaded = ref(false)
 const toast = inject('toast')
@@ -76,10 +76,10 @@ const items = computed(() => {
     .filter(ja => (status.value == 'all') ? true : ja.status == status.value)
 })
 
-const computedQualification = (item) => {
+const computedQualification = item => {
   return helpers.resolver.getQualification(
     item.raw.user.personal_data.skill.map(s => s.title.toLowerCase()),
-    item.raw.job_posting.position.skills.toLowerCase()
+    item.raw.job_posting.position.skills.toLowerCase(),
   )
 }
 
@@ -88,7 +88,7 @@ async function onView(data) {
     name: 'company-companyid-job-posting-jobpostingid-job-applicant-jobapplicantid',
     params: {
       jobpostingid: helpers.security.encrypt(props.jobpostingid),
-      jobapplicantid: helpers.security.encrypt(data.raw.id)
+      jobapplicantid: helpers.security.encrypt(data.raw.id),
     },
     props: true,
   })
@@ -115,13 +115,19 @@ onMounted(async () => {
     <VCard>
       <VCardText>
         <VRow>
-          <VCol cols="12" md="4">
+          <VCol
+            cols="12"
+            md="4"
+          >
             <VTextField 
               v-model="search"
               label="Search position or applicant"
             />
           </VCol>
-          <VCol cols="12" md="3">
+          <VCol
+            cols="12"
+            md="3"
+          >
             <VSelect
               v-model="status"
               label="Filter by status"
@@ -129,7 +135,10 @@ onMounted(async () => {
               outlined
             />
           </VCol>
-          <VCol cols="12" md="auto">
+          <VCol
+            cols="12"
+            md="auto"
+          >
             <ItemsPerPage 
               v-model="itemsPerPage"
               style="width: auto;"
@@ -151,9 +160,7 @@ onMounted(async () => {
               class="d-inline-block rounded-circle elevation-3"
               style="border: 3px solid rgb(var(--v-theme-background));"
             >
-              <VAvatar
-                variant="elevated"
-              >
+              <VAvatar variant="elevated">
                 <span 
                   v-if="!item.raw.user.profile_image"
                   class="text-uppercase font-weight-bold"
@@ -193,7 +200,6 @@ onMounted(async () => {
             </span>
           </VProgressCircular>
         </template>
-      
       </AppTable>
     </VCard>
   </section>
@@ -202,5 +208,7 @@ onMounted(async () => {
 <route lang="yaml">
   meta:
     navActiveLink: company-companyid-job-posting
+    subject: company
+    action: read
     requiresAuth: true
 </route>

@@ -4,19 +4,14 @@ import { useThemeConfig } from '@core/composable/useThemeConfig'
 import { themeConfig } from '@themeConfig'
 
 // Components
+import { helpers } from '@/helpers'
 import Footer from '@/layouts/components/Footer.vue'
 import NavbarThemeSwitcher from '@/layouts/components/NavbarThemeSwitcher.vue'
 import UserProfile from '@/layouts/components/UserProfile.vue'
 import { HorizontalNavLayout } from '@layouts'
 import { VNodeRenderer } from '@layouts/components/VNodeRenderer'
-import useAuthStore from '@/stores/auth.store'
 
 const { appRouteTransition } = useThemeConfig()
-
-const resolveRoot = computed(() => {
-  return useAuthStore().isAdmin ? '/admin/companies' : '/'
-})
-
 </script>
 
 <template>
@@ -24,7 +19,7 @@ const resolveRoot = computed(() => {
     <!-- 👉 navbar -->
     <template #navbar>
       <RouterLink
-        :to="resolveRoot"
+        :to="helpers.resolver.resolveRoot()"
         class="app-logo d-flex align-center gap-x-3"
       >
         <VNodeRenderer :nodes="themeConfig.app.logo" />

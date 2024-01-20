@@ -1,6 +1,6 @@
 <script setup>
-import { helpers } from '@/helpers';
-import EmployeeService from '@/service/employee.service';
+import { helpers } from '@/helpers'
+import EmployeeService from '@/service/employee.service'
 
 const items = ref([])
 const loaded = ref(false)
@@ -11,7 +11,7 @@ onMounted(async () => {
     const { status: code, data: response } = await EmployeeService.getMyWork()
 
     if (code == 200) {
-      console.log(response);
+      console.log(response)
       items.value = response
       loaded.value = true
     }
@@ -39,9 +39,7 @@ onMounted(async () => {
         :loading="!loaded" 
         type="list-item@4"
       />
-      <template
-        v-else
-      >
+      <template v-else>
         <div 
           v-if="items.length <= 0"
           class="d-block text-center"

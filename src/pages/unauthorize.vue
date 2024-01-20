@@ -46,5 +46,5 @@ const authThemeMask = useGenerateImageVariant(miscMaskLight, miscMaskDark)
 meta:
   layout: blank
   action: read
-  subject: Auth
+  subject: auth
 </route>

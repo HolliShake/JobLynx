@@ -1,17 +1,16 @@
 
 <script setup>
-import { computed } from 'vue';
-import EducationModal from './EducationModal.vue';
-import { onMounted } from 'vue';
-import useEducationStore from '@/stores/education.store';
-import useAuthStore from '@/stores/auth.store';
-import EducationService from '@/service/education.service';
-import { helpers } from '@/helpers';
+import { helpers } from '@/helpers'
+import EducationService from '@/service/education.service'
+import useAuthStore from '@/stores/auth.store'
+import useEducationStore from '@/stores/education.store'
+import { computed, onMounted } from 'vue'
+import EducationModal from './EducationModal.vue'
 
-const educationService = EducationService;
+const educationService = EducationService
 const authStore = useAuthStore()
 const educationStore = useEducationStore()
-const modalRef = ref();
+const modalRef = ref()
 const loaded = ref(false)
 const toast = inject("toast")
 const swal = inject("swal")
@@ -89,7 +88,9 @@ onMounted(async () => {
         @click="onCreate"
       >
         <VIcon icon="tabler-plus" />
-        <VTooltip activator="parent">Add Education Details</VTooltip>
+        <VTooltip activator="parent">
+          Add Education Details
+        </VTooltip>
       </VBtn>
     </template>
     <VCardText>
@@ -98,9 +99,7 @@ onMounted(async () => {
         :loading="!loaded" 
         type="list-item@4"
       />
-      <template
-        v-else
-      >
+      <template v-else>
         <div 
           v-if="items.length <= 0"
           class="d-block text-center"

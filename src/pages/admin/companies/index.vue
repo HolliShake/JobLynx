@@ -1,11 +1,20 @@
 <script setup>
-import CompanyService from '@/service/company.service';
-import useCompanyStore from '@/stores/company.store';
-import CompanyModal from '@/views/pages/company/CompanyModal.vue';
-import { computed } from 'vue';
-import { inject } from 'vue';
-import { onMounted } from 'vue';
+import CompanyService from '@/service/company.service'
+import useCompanyStore from '@/stores/company.store'
+import CompanyModal from '@/views/pages/company/CompanyModal.vue'
+import { computed, inject, onMounted } from 'vue'
 
+const breadCrumbs = ref([
+  {
+    title: "Home",
+    to: "/",
+  },
+  {
+    title: "Companies",
+    disabled: true,
+    to: "#",
+  },
+])
 
 const tableHeader = ref([
   {
@@ -26,7 +35,7 @@ const tableHeader = ref([
     title: "ACTION",
     key: "action",
     align: 'center',
-  }
+  },
 ])
 
 const companyStore = useCompanyStore()
@@ -52,22 +61,22 @@ async function onDelete(company) {
     question: "Are you sure you want to delete this company?",
     dangerMode: true,
   })
-  .then(async result => {
-    if (!result) return
+    .then(async result => {
+      if (!result) return
 
-    try
-    {
-      const { status: code } = await CompanyService.deleteCompany(company.id)
+      try
+      {
+        const { status: code } = await CompanyService.deleteCompany(company.id)
 
-      if (code >= 200 && code <= 299) {
-        companyStore.delete(company)
-        toast.success("Successfully deleted.")
+        if (code >= 200 && code <= 299) {
+          companyStore.delete(company)
+          toast.success("Successfully deleted.")
+        }
+      } catch (error) {
+        console.error(error)
+        toast.error("Failed to delete company.")
       }
-    } catch (error) {
-      console.error(error)
-      toast.error("Failed to delete company.")
-    }
-  })
+    })
 }
 
 onMounted(async () => {
@@ -88,6 +97,11 @@ onMounted(async () => {
 
 <template>
   <section>
+    <PageHeader
+      title="Companies"
+      subtitle="List of partner companies"
+      :breadcrumb="breadCrumbs"
+    />
     <VCard>
       <VCardText>
         <VRow>
@@ -136,19 +150,21 @@ onMounted(async () => {
             @click.stop="onDelete(item.raw)"
           >
             <VIcon icon="tabler-trash" />
-            <VTooltip activator="parent">Delete company</VTooltip>
+            <VTooltip activator="parent">
+              Delete company
+            </VTooltip>
           </VBtn>
         </template>
       </AppTable>
     </VCard>
 
-    <CompanyModal 
-      ref="modalRef"
-    />
+    <CompanyModal ref="modalRef" />
   </section>
 </template>
 
 <route lang="yaml">
   meta:
     requiresAuth: true
+    subject: admin
+    action: read
 </route>

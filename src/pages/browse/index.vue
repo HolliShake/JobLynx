@@ -1,19 +1,18 @@
 <script setup>
-import Meeting from "@/assets/images/download/meeting.jpg"
-import Design from "@/assets/images/download/Design.jpg"
-import Writer from "@/assets/images/download/Writer.png"
-import JobPostingService from "@/service/jobposting.service"
-import useJobPostingStore from "@/stores/job-posting.store"
-import { onMounted } from "vue"
-import { inject } from "vue"
-import JobPostingCard from "@/views/pages/global/JobPostingCard.vue"
-import CompanyService from "@/service/company.service"
-import useCompanyStore from "@/stores/company.store"
-import CompanyCard from "@/views/pages/global/CompanyCard.vue"
-import Footer from "@/layouts/components/Footer.vue"
-import EmptyJobPost from "@/views/pages/global/EmptyJobPost.vue"
-import useAuthStore from "@/stores/auth.store"
 import { helpers } from "@/helpers"
+import Footer from "@/layouts/components/Footer.vue"
+import CompanyService from "@/service/company.service"
+import JobPostingService from "@/service/jobposting.service"
+import useAuthStore from "@/stores/auth.store"
+import useCompanyStore from "@/stores/company.store"
+import useJobPostingStore from "@/stores/job-posting.store"
+import CompanyCard from "@/views/pages/global/CompanyCard.vue"
+import EmptyJobPost from "@/views/pages/global/EmptyJobPost.vue"
+import JobPostingCard from "@/views/pages/global/JobPostingCard.vue"
+import Design from "@images/download/Design.jpg"
+import Writer from "@images/download/Writer.png"
+import Meeting from "@images/download/meeting.jpg"
+import { inject, onMounted } from "vue"
 
 
 const authStore = useAuthStore()
@@ -23,11 +22,13 @@ const searchQuery = ref('')
 const stars = ref(-1)
 const featured = ref(false)
 const recommended = ref(false)
+
 const slides = ref([
   Meeting,
   Design,
-  Writer
+  Writer,
 ])
+
 const jobPostingLoaded = ref(false)
 const toast = inject('toast')
 
@@ -49,27 +50,26 @@ function isRecommended(data) {
 
   const myQualification = helpers.resolver.getQualification(
     authStore.getUserData.personal_data.skill.map(s => s.title.toLowerCase()),
-    data.position.skills.toLowerCase()
+    data.position.skills.toLowerCase(),
   )
 
   return myQualification >= tresh
 }
 
 const jobPostings = computed(() => {
-  let items = jobPostingStore.getJobPostings
+  return jobPostingStore.getJobPostings
     .filter(jp => jp.position.title.toLowerCase().includes(searchQuery.value.toLowerCase()))
     .filter(jp => (stars.value == -1) ? true : (jp.position.company.average == stars.value))
     .filter(jp => (!featured.value) ? true : (jp.adtype.is_featured == featured.value))
     .filter(jp => isRecommended(jp))
-
-  return items
 })
 
 const loadSampleJobPosting = async () => {
   try
   {
     const { status: code, data: response } = await JobPostingService.getAllJobPosting()
-    console.log(">>", response);
+
+    console.log(">>", response)
     if (code == 200) {
       jobPostingStore.initialize(response)
       jobPostingLoaded.value = true
@@ -125,17 +125,17 @@ onMounted(async () => {
                 :lazy-src="slide"
                 cover
               >
-                <template v-slot:placeholder>
-                  <v-row
+                <template #placeholder>
+                  <VRow
                     class="fill-height ma-0"
                     align="center"
                     justify="center"
                   >
-                    <v-progress-circular
+                    <VProgressCircular
                       indeterminate
                       color="grey lighten-5"
-                    ></v-progress-circular>
-                  </v-row>
+                    />
+                  </VRow>
                 </template>
               </VImg>
             </VCarouselItem>
@@ -148,9 +148,7 @@ onMounted(async () => {
             <VRow no-gutters>
               <VCol cols="12">
                 <span class="font-weight-thin">Search</span>
-                <VTextField 
-                  v-model="searchQuery"
-                />
+                <VTextField v-model="searchQuery" />
               </VCol>
               <VCol cols="12">
                 <div class="d-flex flex-row gap-2 w-100 align-center">
@@ -163,8 +161,8 @@ onMounted(async () => {
                     label="Recommended For My Skills"
                   />
                   <VRadioGroup
-                    inline
                     v-model="stars"
+                    inline
                   >
                     <VRadio 
                       label="All"
@@ -179,12 +177,17 @@ onMounted(async () => {
                         <VIcon 
                           v-for="m in n"
                           :key="`star-icon-enable-${m}`"
-                          size="15" color="warning" icon="tabler-star-filled" 
+                          size="15"
+                          color="warning"
+                          icon="tabler-star-filled" 
                         />
                         <VIcon 
                           v-for="o in 5 - n"
                           :key="`star-icon-disable-${o}`"
-                          size="15" color="warning" icon="tabler-star" />
+                          size="15"
+                          color="warning"
+                          icon="tabler-star"
+                        />
                       </template>
                     </VRadio>
                   </VRadioGroup>
@@ -203,7 +206,10 @@ onMounted(async () => {
           sm="6"
           md="3"
         >
-          <VSkeletonLoader :loading="!jobPostingLoaded" type="card" />
+          <VSkeletonLoader
+            :loading="!jobPostingLoaded"
+            type="card"
+          />
         </VCol>
       </template>
       <template v-else>
@@ -214,8 +220,8 @@ onMounted(async () => {
           <EmptyJobPost />
         </VCol>
         <VCol
-          v-else
           v-for="jobPosting in jobPostings"
+          v-else
           :key="jobPosting.id"
           cols="12"
           sm="6"
@@ -264,5 +270,8 @@ onMounted(async () => {
 
 <route lang="yaml">
   meta:
+    subject: auth
+    action: read
+    requiresAuth: true
     layout: raw
 </route>

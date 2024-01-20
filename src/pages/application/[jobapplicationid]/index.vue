@@ -1,24 +1,24 @@
 <script setup>
-import { helpers } from '@/helpers';
-import JobApplicationService from '@/service/job-application.service';
-import RatingService from '@/service/rating.service';
-import { inject } from 'vue';
-import { onMounted } from 'vue';
+import { helpers } from '@/helpers'
+import JobApplicationService from '@/service/job-application.service'
+import RatingService from '@/service/rating.service'
+import { inject, onMounted } from 'vue'
 
 const props = defineProps({
   jobapplicationid: {
     type: String,
-    required: true
-  }
+    required: true,
+  },
 })
 
 const pageData = ref({})
 const comments = ref([])
 const loaded = ref(false)
 const commentLoaded = ref(false)
+
 const commentForm = ref({
   rating: 1,
-  comment: ""
+  comment: "",
 })
 
 const toast = inject('toast')
@@ -28,7 +28,7 @@ const loadComments = async () => {
     const { status: code, data: response } = await RatingService.getMyRatingByCompanyId(pageData.value.job_posting.position.company_id)
 
     if (code == 200) {
-      console.log(">>", response);
+      console.log(">>", response)
       comments.value = response
       commentLoaded.value = true
     }
@@ -42,7 +42,7 @@ async function onComment() {
   try {
     const { status: code, data: response } = await RatingService.submitMyComment({
       ...commentForm.value,
-      company_id: pageData.value.job_posting.position.company_id
+      company_id: pageData.value.job_posting.position.company_id,
     })
 
     if (code == 201) {
@@ -50,7 +50,7 @@ async function onComment() {
       await loadComments()
       commentForm.value = {
         rating: 1,
-        comment: ""
+        comment: "",
       }
     }
   } catch (error) {
@@ -64,7 +64,7 @@ onMounted(async () => {
     const { status: code, data: response } = await JobApplicationService.getById(helpers.security.decrypt(props.jobapplicationid))
 
     if (code == 200) {
-      console.log(response);
+      console.log(response)
       pageData.value = response
       loaded.value = true
       await loadComments()
@@ -143,11 +143,16 @@ onMounted(async () => {
                   color="mgreen"
                 >
                   <VCardText class="pa-3">
-                    <h3 class="text-white">{{ pageData.job_posting.position.title }}</h3>
+                    <h3 class="text-white">
+                      {{ pageData.job_posting.position.title }}
+                    </h3>
                   </VCardText>
                 </VCard>
               </VCol>
-              <VCol cols="12" class="py-0">
+              <VCol
+                cols="12"
+                class="py-0"
+              >
                 <div class="d-inline">
                   <VIcon 
                     icon="tabler-map-pin-filled" 
@@ -159,24 +164,34 @@ onMounted(async () => {
                   &nbsp; <span v-if="!pageData.job_posting.is_hide_company_info">Posted by {{ pageData.job_posting.position.company.company_name }}</span>
                 </div>
               </VCol>
-              <VCol cols="12" class="py-0" />
+              <VCol
+                cols="12"
+                class="py-0"
+              />
               <VCol 
                 cols="12" 
                 md="6"
                 class="mt-10"
               >
-                <h4 class="text-h4 font-weight-thin mb-3">Description</h4>
+                <h4 class="text-h4 font-weight-thin mb-3">
+                  Description
+                </h4>
                 <p>
                   {{ pageData.job_posting.description }}
                 </p>
               </VCol>
-              <VCol cols="12" class="py-0" />
+              <VCol
+                cols="12"
+                class="py-0"
+              />
               <VCol 
                 cols="12" 
                 md="6"
                 class="mt-10"
               >
-                <h4 class="text-h4 font-weight-thin mb-3">Skills Required</h4>
+                <h4 class="text-h4 font-weight-thin mb-3">
+                  Skills Required
+                </h4>
 
                 <VList>
                   <VListItem
@@ -184,7 +199,10 @@ onMounted(async () => {
                     :key="`skill-${item.id}`"
                   >
                     <template #prepend>
-                      <VIcon icon="mdi-circle" size="9" />
+                      <VIcon
+                        icon="mdi-circle"
+                        size="9"
+                      />
                     </template>
                     <VListItemTitle>{{ item }}</VListItemTitle>
                   </VListItem>
@@ -198,7 +216,9 @@ onMounted(async () => {
                 offset-md="1"
                 class="mt-10"
               >
-                <h4 class="text-h4 font-weight-thin mb-3">Sample Photos</h4>
+                <h4 class="text-h4 font-weight-thin mb-3">
+                  Sample Photos
+                </h4>
                 <VCard
                   style="border: 4px solid rgb(var(--v-theme-background));"
                   rounded="xl"
@@ -223,19 +243,22 @@ onMounted(async () => {
                   </div>
                 </VCard>
               </VCol>
-              <VCol cols="12" class="py-0" />
+              <VCol
+                cols="12"
+                class="py-0"
+              />
               <!-- Timeline -->
               <VCol cols="12">
-                <h4 class="text-h3 font-weight-thin mb-4">Events</h4>
+                <h4 class="text-h3 font-weight-thin mb-4">
+                  Events
+                </h4>
 
                 <VCard
                   v-if="pageData.application_logs.length <= 0"
                   flat
                   border
                 >
-                  <VCardText 
-                    class="pa-4 text-center"
-                  >
+                  <VCardText class="pa-4 text-center">
                     No Events Found.
                   </VCardText>
                 </VCard>
@@ -273,8 +296,13 @@ onMounted(async () => {
               </VCol>
               <!--  -->
               <template v-if="!commentLoaded">
-                <VCol cols="12" class="mt-10">
-                  <h4 class="text-h4 font-weight-thin mb-3">Comments</h4>
+                <VCol
+                  cols="12"
+                  class="mt-10"
+                >
+                  <h4 class="text-h4 font-weight-thin mb-3">
+                    Comments
+                  </h4>
                 </VCol>
                 <VCol 
                   v-for="item in 3"
@@ -289,8 +317,13 @@ onMounted(async () => {
                 </VCol>
               </template>
               <template v-else>
-                <VCol cols="12" class="mt-10">
-                  <h4 class="text-h4 font-weight-thin mb-3">Comments</h4>
+                <VCol
+                  cols="12"
+                  class="mt-10"
+                >
+                  <h4 class="text-h4 font-weight-thin mb-3">
+                    Comments
+                  </h4>
                 </VCol>
                 <VCol 
                   v-if="comments.length <= 0"
@@ -302,10 +335,10 @@ onMounted(async () => {
                     flat
                   >
                     <VCardText class="text-center">
-                        <VIcon 
-                          icon="mdi-ghost"
-                          size="90"
-                        />
+                      <VIcon 
+                        icon="mdi-ghost"
+                        size="90"
+                      />
                       <span class="d-block mt-10 font-weight-bold text-h4">
                         No Review Or Comments Yet.
                       </span>
@@ -313,16 +346,20 @@ onMounted(async () => {
                   </VCard>
                 </VCol>
                 <VCol
-                  v-else
                   v-for="item in comments"
+                  v-else
                   :key="`comment-${item.id}`"
                   cols="12"
                   md="4"
                 >
-                  <VCard border flat>
+                  <VCard
+                    border
+                    flat
+                  >
                     <VCardText class="pa-4">
                       <div class="d-flex flex-row flex-nowrap gap-2 align-center">
-                        <div class="d-inline elevation-2"
+                        <div
+                          class="d-inline elevation-2"
                           style="border: 2px solid #fff;border-radius: 360px;"
                         >
                           <VAvatar
@@ -366,8 +403,7 @@ onMounted(async () => {
                 </VCol>
               </template>
               <!--  -->
-              <VCol cols="12"
-              >
+              <VCol cols="12">
                 <VDivider />
               </VCol>
               <!--  -->
@@ -377,11 +413,11 @@ onMounted(async () => {
                 offset="0"
                 offset-md="3"
               >
-                <VCard
-                  color="rgb(var(--v-theme-background))"
-                >
+                <VCard color="rgb(var(--v-theme-background))">
                   <template #title>
-                    <h4 class="text-h4 font-weight-thin mb-3">Leave a comment</h4>
+                    <h4 class="text-h4 font-weight-thin mb-3">
+                      Leave a comment
+                    </h4>
                   </template>
                   <VCardText>
                     <VTextarea
@@ -392,9 +428,9 @@ onMounted(async () => {
                       auto-grow
                     />
                     <VRadioGroup
+                      v-model="commentForm.rating"
                       inline
                       class="mt-5"
-                      v-model="commentForm.rating"
                     >
                       <VRadio 
                         v-for="item in 5"
@@ -444,5 +480,7 @@ onMounted(async () => {
   meta:
     layout: raw
     navActiveLink: application
+    subject: user
+    action: read
     requiresAuth: true
 </route>

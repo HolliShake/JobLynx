@@ -1,30 +1,29 @@
 <script setup>
-import PageHeader from '@/@core/components/PageHeader.vue';
-import { helpers } from '@/helpers';
-import JobApplicationService from '@/service/job-application.service';
-import useJobApplicationStore from '@/stores/job-application.store';
-import { computed } from 'vue';
-import { inject, onMounted } from 'vue';
-import { useRouter } from 'vue-router';
+import PageHeader from '@/@core/components/PageHeader.vue'
+import { helpers } from '@/helpers'
+import JobApplicationService from '@/service/job-application.service'
+import useJobApplicationStore from '@/stores/job-application.store'
+import { computed, inject, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 
 const breadCrumb = ref([
   {
     text: 'Dashboard',
     active: false,
-    href: '/dashboard'
+    href: '/dashboard',
   },
   {
     text: 'My Applications',
     active: true,
-    href: '#'
-  }
+    href: '#',
+  },
 ])
 
 const tableHeader = ref([
   {
     title: "POSITION",
     key: "job_posting.position.title",
-    width: '100%'
+    width: '100%',
   },
   {
     title: "STATUS",
@@ -35,7 +34,7 @@ const tableHeader = ref([
     title: "ACTION",
     key: "action",
     sortable: false,
-  }
+  },
 ])
 
 const router = useRouter()
@@ -68,9 +67,9 @@ async function onVisit(application) {
   router.push({
     name: 'application-jobapplicationid',
     params: {
-      jobapplicationid: helpers.security.encrypt(application.raw.id)
+      jobapplicationid: helpers.security.encrypt(application.raw.id),
     },
-    props: true
+    props: true,
   })
 }
 
@@ -79,7 +78,7 @@ onMounted(async () => {
     const { status: code, data: response } = await JobApplicationService.myJobApplications()
 
     if (code == 200) {
-      console.log(response);
+      console.log(response)
       jobApplicationStore.initialize(response)
       loaded.value = true
     }
@@ -87,6 +86,7 @@ onMounted(async () => {
     toast.error("Failed to load application data.")
   }
 })
+
 // 
 </script>
 
@@ -147,7 +147,9 @@ onMounted(async () => {
             @click.stop="() => (item.raw.status == 'pending') ? onCancel(item.raw) : onVisit(item)"
           >
             <VIcon :icon="(item.raw.status == 'pending') ? 'tabler-location-cancel' : 'tabler-eye'" />
-            <VTooltip activator="parent">{{ (item.raw.status == 'pending') ? 'Cancel' : 'View' }}</VTooltip>
+            <VTooltip activator="parent">
+              {{ (item.raw.status == 'pending') ? 'Cancel' : 'View' }}
+            </VTooltip>
           </VBtn>
         </template>
       </AppTable>
@@ -158,5 +160,7 @@ onMounted(async () => {
 <route lang="yaml">
   meta:
     layout: raw
+    subject: user
+    action: read
     requiresAuth: true
 </route>

@@ -1,8 +1,8 @@
 <script setup>
-import JobPostingService from '@/service/jobposting.service';
-import useJobPostingStore from '@/stores/job-posting.store';
-import { onMounted } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
+import JobPostingService from '@/service/jobposting.service'
+import useJobPostingStore from '@/stores/job-posting.store'
+import { onMounted } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 
 const route = useRoute()
 const router = useRouter()
@@ -32,7 +32,7 @@ onMounted(async () => {
       params: {
         companyid: companyId.value,
       },
-      props: true
+      props: true,
     })
   }
 
@@ -44,7 +44,7 @@ onMounted(async () => {
     }
 
   } catch (error) {
-    console.log(error);
+    console.log(error)
     toast.error('Failed to fetch job postings.')
   }
 })
@@ -56,14 +56,18 @@ onMounted(async () => {
   <section>
     <VCard>
       <VCardText>
-        <h3 class="text-h3">{{ computedResult }}</h3>
-        <RouterLink :to="{
-          name: 'company-companyid-job-posting',
-          params: {
-            companyid: companyId,
-          },
-          props: true
-        }">
+        <h3 class="text-h3">
+          {{ computedResult }}
+        </h3>
+        <RouterLink
+          :to="{
+            name: 'company-companyid-job-posting',
+            params: {
+              companyid: companyId,
+            },
+            props: true
+          }"
+        >
           <VBtn
             class="mt-2"
             color="success"
@@ -79,5 +83,7 @@ onMounted(async () => {
 <route lang="yaml">
   meta:
     layout: raw
+    subject: company
+    action: read
     requiresAuth: true
 </route>

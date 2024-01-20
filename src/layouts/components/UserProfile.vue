@@ -1,10 +1,11 @@
 <script setup>
-import { helpers } from '@/helpers';
-import useAuthStore from '@/stores/auth.store';
-import avatar1 from '@images/avatars/avatar-1.png'
-import DefaultProfileImg from '@/assets/images/download/default-avatar.png';
+import { helpers } from '@/helpers'
+import { useAppAbility } from '@/plugins/casl/useAppAbility'
+import useAuthStore from '@/stores/auth.store'
+import DefaultProfileImg from '@images/download/default-avatar.png'
 
 const authStore = useAuthStore()
+const ability = useAppAbility()
 
 async function onLogout() {
   authStore.clearCache()
@@ -27,7 +28,10 @@ async function onLogout() {
       color="primary"
       variant="tonal"
     >
-      <VImg cover :src="(authStore.getUserData.profile_image) ? helpers.resolver.getImagePath(authStore.getUserData.profile_image.file_name) : DefaultProfileImg" />
+      <VImg
+        cover
+        :src="(authStore.getUserData.profile_image) ? helpers.resolver.getImagePath(authStore.getUserData.profile_image.file_name) : DefaultProfileImg"
+      />
 
       <!-- SECTION Menu -->
       <VMenu
@@ -62,15 +66,18 @@ async function onLogout() {
             </template>
 
             <VListItemTitle class="font-weight-semibold">
-              {{ authStore.isLoggedIn ? `${authStore.getUserData.first_name} ${authStore.getUserData.last_name }` : 'Guest' }}
+              {{ authStore.isLoggedIn ? `${authStore.getUserData.first_name} ${authStore.getUserData.last_name}` : 'Guest' }}
             </VListItemTitle>
-            <VListItemSubtitle v-if="authStore.isAdmin">Admin</VListItemSubtitle>
+            <VListItemSubtitle v-if="authStore.isAdmin">
+              Admin
+            </VListItemSubtitle>
           </VListItem>
 
           <!-- 👉 My Application -->
           <VListItem 
-            v-if="authStore.isLoggedIn"
-            link :to="{
+            v-if="authStore.isLoggedIn && ability.can('read', 'user')"
+            link
+            :to="{
               name: 'application',
             }"
           >
@@ -87,8 +94,9 @@ async function onLogout() {
 
           <!-- 👉 My Companies -->
           <VListItem 
-            v-if="authStore.isLoggedIn"
-            link :to="{
+            v-if="authStore.isLoggedIn && ability.can('read', 'company')"
+            link
+            :to="{
               name: 'company',
             }"
           >
@@ -106,7 +114,8 @@ async function onLogout() {
           <!-- 👉 Profile -->
           <VListItem 
             v-if="authStore.isLoggedIn"
-            link :to="{
+            link
+            :to="{
               name: 'profile-tab',
               params: { tab: 'profile' },
               props: true,
@@ -124,12 +133,17 @@ async function onLogout() {
           </VListItem>
 
           <!-- Divider -->
-          <VDivider v-if="authStore.isLoggedIn" class="my-2" />
+          <VDivider
+            v-if="authStore.isLoggedIn"
+            class="my-2"
+          />
 
           <!-- 👉 Logout -->
           <VListItem 
             v-if="authStore.isLoggedIn"
-            to="/login" @click="onLogout">
+            to="/login"
+            @click="onLogout"
+          >
             <template #prepend>
               <VIcon
                 class="me-2"

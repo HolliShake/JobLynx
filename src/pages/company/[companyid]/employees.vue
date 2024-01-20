@@ -1,38 +1,37 @@
 <script setup>
-import { avatarText } from '@/@core/utils/formatters';
-import CompanyContext from '@/context/CompanyContext.vue';
-import { helpers } from '@/helpers';
-import EmployeeService from '@/service/employee.service';
-import useCompanyStore from '@/stores/company.store';
-import useEmployees from '@/stores/employees.store';
-import { inject } from 'vue';
-import { computed } from 'vue';
+import { avatarText } from '@/@core/utils/formatters'
+import CompanyContext from '@/context/CompanyContext.vue'
+import { helpers } from '@/helpers'
+import EmployeeService from '@/service/employee.service'
+import useCompanyStore from '@/stores/company.store'
+import useEmployees from '@/stores/employees.store'
+import { computed, inject } from 'vue'
 
 const tableHeaders = ref([
   {
     title: "EMPLOYEE",
-    key: "employee"
+    key: "employee",
   },
   {
     title: "POSITION",
-    key: "job_applicant.job_posting.position.title"
+    key: "job_applicant.job_posting.position.title",
   },
   {
     title: "SALARY",
     key: "job_applicant.job_posting.position.salary.value",
-    value: v => `${v.job_applicant.job_posting.position.salary.currency} ${helpers.formater.numberToMoney(v.job_applicant.job_posting.position.salary.value)}`
+    value: v => `${v.job_applicant.job_posting.position.salary.currency} ${helpers.formater.numberToMoney(v.job_applicant.job_posting.position.salary.value)}`,
   },
   {
     title: "DATE EFFECTIVE",
     key: "hired_date",
-    value: v => helpers.formater.dateToWord(v.hired_date)
+    value: v => helpers.formater.dateToWord(v.hired_date),
   },
   {
     title: "ACTIONS",
     key: "actions",
     width: '150',
     align: 'center',
-  }
+  },
 ])
 
 const companyStore = useCompanyStore()
@@ -53,7 +52,7 @@ async function onDelete(employee) {
   swal.value.fire({
     question: `You are about to delete ${employee.raw.job_applicant.user.first_name} ${employee.raw.job_applicant.user.last_name}`,
     dangerMode: true,
-  }).then(async (result) => {
+  }).then(async result => {
     if (!result) return
 
     try {
@@ -64,25 +63,25 @@ async function onDelete(employee) {
         toast.success("Employee deleted successfully")
       }
     } catch (error) {
-      console.log(error);
+      console.log(error)
       toast.error("Failed to delete employee")
     }
   })
 }
 
-watch(() => companyStore.companyModel, async (company) => {
+watch(() => companyStore.companyModel, async company => {
   try
-    {
-      const { status: code, data: response } = await EmployeeService.getEmployeesByCompanyId(company.id)
+  {
+    const { status: code, data: response } = await EmployeeService.getEmployeesByCompanyId(company.id)
 
-      if (code == 200) {
-        employeeStore.initialize(response)
-        loaded.value = true
-      }
-    } catch (error) {
-        console.log(error);
-        toast.error("Failed to load employees")
+    if (code == 200) {
+      employeeStore.initialize(response)
+      loaded.value = true
     }
+  } catch (error) {
+    console.log(error)
+    toast.error("Failed to load employees")
+  }
 }, { deep: true })
 
 // 
@@ -125,7 +124,7 @@ watch(() => companyStore.companyModel, async (company) => {
               class="d-inline-block rounded-circle elevation-2"
               style="border: 3px solid rgb(var(--v-theme-background));"
             >
-                <VAvatar
+              <VAvatar
                 rounded="circle"
                 variant="tonal"
               >
@@ -150,7 +149,9 @@ watch(() => companyStore.companyModel, async (company) => {
             @click="onDelete(item)"
           >
             <VIcon icon="tabler-trash" />
-            <VTooltip activator="parent">Delete employee</VTooltip>
+            <VTooltip activator="parent">
+              Delete employee
+            </VTooltip>
           </VBtn>
         </template>
       </AppTable>
@@ -162,5 +163,7 @@ watch(() => companyStore.companyModel, async (company) => {
 <route lang="yaml">
   meta:
     layout: default
+    subject: company
+    action: read
     requiresAuth: true
 </route>

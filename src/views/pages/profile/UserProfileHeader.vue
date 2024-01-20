@@ -1,13 +1,13 @@
 <script setup>
-import useAuthStore from '@/stores/auth.store';
-import DefaultProfileImg from '@/assets/images/download/default-avatar.png';
-import DefaultCoverImg from '@/assets/images/download/default-cover.jpg';
-import { helpers } from '@/helpers';
-import { useAppAbility } from '@/plugins/casl/useAppAbility';
-import ProfileModal from './tabs/profile/ProfileModal.vue';
-import { watch } from 'vue';
-import FileProfileService from '@/service/file-profile.service';
-import FileCoverService from '@/service/file-cover.service';
+import { helpers } from '@/helpers'
+import { useAppAbility } from '@/plugins/casl/useAppAbility'
+import FileCoverService from '@/service/file-cover.service'
+import FileProfileService from '@/service/file-profile.service'
+import useAuthStore from '@/stores/auth.store'
+import DefaultProfileImg from '@images/download/default-avatar.png'
+import DefaultCoverImg from '@images/download/default-cover.jpg'
+import { watch } from 'vue'
+import ProfileModal from './tabs/profile/ProfileModal.vue'
 
 const data = useAuthStore()
 const ability = useAppAbility()
@@ -39,6 +39,7 @@ async function onEdit() {
 
 watch(dpImage, async image => {
   const formData = new FormData()
+
   formData.append('profile', image)
   formData.append('user_id', data.getUserData.id)
 
@@ -49,7 +50,7 @@ watch(dpImage, async image => {
 
     if (code == 200) {
       data.patch({
-        profile_image: response
+        profile_image: response,
       })
     }
 
@@ -60,6 +61,7 @@ watch(dpImage, async image => {
 
 watch(cvImage, async image => {
   const formData = new FormData()
+
   formData.append('cover', image)
   formData.append('user_id', data.getUserData.id)
 
@@ -70,7 +72,7 @@ watch(cvImage, async image => {
 
     if (code == 200) {
       data.patch({
-        cover_image: response
+        cover_image: response,
       })
     }
 
@@ -83,9 +85,7 @@ watch(cvImage, async image => {
 </script>
 
 <template>
-  <VCard
-    style="position: relative;"
-  >
+  <VCard style="position: relative;">
     <VImg
       :src="(data.getUserData.cover_image) ? helpers.resolver.getImagePath(data.getUserData.cover_image.file_name) : DefaultCoverImg"
       min-height="125"
@@ -134,20 +134,20 @@ watch(cvImage, async image => {
 
       <div class="d-none">
         <input
+          ref="inputRef1"
           type="file"
           accept="image/png, image/jpeg, image/jpg"
-          v-on:change="onFileDpChange"
-          ref="inputRef1"
-        />
+          @change="onFileDpChange"
+        >
       </div>
 
       <div class="d-none">
         <input
+          ref="inputRef2"
           type="file"
           accept="image/png, image/jpeg, image/jpg"
-          v-on:change="onFileCoverChange"
-          ref="inputRef2"
-        />
+          @change="onFileCoverChange"
+        >
       </div>
 
       <div class="user-profile-info w-100 mt-16 pt-6 pt-sm-0 mt-sm-0">

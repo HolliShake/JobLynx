@@ -1,5 +1,5 @@
+import { cloneDeep } from "lodash";
 import { defineStore } from "pinia";
-import { cloneDeep } from "lodash"
 
 const defaultModel = () => ({
     first_name: "",
@@ -52,7 +52,33 @@ const useAuthStore = defineStore("Auth", {
                 return false
             }
 
-            return !!all
+            return (!!all) && this.userData.role == 'admin'
+        },
+        isCompany() {
+            if (!this.isLoggedIn) return false
+
+            const access = this.userData.user_access.map(ua => ({ subject: ua.subject, action: ua.action }))
+
+            const all = access.find(a => a.subject == "company")
+
+            if (!all) {
+                return false
+            }
+
+            return (!!all) && this.userData.role == 'company'
+        },
+        isUser() {
+            if (!this.isLoggedIn) return false
+
+            const access = this.userData.user_access.map(ua => ({ subject: ua.subject, action: ua.action }))
+
+            const all = access.find(a => a.subject == "user")
+
+            if (!all) {
+                return false
+            }
+
+            return (!!all) && this.userData.role == 'user'
         },
         isAccountsetuped() {
             if (!this.isLoggedIn) return false

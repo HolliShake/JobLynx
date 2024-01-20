@@ -1,5 +1,12 @@
 <script setup>
 
+const props = defineProps({
+  closable: {
+    type: Boolean,
+    default: true
+  }
+})
+
 const visibility = ref(false)
 const updateMode = ref(false)
 
@@ -36,7 +43,7 @@ defineExpose({
     class="v-dialog-sm"
     persistent
   >
-    <DialogCloseBtn @click="close" />
+    <DialogCloseBtn v-if="props.closable" @click="close" />
   
     <template #activator>
       <slot name="activator" :isUpdateMode="updateMode" />  
