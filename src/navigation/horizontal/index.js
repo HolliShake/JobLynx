@@ -1,5 +1,10 @@
 import { make } from "../mapper.js"
 
+
+const company_paths = [
+    
+]
+
 export default Object.freeze([
   ...make('company', [
     { 
@@ -48,6 +53,9 @@ export default Object.freeze([
 
   ...make('admin', [
     { 
+      heading: 'Manage Starboard',
+    },
+    { 
       heading: 'Administration',
     },
     {
@@ -66,6 +74,15 @@ export default Object.freeze([
       title: 'Users',
       to: { name: 'admin-users' },
       icon: { icon: 'tabler-users' },
+      auth: true,
+    },
+    {
+      title: 'Manage Starboard',
+      to: { 
+        name: 'company-companyid-dashboard',
+        params: { companyid: 'starboard' },
+      },
+      icon: { icon: 'tabler-sun' },
       auth: true,
     },
   ]),

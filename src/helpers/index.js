@@ -52,7 +52,7 @@ const resolver = ({
     const authStore = useAuthStore()
 
     if (authStore.isAdmin) {
-      return "/admin/ad-types"
+      return "/admin/starboard/ad-types"
     } else if (authStore.isCompany) {
       return "/company"
     } else if (authStore.isUser) {

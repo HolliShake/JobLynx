@@ -2,23 +2,28 @@ import { breakpointsVuetify } from '@vueuse/core'
 import { VIcon } from 'vuetify/components/VIcon'
 
 // ❗ Logo SVG must be imported with ?raw suffix
-import logo from '@images/logo.svg?raw'
+import { avatarText } from '@/@core/utils/formatters'
 import { defineThemeConfig } from '@core'
 import { RouteTransitions, Skins } from '@core/enums'
+import logo from '@images/trace.svg'
 import { AppContentLayoutNav, ContentWidth, FooterType, NavbarType } from '@layouts/enums'
-import { avatarText } from '@/@core/utils/formatters'
+import { h } from 'vue'
 
-const title = 'Starboard Manpower Services'
+const title = 'Starboard Manpower Services Inc'
+
+const logoManpower = h('img', { src: logo, style: 'width: 52px !important;' })
 
 export const { themeConfig, layoutConfig } = defineThemeConfig({
   app: {
     title: (title.length >= 8)? avatarText(title) : title,
-    logo: h('div', { innerHTML: logo, style: 'line-height:0; color: rgb(var(--v-global-theme-primary))' }),
+    logo: h('div', { style: 'line-height:0; color: rgb(var(--v-global-theme-primary))' }, [
+      logoManpower,
+    ]),
     contentWidth: ContentWidth.Boxed,
     contentLayoutNav: AppContentLayoutNav.Vertical,
     overlayNavFromBreakpoint: breakpointsVuetify.md + 16,
     enableI18n: false,
-    theme: 'system',
+    theme: 'dark',
     isRtl: false,
     skin: Skins.Default,
     routeTransition: RouteTransitions.Fade,

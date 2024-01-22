@@ -1,4 +1,5 @@
 <script setup>
+import { helpers } from '@/helpers'
 import { useAppAbility } from '@/plugins/casl/useAppAbility'
 import AuthService from '@/service/auth.service'
 import useAuthStore from '@/stores/auth.store'
@@ -54,15 +55,7 @@ async function onSubmit() {
 
       ability.update(respose.user_access.map(ua => ({ subject: ua.subject, action: ua.action })))
       authStore.save(respose)
-      if (authStore.isAdmin) {
-        router.push("/admin/companies")
-      } else if (authStore.isCompany) {
-        router.push("/company")
-      } else if (authStore.isUser) {
-        router.push("/")
-      } else {
-        router.push("404")
-      }
+      router.push(helpers.resolver.resolveRoot())
     }
   } catch (err) {
     console.log(err)

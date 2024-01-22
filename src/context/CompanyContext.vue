@@ -24,6 +24,10 @@ const companyContext = computed(() => {
   return companyStore.getCompanyModelAsContext
 })
 
+const isDefault = computed(() => {
+  return (props.companyid.toString() === 'starboard')
+})
+
 provide("companyContext", companyContext)
 
 async function showNotVerifiedInfo() {
@@ -36,7 +40,27 @@ async function showNotVerifiedInfo() {
     })
 }
 
-onMounted(async () => {
+async function loadDefault() {
+  companyStore.setUser(authContext.value.id)
+
+  try {
+    const { status: code, data: response } = await CompanyService.getDefaultCompany()
+
+    if (code == 200) {
+      companyStore.setField(response)
+      loaded.value = true
+
+      if (!response.verified_by_admin) {
+        showNotVerifiedInfo()
+      }
+    } 
+  } catch (error) {
+    console.error(error)
+    toast.error("Failed to load company data")
+  }
+}
+
+async function loadOther() {
   companyStore.setUser(authContext.value.id)
 
   try {
@@ -53,6 +77,17 @@ onMounted(async () => {
   } catch (error) {
     console.error(error)
     toast.error("Failed to load company data")
+  }
+}
+
+onMounted(async () => {
+  if (isDefault.value) 
+  {
+    await loadDefault()
+  } 
+  else 
+  {
+    await loadOther()
   }
 })
 
