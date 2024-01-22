@@ -25,7 +25,9 @@ const companyContext = computed(() => {
 })
 
 const isDefault = computed(() => {
-  return (props.companyid.toString() === 'starboard')
+  const virtaulcid = import.meta.env.VITE_APP_VIRTUAL_COMPANY_ID
+  
+  return (props.companyid.toString() === virtaulcid)
 })
 
 provide("companyContext", companyContext)
@@ -57,6 +59,7 @@ async function loadDefault() {
   } catch (error) {
     console.error(error)
     toast.error("Failed to load company data")
+    router.push('/company')
   }
 }
 
@@ -77,6 +80,7 @@ async function loadOther() {
   } catch (error) {
     console.error(error)
     toast.error("Failed to load company data")
+    router.push('/company')
   }
 }
 

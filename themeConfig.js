@@ -9,7 +9,7 @@ import logo from '@images/trace.svg'
 import { AppContentLayoutNav, ContentWidth, FooterType, NavbarType } from '@layouts/enums'
 import { h } from 'vue'
 
-const title = 'Starboard Manpower Services Inc'
+const title = import.meta.env.VITE_APP_NAME
 
 const logoManpower = h('img', { src: logo, style: 'width: 52px !important;' })
 
