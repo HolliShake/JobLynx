@@ -10,8 +10,7 @@ import useJobPostingStore from '@/stores/job-posting.store'
 import usePositionStore from '@/stores/position.store'
 import { EMPLOYEMENT_TYPE_ITEMS } from '@/views/pages/company/tabs/position/employment-type.map'
 import { PAYMENT_TYPE_ITEMS } from '@/views/pages/company/tabs/position/payment-type.map'
-import { inject } from 'vue'
-import { watch } from 'vue'
+import { inject, watch } from 'vue'
 
 const jobPostingStore = useJobPostingStore()
 const positionStore = usePositionStore()
@@ -27,10 +26,13 @@ const bannerFiles = ref([])
 const samplePhotos = ref([])
 const isChanged = ref(false)
 const isSampleChanged = ref(false)
+
 const errors = ref({
   
 })
+
 const currentStep = ref(1)
+
 const steps = ref([
   {
     title: "Classify",
@@ -45,6 +47,7 @@ const steps = ref([
     step: 3,
   },
 ])
+
 const modalRef = ref()
 const stripeRef = inject('stripeRef')
 const positionLoaded = ref(false)
@@ -54,15 +57,15 @@ const positionItems = computed(() => {
   return [
     {
       title: "-- Select Position --",
-      value: -1
+      value: -1,
     },
     ...(
       positionStore.getPositions
-      .map(p => ({
-        title: `${p.title}`,
-        value: p.id
-      }))
-    )
+        .map(p => ({
+          title: `${p.title}`,
+          value: p.id,
+        }))
+    ),
   ]
 })
 
@@ -82,35 +85,35 @@ const getPosition = async () => {
 }
 
 const reset_parameter = () => {
-  selectedPosition.value = null
+  selectedPosition.value = -1
   positionData.value = {}
   selectedAdType.value = {}
   currentStep.value = 1
 }
 
 defineExpose({
-    async open() {
-      modalRef.value.open()
-      reset_parameter()
-      jobPostingStore.resetField()
-      form.value = jobPostingStore.getJobPostingModel
-      await getPosition()
-    },
-    async openAsUpdateMode(data) {
-      reset_parameter()
-      jobPostingStore.setField(data)
-      selectedPosition.value = data.position_id
-      positionData.value = data.position
-      selectedAdType.value = data.adtype
-      form.value = jobPostingStore.getJobPostingModel
-      modalRef.value.openAsUpdateMode()
-      await getPosition()
-    },
-    close() {
-      modalRef.value.close()
-      jobPostingStore.resetField()
+  async open() {
+    reset_parameter()
+    jobPostingStore.resetField()
+    form.value = jobPostingStore.getJobPostingModel
+    modalRef.value.open()
+    await getPosition()
+  },
+  async openAsUpdateMode(data) {
+    reset_parameter()
+    jobPostingStore.setField(data)
+    selectedPosition.value = data.position_id
+    positionData.value = data.position
+    selectedAdType.value = data.adtype
+    form.value = jobPostingStore.getJobPostingModel
+    modalRef.value.openAsUpdateMode()
+    await getPosition()
+  },
+  close() {
+    modalRef.value.close()
+    jobPostingStore.resetField()
       
-    },
+  },
 })
 
 
@@ -124,6 +127,7 @@ async function create() {
     form.value = {
       ...form.value,
       date_posted: helpers.formater.toPhpDate(form.value.date_posted),
+
       paid: selectedAdType.value.price <= 0,
     }
 
@@ -149,14 +153,14 @@ async function create() {
       toast.success("Job posting created.")
     }
   } catch (err) {
-    console.log(err);
+    console.log(err)
     if ((err.response?.data?.errors) ?? false) {
       errors.value = err.response?.data?.errors
     }
   }
 }
 
-const validProp = (prop) => {
+const validProp = prop => {
   return [
     "id",
     "description",
@@ -166,7 +170,7 @@ const validProp = (prop) => {
     "paid",
     "is_hide_company_info",
     "is_hidden",
-    "is_editable"
+    "is_editable",
   ].includes(prop)
 }
 
@@ -200,7 +204,7 @@ async function update() {
       toast.success("Job posting update.")
     }
   } catch (err) {
-    console.log(err);
+    console.log(err)
     if ((err.response?.data?.errors) ?? false) {
       errors.value = err.response?.data?.errors
     }
@@ -245,7 +249,7 @@ async function createAndPayJobPost() {
       await payJobPost()
     }
   } catch (err) {
-    console.log(err);
+    console.log(err)
     if ((err.response?.data?.errors) ?? false) {
       errors.value = err.response?.data?.errors
     }
@@ -260,15 +264,15 @@ function isFinished(step, currentStep) {
   if (step != currentStep) return false
 
   switch (currentStep) {
-    case 1: {
-      return (selectedPosition.value > 0)
-    }
-    case 2:
-      return selectedAdType.value.id > 0
-    case 3:
-      return bannerFiles.value.length > 0
-    default:
-      return step <= currentStep
+  case 1: {
+    return (selectedPosition.value > 0)
+  }
+  case 2:
+    return selectedAdType.value.id > 0
+  case 3:
+    return bannerFiles.value.length > 0
+  default:
+    return step <= currentStep
   }  
 }
 
@@ -288,7 +292,7 @@ function prevStep() {
   currentStep.value -= 1
 }
 
-const loadPosition = async (value) => {
+const loadPosition = async value => {
   positionData.value = {}
   form.value.position_id = value
 
@@ -324,7 +328,7 @@ async function onSelect(adtype) {
   form.value.adtype_id = adtype.id
 }
 
-watch(selectedPosition, async (value) => {
+watch(selectedPosition, async value => {
   if (value <= 0) return
 
   await loadPosition(value)
@@ -335,7 +339,8 @@ watch(selectedPosition, async (value) => {
 
 function getFile(file) {
   if (!file) return ""
-  return window.URL.createObjectURL(file);
+  
+  return window.URL.createObjectURL(file)
 }
 
 watch(bannerFiles, files => {
@@ -350,6 +355,7 @@ watch(bannerFiles, files => {
 
   if (!modalRef.value.isUpdateMode()) {
     isChanged.value = false
+    
     return
   }
 
@@ -369,6 +375,7 @@ watch(samplePhotos, files => {
 
   if (!modalRef.value.isUpdateMode()) {
     isSampleChanged.value = false
+    
     return
   }
 
@@ -385,7 +392,6 @@ watch(samplePhotos, files => {
     fullscreen
     style="background-color: rgb(var(--v-theme-background));"
   >
-
     <template #header>
       <div>
         <VToolbar color="primary">
@@ -422,7 +428,6 @@ watch(samplePhotos, files => {
                   direction="horizontal"
                   truncate-line="both"
                   side="end"
-                  
                 >
                   <VTimelineItem
                     v-for="step in steps"
@@ -449,7 +454,10 @@ watch(samplePhotos, files => {
             >
               <VWindowItem :value="1">
                 <VRow>
-                  <VCol cols="12" md="5">
+                  <VCol
+                    cols="12"
+                    md="5"
+                  >
                     <VCard flat>
                       <template #prepend>
                         <span class="font-weight-bold">Role information</span>
@@ -498,9 +506,7 @@ watch(samplePhotos, files => {
                                 </VTooltip>
                               </VBtn>
                             </div>
-                            <VRadioGroup
-                              v-model="positionData.employment_type"
-                            >
+                            <VRadioGroup v-model="positionData.employment_type">
                               <VRadio
                                 v-for="et in EMPLOYEMENT_TYPE_ITEMS"
                                 :key="et.value"
@@ -548,9 +554,7 @@ watch(samplePhotos, files => {
                                 </VTooltip>
                               </VBtn>
                             </div>
-                            <VRadioGroup
-                              v-model="positionData.payment_type"
-                            >
+                            <VRadioGroup v-model="positionData.payment_type">
                               <VRadio
                                 v-for="pt in PAYMENT_TYPE_ITEMS"
                                 :key="pt.value"
@@ -607,11 +611,9 @@ watch(samplePhotos, files => {
                 </VRow>
               </VWindowItem>
               <!--  -->
-              <VWindowItem 
-                :value="2"
-              >
+              <VWindowItem :value="2">
                 <VRow>
-                  <VCol cols=12>
+                  <VCol cols="12">
                     <VRow>
                       <template v-if="adtypeStore.getAdTypes.length <= 0">
                         <VCol 
@@ -623,15 +625,13 @@ watch(samplePhotos, files => {
                         </VCol>
                       </template>
                       <VCol 
-                        v-else
                         v-for="adtype in adtypeStore.getAdTypes"
+                        v-else
                         :key="`adtype-${adtype.id}`"
                         cols="12"
                         md="4"
                       >
-                        <VCard
-                          :style="`border: 2px solid ${ selectedAdType.id == adtype.id ? 'rgb(var(--v-theme-primary))' : 'transparent' };`"
-                        >
+                        <VCard :style="`border: 2px solid ${selectedAdType.id == adtype.id ? 'rgb(var(--v-theme-primary))' : 'transparent'};`">
                           <template #title>
                             <div class="d-block text-center">
                               {{ adtype.type }}
@@ -639,13 +639,22 @@ watch(samplePhotos, files => {
                           </template>
                           <VCardText>
                             <VRow>
-                              <VCol 
+                              <!--
+                                <VCol 
                                 cols="12"
                                 class="my-10"
-                              >
+                                >
                                 <span class="font-weight-bold">PRICE</span>
-                                <h1 class="text-h1 text-center">₱ {{ helpers.formater.numberToMoney(adtype.price) }}</h1>
-                              </VCol>
+                                <h1 class="text-h1 text-center">
+                                <template v-if="adtype.price>0">
+                                ₱ {{ helpers.formater.numberToMoney(adtype.price) }}
+                                </template>
+                                <template v-else>
+                                FREE
+                                </template>
+                                </h1>
+                                </VCol> 
+                              -->
                               <VCol cols="12">
                                 <div class="d-flex flex-row flex-nowrap align-center">
                                   <VIcon 
@@ -665,7 +674,7 @@ watch(samplePhotos, files => {
                                     color="success"  
                                   />
 
-                                  <span class="font-weight-bold">{{ adtype.max_skills_matching}} Maximum skill matching</span>
+                                  <span class="font-weight-bold">{{ adtype.max_skills_matching }} Maximum skill matching</span>
                                 </div>
                               </VCol>
                               <VCol cols="12">
@@ -719,9 +728,9 @@ watch(samplePhotos, files => {
                                 <div>
                                   <VBtn
                                     block 
-                                    @click="onSelect(adtype)"
                                     color="success"
                                     :disabled="isUpdateMode && !form.adtype?.is_editable"
+                                    @click="onSelect(adtype)"
                                   >
                                     SELECT
                                   </VBtn>
@@ -757,9 +766,7 @@ watch(samplePhotos, files => {
               <VWindowItem :value="3">
                 <VRow>
                   <VCol cols="12">
-                    <VCard
-    
-                    >
+                    <VCard>
                       <VCardText>
                         <VRow>
                           <VCol cols="12">
@@ -777,15 +784,12 @@ watch(samplePhotos, files => {
                                   Ad Banner
                                 </h1>
                                 <VCard v-else>
-                                  <VImg 
-                                    :src="(isUpdateMode && !isChanged) ? helpers.resolver.getImagePath(form.banner?.file_name) : getFile(bannerFiles[0])" />
+                                  <VImg :src="(isUpdateMode && !isChanged) ? helpers.resolver.getImagePath(form.banner?.file_name) : getFile(bannerFiles[0])" />
                                 </VCard>
                               </VCardText>
                             </VCard>
                           </VCol>
-                          <VCol 
-                            cols="12"
-                          >
+                          <VCol cols="12">
                             <VFileInput
                               v-model="bannerFiles"
                               :rules="[fileList => !fileList || !fileList.length || fileList[0].size < (1024 * 10 * 10) || 'Avatar size should be less than 10  MB!']"
@@ -803,8 +807,8 @@ watch(samplePhotos, files => {
                             cols="12"
                           >
                             <VFileInput
-                              class="mt-5"
                               v-model="samplePhotos"
+                              class="mt-5"
                               label="Featured Photos"
                               accept="image/png, image/jpeg, image/bmp"
                               placeholder="Pick a banner"
@@ -830,7 +834,9 @@ watch(samplePhotos, files => {
                             cols="12"
                             md="4"
                           >
-                            <h3 class="mb-2">Position Details</h3>
+                            <h3 class="mb-2">
+                              Position Details
+                            </h3>
                             <VCard
                               flat
                               border
@@ -865,12 +871,17 @@ watch(samplePhotos, files => {
                               </VCardText>
                             </VCard>
                           </VCol>
-                          <VCol cols="12" class="py-0" /> 
+                          <VCol
+                            cols="12"
+                            class="py-0"
+                          /> 
                           <VCol 
                             cols="12"
                             md="4"
                           >
-                            <h3 class="mb-2">Skills Required</h3>
+                            <h3 class="mb-2">
+                              Skills Required
+                            </h3>
                             <div class="py-2 d-flex flex-row flex-wrap gap-1">
                               <VChip
                                 v-for="skill in positionData.skills?.split(' ')"
@@ -882,21 +893,24 @@ watch(samplePhotos, files => {
                               </VChip>
                             </div>
                           </VCol>
-                          <VCol cols="12" class="py-0" /> 
+                          <VCol
+                            cols="12"
+                            class="py-0"
+                          /> 
                           <VCol 
                             cols="12"
                             md="4"
                           >
-                            <h3 class="mb-2">Your Ad Details</h3>
+                            <h3 class="mb-2">
+                              Your Ad Details
+                            </h3>
                             <VCard 
                               border 
                               flat
                             >
                               <VCardText>
                                 <VRow no-gutters>
-                                  <VCol 
-                                    cols="12"
-                                  >
+                                  <VCol cols="12">
                                     <span class="d-block font-weight-bold">Type : {{ selectedAdType.type }}</span>
                                   </VCol>
                                   <VCol 
@@ -924,7 +938,7 @@ watch(samplePhotos, files => {
                                         color="success"  
                                       />
 
-                                      <span class="font-weight-bold">{{ selectedAdType.max_skills_matching}} Maximum skill matching</span>
+                                      <span class="font-weight-bold">{{ selectedAdType.max_skills_matching }} Maximum skill matching</span>
                                     </div>
                                   </VCol>
                                   <VCol cols="12">
@@ -976,9 +990,14 @@ watch(samplePhotos, files => {
                             </VCard>
                           </VCol>
                           <VCol cols="12">
-                            <h3 class="mb-2">Posting</h3>
+                            <h3 class="mb-2">
+                              Posting
+                            </h3>
                           </VCol>
-                          <VCol cols="12" md="4">
+                          <VCol
+                            cols="12"
+                            md="4"
+                          >
                             <span class="font-weight-bold text-sm">Post date</span>
                             <AppDateTimePicker 
                               v-model="form.date_posted"
@@ -1001,28 +1020,45 @@ watch(samplePhotos, files => {
                   </VCol>
                   <VCol cols="12">
                     <div class="d-flex flex-row gap-2">
-                      <VBtn
+                      <!--
+                        <VBtn
                         v-if="!form.paid"
                         color="success"
                         @click="onPay"
-                      >
-                        <VIcon start icon="tabler-cash" />
+                        >
+                        <VIcon
+                        start
+                        icon="tabler-cash"
+                        />
                         Pay
-                      </VBtn>
+                        </VBtn> 
+                      -->
                       <VBtn
                         v-if="isUpdateMode && form.adtype?.is_editable"
                         color="primary"
                         @click="onSubmit"
                       >
-                        <VIcon start icon="tabler-edit" />
+                        <VIcon
+                          start
+                          icon="tabler-edit"
+                        />
                         Update
                       </VBtn>
+                      <!--
+                        <VBtn
+                        v-if="!isUpdateMode"
+                        color="primary"
+                        @click="onSubmit"
+                        >
+                        Save as draft
+                        </VBtn> 
+                      -->
                       <VBtn
                         v-if="!isUpdateMode"
                         color="primary"
                         @click="onSubmit"
                       >
-                        Save as draft
+                        POST
                       </VBtn>
                       <VBtn
                         color="info"

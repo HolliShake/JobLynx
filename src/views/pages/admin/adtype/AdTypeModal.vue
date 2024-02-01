@@ -1,7 +1,6 @@
 
 <script setup>
 import AdTypeService from '@/service/adtype.service'
-import OfficeService from '@/service/office.service'
 import useAdTypeStore from '@/stores/adtype.store'
 
 
@@ -9,6 +8,7 @@ const adTypeStore = useAdTypeStore()
 const refVForm = ref()
 const submitted = ref(false)
 const form = ref({})
+
 const errors = ref({
   type: [],
   price: [],
@@ -19,23 +19,24 @@ const errors = ref({
   is_analytics_available: [],
   is_editable: [],
 })
+
 const modalRef = ref()
 const toast = inject("toast")
 
 defineExpose({
-    open() {
-      modalRef.value.open()
-      adTypeStore.resetField()
-      form.value = adTypeStore.getAdTypeModel
-    },
-    openAsUpdateMode() {
-      modalRef.value.openAsUpdateMode()
-      form.value = adTypeStore.getAdTypeModel
-    },
-    close() {
-      modalRef.value.close()
-      adTypeStore.resetField()
-    },
+  open() {
+    modalRef.value.open()
+    adTypeStore.resetField()
+    form.value = adTypeStore.getAdTypeModel
+  },
+  openAsUpdateMode() {
+    modalRef.value.openAsUpdateMode()
+    form.value = adTypeStore.getAdTypeModel
+  },
+  close() {
+    modalRef.value.close()
+    adTypeStore.resetField()
+  },
 })
 
 
@@ -81,7 +82,10 @@ async function update() {
 </script>
 
 <template>
-  <AppDialog ref="modalRef" :max-width="430">
+  <AppDialog
+    ref="modalRef"
+    :max-width="430"
+  >
     <template #title>
       Ad Details
     </template>
@@ -99,13 +103,15 @@ async function update() {
               :error-messages="errors.type"
             />
           </VCol>
-          <VCol cols="12">
+          <!--
+            <VCol cols="12">
             <span class="text-sm font-weight-bold">PRICE</span>
             <VTextField
-              v-model="form.price"
-              :error-messages="errors.price"
+            v-model="form.price"
+            :error-messages="errors.price"
             />
-          </VCol>
+            </VCol> 
+          -->
           <VCol cols="12">
             <span class="text-sm font-weight-bold">MAX SKILLS MATCHING</span>
             <VTextField
@@ -147,23 +153,23 @@ async function update() {
           <VCol cols="12">
             <div class="d-flex flex-row flex-wrap gap-3">
               <VCheckbox 
-                label="Featured"
                 v-model="form.is_featured"
+                label="Featured"
               />
 
               <VCheckbox 
-                label="Search Priority"
                 v-model="form.is_search_priority"
+                label="Search Priority"
               />
 
               <VCheckbox 
-                label="Editable"
                 v-model="form.is_editable"
+                label="Editable"
               />
 
               <VCheckbox 
-                label="Enable Analytics"
                 v-model="form.is_analytics_available"
+                label="Enable Analytics"
               />
             </div>
           </VCol>

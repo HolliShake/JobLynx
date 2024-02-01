@@ -1,4 +1,5 @@
 <script setup>
+import { helpers } from '@/helpers'
 import AdTypeService from '@/service/adtype.service'
 import useAdTypeStore from '@/stores/adtype.store'
 import AdTypeModal from '@/views/pages/admin/adtype/AdTypeModal.vue'
@@ -11,7 +12,7 @@ const itemsPerPage = ref(10)
 const breadCrumbs = ref([
   {
     title: "Home",
-    to: "/",
+    to: helpers.resolver.resolveRoot(),
   },
   {
     title: "Ad Types",
@@ -25,10 +26,11 @@ const tableHeader = ref([
     title: "TYPE",
     key: "type",
   },
-  {
-    title: "PRICE",
-    key: "price",
-  },
+
+  // {
+  //   title: "PRICE",
+  //   key: "price",
+  // },
   {
     title: "SKILLS MATCHING",
     key: "max_skills_matching",

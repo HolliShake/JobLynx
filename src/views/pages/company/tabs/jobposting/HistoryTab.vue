@@ -1,14 +1,37 @@
 <script setup>
-import JobPostingService from '@/service/jobposting.service';
-import JobPostingModal from './JobPostingModal.vue';
-import useJobPostingStore from '@/stores/job-posting.store';
-import { helpers } from '@/helpers';
-import useCompanyStore from '@/stores/company.store';
-import EmptyResult from "@/assets/images/download/empty.png"
+import { helpers } from '@/helpers'
+import JobPostingService from '@/service/jobposting.service'
+import useCompanyStore from '@/stores/company.store'
+import useJobPostingStore from '@/stores/job-posting.store'
+import EmptyResult from "@images/download/empty.png"
+import JobPostingModal from './JobPostingModal.vue'
 
 const companyStore = useCompanyStore()
 const jobPostingStore = useJobPostingStore()
 const search = ref('')
+
+
+const selectStatus = ref(-1)
+
+const statusItems = ref([
+  {
+    title: "All",
+    value: -1,
+  },
+  {
+    title: "Pending",
+    value: 'pending',
+  },
+  {
+    title: "Rejected",
+    value: 'rejected',
+  },
+  {
+    title: "Approved",
+    value: 'approved',
+  },
+])
+
 const options = ref({
   itemsPerPage: 10,
   page: 1,
@@ -26,8 +49,10 @@ const items = computed(() => {
       const date_posted = new Date(Date.parse(jp.date_posted))
       const expired_date = new Date(date_posted.getTime() + (jp.adtype.duration * 24 * 60 * 60 * 1000))
       const now = new Date(Date.now())
+      
       return expired_date.getTime() < now.getTime()
     })
+    .filter(jp => selectStatus.value == -1 ? true : jp.status == selectStatus.value)
 })
 
 async function onCreate() {
@@ -39,27 +64,27 @@ async function onDelete(jobPosting) {
     question: 'Are you sure you want to delete this job posting?',
     dangerMode: true,
   })
-  .then(async (result) => {
-    if (!result) return
+    .then(async result => {
+      if (!result) return
 
-    try {
-      const { status: code } = await JobPostingService.deleteJobPosting(jobPosting.id)
+      try {
+        const { status: code } = await JobPostingService.deleteJobPosting(jobPosting.id)
 
-      if (code == 204) {
-        toast.success("Job posting deleted successfully.")
-        jobPostingStore.delete(jobPosting)
+        if (code == 204) {
+          toast.success("Job posting deleted successfully.")
+          jobPostingStore.delete(jobPosting)
+        }
+
+      } catch (error) {
+        console.log(error)
+        toast.error("Failed to delete job posting.")
       }
-
-    } catch (error) {
-      console.log(error);
-      toast.error("Failed to delete job posting.")
-    }
-  })
+    })
 }
 
 
-watch(() => companyStore.companyModel, async (company) => {
-  console.log(company);
+watch(() => companyStore.companyModel, async company => {
+  console.log(company)
   try
   {
     const { status: code, data: response } = await JobPostingService.getJobPostingByCompanyId(company.id)
@@ -87,6 +112,16 @@ watch(() => companyStore.companyModel, async (company) => {
         <VTextField 
           v-model="search"
           label="Search Posted Job"
+        />
+      </VCol>
+      <VCol
+        cols="12"
+        md="4"
+      >
+        <VSelect
+          v-model="selectStatus"
+          :items="statusItems"
+          label="Filter by status"
         />
       </VCol>
       <VCol 
@@ -122,7 +157,9 @@ watch(() => companyStore.companyModel, async (company) => {
             alt="Empty" 
             max-width="600"
           />
-          <h2 class="text-h2 text-center font-weight-thin">Nothing To Show</h2>
+          <h2 class="text-h2 text-center font-weight-thin">
+            Nothing To Show
+          </h2>
         </VCol>
         <VCol 
           v-for="jp in items"
@@ -154,9 +191,7 @@ watch(() => companyStore.companyModel, async (company) => {
                       variant="text"
                       @click="modalRef.openAsUpdateMode(jp)"
                     >
-                      <VIcon  
-                        icon="tabler-edit"
-                      />
+                      <VIcon icon="tabler-edit" />
                     </VBtn>
                   </div>
                   <VChip
@@ -175,7 +210,10 @@ watch(() => companyStore.companyModel, async (company) => {
                     {{ jp.adtype.type }}
                   </VChip>
                 </VCol>
-                <VCol cols="12" class="py-0">
+                <VCol
+                  cols="12"
+                  class="py-0"
+                >
                   <div class="d-flex flex-row flex-wrap gap-1">
                     <VChip
                       :color="jp.paid ? 'success' : 'error'"
@@ -247,8 +285,6 @@ watch(() => companyStore.companyModel, async (company) => {
   </VCardText>
 
   <Teleport to="#app">
-    <JobPostingModal
-      ref="modalRef" 
-    />
+    <JobPostingModal ref="modalRef" />
   </Teleport>
 </template>

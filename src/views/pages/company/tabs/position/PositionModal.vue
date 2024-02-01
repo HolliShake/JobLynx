@@ -1,16 +1,15 @@
 
 <script setup>
-import { integerValidator } from '@/@core/utils/validators';
-import { onMounted } from 'vue';
-import SalaryService from '@/service/salary.service';
-import { computed } from 'vue';
-import PositionService from '@/service/position.service';
-import usePositionStore from "@/stores/position.store";
-import { EMPLOYEMENT_TYPE_ITEMS } from './employment-type.map';
-import OfficeService from '@/service/office.service';
-import useSalaryStore from '@/stores/salary.store';
-import useOfficeStore from '@/stores/office.store';
-import { PAYMENT_TYPE_ITEMS } from './payment-type.map';
+import { integerValidator } from '@/@core/utils/validators'
+import OfficeService from '@/service/office.service'
+import PositionService from '@/service/position.service'
+import SalaryService from '@/service/salary.service'
+import useOfficeStore from '@/stores/office.store'
+import usePositionStore from "@/stores/position.store"
+import useSalaryStore from '@/stores/salary.store'
+import { computed } from 'vue'
+import { EMPLOYEMENT_TYPE_ITEMS } from './employment-type.map'
+import { PAYMENT_TYPE_ITEMS } from './payment-type.map'
 
 const salaryStore = useSalaryStore()
 const officeStore = useOfficeStore()
@@ -18,17 +17,20 @@ const positionStore = usePositionStore()
 const companyContext = inject('companyContext')
 const refVForm = ref()
 const submitted = ref(false)
+
 const form = ref({
-  skills: ''
+  skills: '',
 })
+
 const errors = ref({
   description: [],
   position: [],
   slots: [],
   salary_id: [],
   office_id: [],
-  company_id: []
+  company_id: [],
 })
+
 const toast = inject("toast")
 const modalRef = ref()
 
@@ -39,7 +41,7 @@ const mappedSalaryItems = computed(() => {
   return salaryStore.getSalaries
     .map(s => ({
       title: `${s.title} (${s.level})`,
-      value: s.id
+      value: s.id,
     }))
 })
 
@@ -47,7 +49,7 @@ const mappedOfficeItems = computed(() => {
   return officeStore.getOffices
     .map(o => ({
       title: `${o.name}`,
-      value: o.id
+      value: o.id,
     }))
 })
 
@@ -64,22 +66,22 @@ async function loadOnVisible() {
 
 
 defineExpose({
-    async open() {
-      modalRef.value.open()
-      positionStore.resetField()
-      form.value = positionStore.getPositionModel
-      await loadOnVisible()
-    },
-    async openAsUpdateMode() {
-      modalRef.value.openAsUpdateMode()
-      form.value = positionStore.getPositionModel
-      await loadOnVisible()
-    },
-    close() {
-      modalRef.value.close()
-      positionStore.resetField()
+  async open() {
+    modalRef.value.open()
+    positionStore.resetField()
+    form.value = positionStore.getPositionModel
+    await loadOnVisible()
+  },
+  async openAsUpdateMode() {
+    modalRef.value.openAsUpdateMode()
+    form.value = positionStore.getPositionModel
+    await loadOnVisible()
+  },
+  close() {
+    modalRef.value.close()
+    positionStore.resetField()
 
-    },
+  },
 })
 
 
@@ -115,7 +117,7 @@ async function update() {
       modalRef.value.close()
     }
   } catch (err) {
-    console.log(err);
+    console.log(err)
     if ((err.response?.data?.errors) ?? false) {
       errors.value = err.response?.data?.errors
     }
@@ -125,7 +127,14 @@ async function update() {
 const getSalary = async () => {
   try
   {
-    const { status: code, data: response } = await SalaryService.getSalaryByCompanyId(companyContext.value.id)
+    
+    /*
+      QUICK FIX (NOT RECOMMENDED):
+        Converted to Global Salary instead of Company Salary
+      
+      const { status: code, data: response } = await SalaryService.getSalaryByCompanyId(companyContext.value.id)
+   */
+    const { status: code, data: response } = await SalaryService.getAllSalary()
 
     if (code == 200) {
       salaryStore.initialize(response)
@@ -159,11 +168,15 @@ const getOffices = async () => {
     toast.error("Failed to load offices.")
   }
 }
+
 // 
 </script>
 
 <template>
-  <AppDialog ref="modalRef" :max-width="450">
+  <AppDialog
+    ref="modalRef"
+    :max-width="450"
+  >
     <template #title>
       Position Details
     </template>
@@ -183,9 +196,7 @@ const getOffices = async () => {
           </VCol>
           <VCol cols="12">
             <span class="text-sm font-weight-bold">SKILLS REQUIRED</span>
-            <VMenu
-              :close-on-content-click="false"
-            >
+            <VMenu :close-on-content-click="false">
               <template #activator="{ props }">
                 <VSelect
                   class="position-modal-skills-select"
@@ -212,9 +223,7 @@ const getOffices = async () => {
               </template>
               <VList>
                 <VListItem>
-                  <VTextField 
-                    v-model="form.skills"
-                  />
+                  <VTextField v-model="form.skills" />
                 </VListItem>
               </VList>
             </VMenu>

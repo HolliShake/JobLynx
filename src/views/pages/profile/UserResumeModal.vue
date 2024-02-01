@@ -8,8 +8,12 @@ import { inject } from 'vue'
 const props = defineProps({
   userId: {
     type: Number,
-    required: true
-  }
+    required: true,
+  },
+  isModalMode: {
+    type: Boolean,
+    default: false,
+  },
 })
 
 const modalRef = ref()
@@ -24,7 +28,7 @@ async function onOpen() {
     const { status: code, data: response } = await UserService.getResumeById(props.userId)
 
     if (code == 200) {
-      console.log(response);
+      console.log(response)
       pageData.value = response
       loaded.value = true
     }
@@ -34,19 +38,25 @@ async function onOpen() {
   }
 }
 
+defineExpose({
+  open: onOpen,
+})
 </script>
 
 <template>
   <AppFullDialog 
+    ref="modalRef"
     fullscreen
     scrollable
-    ref="modalRef"
   >
-    <template #activator="{ props }">
+    <template
+      v-if="!props.isModalMode"
+      #activator="{ props }"
+    >
       <VBtn
         v-bind="props"
         size="small"
-        @click="onOpen()"
+        @click="onOpen"
       >
         VIEW
       </VBtn>
@@ -81,8 +91,14 @@ async function onOpen() {
         theme="dark"
         border
       >
-        <VRow class="h-100" no-gutters>
-          <VCol cols="4" class="h-100">
+        <VRow
+          class="h-100"
+          no-gutters
+        >
+          <VCol
+            cols="4"
+            class="h-100"
+          >
             <div
               class="w-100 h-100 text-center py-5"
               style="background-color: rgb(16, 7, 49);"
@@ -111,7 +127,9 @@ async function onOpen() {
               </div>
 
               <!--  -->
-              <h3 class="mt-5 mb-3 text-h3 font-weight-thin text-center">SKILLS</h3>
+              <h3 class="mt-5 mb-3 text-h3 font-weight-thin text-center">
+                SKILLS
+              </h3>
 
               <ul>
                 <li 
@@ -123,11 +141,14 @@ async function onOpen() {
               </ul>
             </div>
           </VCol>
-          <VCol cols="8" class="h-100">
-            <div
-              class="d-block w-100 h-100 py-5"
-            >
-              <h2 class="text-h2 font-weight-thin text-center">{{ pageData.first_name }} {{ pageData.last_name }}</h2>
+          <VCol
+            cols="8"
+            class="h-100"
+          >
+            <div class="d-block w-100 h-100 py-5">
+              <h2 class="text-h2 font-weight-thin text-center">
+                {{ pageData.first_name }} {{ pageData.last_name }}
+              </h2>
               <p class="text-center font-weight-thin">
                 {{ pageData.address }}
                 {{ pageData.country }}

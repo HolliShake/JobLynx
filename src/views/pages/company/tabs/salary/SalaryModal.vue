@@ -1,37 +1,37 @@
 
 <script setup>
-import EducationService from '@/service/education.service';
-import useEducationStore from '@/stores/education.store';
-import { integerValidator, moneyValidator } from '@/@core/utils/validators';
-import SalaryService from '@/service/salary.service';
-import useSalaryStore from '@/stores/salary.store';
+import { moneyValidator } from '@/@core/utils/validators'
+import SalaryService from '@/service/salary.service'
+import useSalaryStore from '@/stores/salary.store'
 
 const salaryStore = useSalaryStore()
 const refVForm = ref()
 const submitted = ref(false)
 const form = ref({})
+
 const errors = ref({
   title: [],
   level: [],
-  value: []
+  value: [],
 })
+
 const modalRef = ref()
 const toast = inject("toast")
 
 defineExpose({
-    open() {
-      modalRef.value.open()
-      salaryStore.resetField()
-      form.value = salaryStore.getSalaryModel
-    },
-    openAsUpdateMode() {
-      modalRef.value.openAsUpdateMode()
-      form.value = salaryStore.getSalaryModel
-    },
-    close() {
-      modalRef.value.close()
-      salaryStore.resetField()
-    },
+  open() {
+    modalRef.value.open()
+    salaryStore.resetField()
+    form.value = salaryStore.getSalaryModel
+  },
+  openAsUpdateMode() {
+    modalRef.value.openAsUpdateMode()
+    form.value = salaryStore.getSalaryModel
+  },
+  close() {
+    modalRef.value.close()
+    salaryStore.resetField()
+  },
 })
 
 
@@ -79,7 +79,10 @@ async function update() {
 </script>
 
 <template>
-  <AppDialog ref="modalRef" :max-width="420">
+  <AppDialog
+    ref="modalRef"
+    :max-width="420"
+  >
     <template #title>
       Position Details
     </template>
@@ -97,27 +100,21 @@ async function update() {
               :error-messages="errors.title"
             />
           </VCol>
-          <VCol 
-            cols="12"
-          >
+          <VCol cols="12">
             <span class="text-sm font-weight-bold">LEVEL</span>
             <VTextField
               v-model="form.level"
               :error-messages="errors.level"
             />
           </VCol>
-          <VCol 
-            cols="12"
-          >
+          <VCol cols="12">
             <span class="text-sm font-weight-bold">CURRENCY</span>
             <SelectCurrency
               v-model="form.currency"
               label=""
             />
           </VCol>
-          <VCol 
-            cols="12"
-          >
+          <VCol cols="12">
             <span class="text-sm font-weight-bold">AMOUNT</span>
             <VTextField
               v-model="form.value"

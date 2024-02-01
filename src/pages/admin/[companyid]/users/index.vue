@@ -1,4 +1,5 @@
 <script setup>
+import { helpers } from '@/helpers'
 import UserService from '@/service/user.service'
 import useUserStore from '@/stores/user.store'
 import CompanyModal from '@/views/pages/company/CompanyModal.vue'
@@ -29,6 +30,18 @@ const tableHeader = ref([
     key: "action",
     align: 'center',
     sortable: false,
+  },
+])
+
+const breadCrumbs = ref([
+  {
+    title: "Home",
+    to: helpers.resolver.resolveRoot(),
+  },
+  {
+    title: "Users",
+    disabled: true,
+    to: "#",
   },
 ])
 
@@ -150,6 +163,11 @@ onMounted(async () => {
 
 <template>
   <section>
+    <PageHeader
+      title="Users"
+      subtitle="list of users"
+      :breadcrumb="breadCrumbs"
+    />
     <VCard>
       <VCardText>
         <VRow>

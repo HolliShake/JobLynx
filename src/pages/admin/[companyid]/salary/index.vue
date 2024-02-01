@@ -1,11 +1,11 @@
 <script setup>
-import CompanyContext from '@/context/CompanyContext.vue'
+import PageHeader from '@/@core/components/PageHeader.vue'
 import { helpers } from '@/helpers'
 import SalaryService from '@/service/salary.service'
 import useCompanyStore from '@/stores/company.store'
 import useSalaryStore from '@/stores/salary.store'
 import SalaryModal from '@/views/pages/company/tabs/salary/SalaryModal.vue'
-import { inject, watch } from 'vue'
+import { inject, onMounted } from 'vue'
 
 const salaryStore = useSalaryStore()
 const companyStore = useCompanyStore()
@@ -31,6 +31,18 @@ const tableHeader = ref([
     key: "action",
     width: '150',
     align: 'center',
+  },
+])
+
+const breadcrumbs = ref([
+  {
+    text: "Home",
+    to: helpers.resolver.resolveRoot(),
+  },
+  {
+    text: "Salary",
+    disabled: true,
+    to: '#',
   },
 ])
 
@@ -75,12 +87,13 @@ async function onDelete(salary) {
   })
 }
 
-watch(() => companyStore.companyModel, async company => {
+onMounted(async () => {
   // salaryStore.setCompany(company.id)
 
   try
   {
-    const { status: code, data: response } = await SalaryService.getSalaryByCompanyId(company.id)
+    // const { status: code, data: response } = await SalaryService.getSalaryByCompanyId(company.id)
+    const { status: code, data: response } = await SalaryService.getAllSalary()
 
     if (code == 200) {
       salaryStore.initialize(response)
@@ -90,13 +103,18 @@ watch(() => companyStore.companyModel, async company => {
     console.error(error)
     toast.error("Failed to load salaries.")
   }
-}, { deep: true })
+})
 
 // 
 </script>
 
 <template>
-  <CompanyContext>
+  <section>
+    <PageHeader
+      title="Salary"
+      subtitle="Manage salary for your company"
+      :breadcrumb="breadcrumbs"
+    />
     <VCard>
       <VCardText class="pa-4">
         <VRow>
@@ -170,13 +188,13 @@ watch(() => companyStore.companyModel, async company => {
     </VCard>
 
     <SalaryModal ref="modalRef" />
-  </CompanyContext>
+  </section>
 </template>
 
 <route lang="yaml">
   meta:
     layout: default
-    subject: company
+    subject: admin
     action: read
     requiresAuth: true
 </route>

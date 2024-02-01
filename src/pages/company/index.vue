@@ -50,6 +50,10 @@ const filterItems = ref([
     title: "Declined",
     value: 1,
   },
+  {
+    title: "Approved",
+    value: 2,
+  },
 ])
 
 const baseItems = computed(() => {
@@ -71,9 +75,11 @@ const items = computed(() => {
       case -1:
         return true
       case 0:
-        return !(c.verified_by_admin && c.is_decliend)
+        return (!c.verified_by_admin && !c.is_decliend)
       case 1:
-        return (!c.verified_by_admin) && c.is_decliend
+        return (c.verified_by_admin) && c.is_decliend
+      case 2:
+        return (c.verified_by_admin) && !c.is_decliend
       default:
         return false
       }

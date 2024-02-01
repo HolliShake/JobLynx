@@ -1,4 +1,5 @@
 <script setup>
+import { helpers } from '@/helpers'
 import CompanyService from '@/service/company.service'
 import useCompanyStore from '@/stores/company.store'
 import CompanyModal from '@/views/pages/company/CompanyModal.vue'
@@ -7,7 +8,7 @@ import { computed, inject, onMounted } from 'vue'
 const breadCrumbs = ref([
   {
     title: "Home",
-    to: "/",
+    to: helpers.resolver.resolveRoot(),
   },
   {
     title: "Companies",
@@ -188,6 +189,10 @@ async function onDelete(company) {
     })
 }
 
+async function onViewPartner(data) {
+  localStorage.setItem('selectedPartner', JSON.stringify(data))
+}
+
 onMounted(async () => {
   try {
     const { status: code, data: response } = await CompanyService.getAllPartnerCompanies()
@@ -271,6 +276,28 @@ onMounted(async () => {
         </template>
 
         <template #item.action="{ item }">
+          <RouterLink
+            :to="{
+              name: 'admin-companyid-companies-partnerid',
+              params: {
+                partnerid: helpers.security.encrypt(item.raw.id),
+              },
+            }"
+            @click.stop="onViewPartner(item.raw)"
+          >
+            <VBtn
+              v-if="item.raw.verified_by_admin && !item.raw.is_declined"
+              icon=""
+              variant="text"
+              size="small"
+              color="primary"
+            >
+              <VIcon icon="tabler-eye" />
+              <VTooltip activator="parent">
+                View company Job post(s)
+              </VTooltip>
+            </VBtn>
+          </RouterLink>
           <VBtn
             v-if="!item.raw.verified_by_admin"
             icon=""
@@ -286,7 +313,7 @@ onMounted(async () => {
           </VBtn>
           <!--  -->
           <VBtn
-            v-if="!(item.raw.verified_by_admin && item.raw.is_declined)"
+            v-if="!item.raw.verified_by_admin"
             icon=""
             variant="text"
             size="small"

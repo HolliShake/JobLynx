@@ -1,15 +1,14 @@
 <script setup>
-import { onMounted } from 'vue';
-import SalaryModal from './SalaryModal.vue';
-import useSalaryStore from '@/stores/salary.store';
-import { inject } from 'vue';
-import { watch } from 'vue';
-import SalaryService from '@/service/salary.service';
+import SalaryService from '@/service/salary.service'
+import useSalaryStore from '@/stores/salary.store'
+import { inject, watch } from 'vue'
+import SalaryModal from './SalaryModal.vue'
 
 const salaryStore = useSalaryStore()
 const companyContext = inject('companyContext')
 const search = ref('')
 const itemsPerPage = ref(10)
+
 const tableHeader = ref([
   {
     title: "TITLE",
@@ -28,8 +27,9 @@ const tableHeader = ref([
     key: "action",
     width: '150',
     align: 'center',
-  }
+  },
 ])
+
 const modalRef = ref()
 const loaded = ref(false)
 const toast = inject("toast")
@@ -53,7 +53,7 @@ async function onDelete(salary) {
   swal.value.fire({
     question: "Are you sure you want to delete salary entry?",
     dangerMode: true,
-  }).then(async (result) => {
+  }).then(async result => {
     if (!result) return
 
     try
@@ -71,8 +71,8 @@ async function onDelete(salary) {
   })
 }
 
-watch(companyContext, async (value) => {
-  salaryStore.setCompany(value.id)
+watch(companyContext, async value => {
+  // salaryStore.setCompany(value.id)
 
   try
   {
@@ -158,10 +158,10 @@ watch(companyContext, async (value) => {
           size="x-small"
           @click.stop="onDelete(item.raw)"
         >
-          <VTooltip activator="parent">Delete salary</VTooltip>
-          <VIcon
-            icon="tabler-trash"
-          />
+          <VTooltip activator="parent">
+            Delete salary
+          </VTooltip>
+          <VIcon icon="tabler-trash" />
         </VBtn>
       </template>
     </AppTable>

@@ -1,6 +1,5 @@
 <script setup>
 import { helpers } from '@/helpers'
-import { useAppAbility } from '@/plugins/casl/useAppAbility'
 import ApplicationLogService from '@/service/application-log.service'
 import JobApplicationService from '@/service/job-application.service'
 import EventModal from '@/views/pages/company/EventModal.vue'
@@ -15,7 +14,6 @@ const props = defineProps({
   },
 })
 
-const ability = useAppAbility()
 const modalRef = ref()
 const pageData = ref({})
 const loaded = ref(false)
@@ -368,7 +366,6 @@ onMounted(async () => {
                     Events
                   </h4>
                   <VBtn
-                    v-if="ability.can('update', 'admin')"
                     size="small"
                     @click="onCreateEvent"
                   >
@@ -413,10 +410,7 @@ onMounted(async () => {
                         <i class="d-block app-timeline-meta">{{ helpers.formater.dateToWord(log.event_date) }}</i>  
                       </div>
 
-                      <div
-                        v-if="ability.can('update', 'admin') && ability.can('delete', 'admin')"
-                        class="d-flex flex-row gap-1 align-center"
-                      >
+                      <div class="d-flex flex-row gap-1 align-center">
                         <VBtn
                           icon=""
                           variant="text"
@@ -451,10 +445,8 @@ onMounted(async () => {
                       <VTextField 
                         v-model="log.score"
                         label="Score"
-                        readonly
                       />
                       <VBtn
-                        v-if="ability.can('update', 'admin')"
                         icon=""
                         rounded="lg"
                         size="small"
@@ -470,7 +462,6 @@ onMounted(async () => {
                 </VTimeline>
               </VCol>
               <VCol 
-                v-if="ability.can('update', 'admin')"
                 cols="12" 
                 md="auto"
               >
@@ -521,8 +512,8 @@ onMounted(async () => {
 
 <route lang="yaml">
   meta:
-    navActiveLink: company-companyid-job-posting
-    subject: company
+    subject: admin
     action: read
+    navActiveLink: admin-companyid-companies
     requiresAuth: true
 </route>

@@ -20,7 +20,7 @@ injectSkinClasses()
 <template>
   <div
     class="layout-wrapper layout-blank"
-    style="padding-top: 69.97px;"
+    style="padding-top: 84px;/*69.97px;*/"
   > 
     <VCard
       rounded="0"

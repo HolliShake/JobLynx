@@ -74,11 +74,10 @@ const toast = inject('toast')
 const items = computed(() => {
   const data = jobApplicationStore.getJobApplications
 
-  if (status.value == 'qualified') {
-    return data.filter(ja => helpers.resolver.getQualification(
-      ja.user.personal_data.skill.map(s => s.title.toLowerCase()),
-      ja.job_posting.position.skills.toLowerCase(),
-    ) >= import.meta.env.VITE_APP_RECOMMENDATION_TRESHOLD)
+  if  (status.value == 'qualified') {
+    console.log(":>>", import.meta.env.VITE_APP_RECOMMENDATION_TRESHOLD)
+    
+    return data.filter(item => helpers.resolver.getQualification(item.user.personal_data.skill.map(s => s.title.toLowerCase()), item.job_posting.position.skills.toLowerCase()) >= import.meta.env.VITE_APP_RECOMMENDATION_TRESHOLD)
   }
 
   return data
@@ -98,9 +97,8 @@ const computedQualification = item => {
 
 async function onView(data) {
   router.push({
-    name: 'company-companyid-job-posting-jobpostingid-job-applicant-jobapplicantid',
+    name: 'admin-companyid-companies-partnerid-applicants-application-jobapplicantid',
     params: {
-      jobpostingid: props.jobpostingid,
       jobapplicantid: helpers.security.encrypt(data.raw.id),
     },
     props: true,
@@ -112,6 +110,7 @@ onMounted(async () => {
     const { status: code, data: response } = await JobApplicationService.getJobApplicantsByJobPostingId(helpers.security.decrypt(props.jobpostingid))
 
     if (code == 200) {
+      console.log(response)
       jobApplicationStore.initialize(response)
       loaded.value = true
     }
@@ -125,6 +124,7 @@ onMounted(async () => {
 
 <template>
   <section>
+    <PageHeader title="Applicants" />
     <VCard>
       <VCardText>
         <VRow>
@@ -219,9 +219,10 @@ onMounted(async () => {
 </template>
 
 <route lang="yaml">
-  meta:
-    navActiveLink: company-companyid-job-posting
-    subject: company
-    action: read
-    requiresAuth: true
+    meta:
+      layout: default
+      subject: admin
+      action: read
+      navActiveLink: admin-companyid-companies
+      requiresAuth: true
 </route>

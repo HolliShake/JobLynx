@@ -70,7 +70,7 @@ const loadCompany = async () => {
 
 const loadJobPosting = async () => {
   try {
-    const { status: code, data: response } = await JobPostingService.getJobPostingByCompanyId(helpers.security.decrypt(props.id))
+    const { status: code, data: response } = await JobPostingService.getApprovedJobPostingByCompanyId(helpers.security.decrypt(props.id))
 
     if (code == 200) {
       jobPostingsRaw.value = response

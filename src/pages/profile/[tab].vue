@@ -91,6 +91,28 @@ watch(currentTab, val => {
           Add Addtional Information to your profile to get more job opportunities. example: Skills, Education, Work Experience, etc.
         </VAlert>
       </VCol>
+      <VCol 
+        v-if="authStore.isCompany"
+        cols="12"
+      >
+        <VAlert
+          variant="tonal"
+          type="warning"
+        >
+          This account was marked as maintainer of a company. You can edit your profile.
+        </VAlert>
+      </VCol>
+      <VCol 
+        v-else-if="authStore.isAdmin"
+        cols="12"
+      >
+        <VAlert
+          variant="tonal"
+          type="warning"
+        >
+          You are an administrator of the system. You can edit your profile.
+        </VAlert>
+      </VCol>
       <VCol cols="12">
         <UserProfileHeader />
       </VCol>

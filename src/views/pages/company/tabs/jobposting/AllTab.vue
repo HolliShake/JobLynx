@@ -44,15 +44,6 @@ const statusItems = ref([
 const items = computed(() => {
   return jobPostingStore.getJobPostings
     .filter(jp => jp.position.title.toLowerCase().includes(search.value.toLowerCase()))
-    .filter(jp => {
-      const date_posted = new Date(Date.parse(jp.date_posted))
-      
-      const expired_date = new Date(date_posted.getTime() + (jp.adtype.duration * 24 * 60 * 60 * 1000))
-
-      const now = new Date(Date.now())
-
-      return date_posted.getTime() <= now.getTime() && expired_date.getTime() >= now.getTime()
-    })
     .filter(jp => selectStatus.value == -1 ? true : jp.status == selectStatus.value)
 })
 

@@ -7,6 +7,7 @@ import useAuthStore from '@/stores/auth.store'
 import DefaultProfileImg from '@images/download/default-avatar.png'
 import DefaultCoverImg from '@images/download/default-cover.jpg'
 import { watch } from 'vue'
+import UserResumeModal from './UserResumeModal.vue'
 import ProfileModal from './tabs/profile/ProfileModal.vue'
 
 const data = useAuthStore()
@@ -16,6 +17,7 @@ const inputRef1 = ref()
 const inputRef2 = ref()
 const dpImage = ref([])
 const cvImage = ref([])
+const resumeRef = ref()
 
 async function onChangeDp() {
   inputRef1.value.click()
@@ -36,6 +38,11 @@ async function onFileCoverChange() {
 async function onEdit() {
   modalRef.value.openAsUpdateMode()
 }
+
+async function onResume() {
+  resumeRef.value.open()
+}
+
 
 watch(dpImage, async image => {
   const formData = new FormData()
@@ -181,12 +188,20 @@ watch(cvImage, async image => {
           </div>
 
           <VBtn 
-            v-if="ability.can('update', 'admin') || ability.can('update', 'user')"
             prepend-icon="tabler-edit"
             color="success"
             @click="onEdit"
           >
             Edit
+          </VBtn>
+
+          <VBtn 
+            v-if="ability.can('update', 'admin') || ability.can('update', 'user')"
+            prepend-icon="tabler-file"
+            color="primary"
+            @click="onResume"
+          >
+            View Resume
           </VBtn>
         </div>
       </div>
@@ -194,6 +209,11 @@ watch(cvImage, async image => {
   </VCard>
 
   <ProfileModal ref="modalRef" />
+  <UserResumeModal
+    ref="resumeRef"
+    :is-modal-mode="!!true"
+    :user-id="data.getUserData.id"
+  />
 </template>
 
 <style lang="scss">

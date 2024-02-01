@@ -1,39 +1,41 @@
 
 <script setup>
-import { emailValidator, requiredValidator } from '@/@core/utils/validators';
-import CompanyService from '@/service/company.service';
-import useCompanyStore from '@/stores/company.store';
+import { emailValidator, requiredValidator } from '@/@core/utils/validators'
+import CompanyService from '@/service/company.service'
+import useCompanyStore from '@/stores/company.store'
 
 const companyService = CompanyService
 const companyStore = useCompanyStore()
 const refVForm = ref()
 const submitted = ref(false)
 const form = ref({})
+
 const errors = ref({
   company_name: [],
-  email : [],
+  email: [],
   description: [],
   address: [],
   status: [],
   user_Id: [],
 })
+
 const toast = inject("toast")
 const modalRef = ref()
 
 defineExpose({
-    open() {
-      modalRef.value.open()
-      companyStore.resetField()
-      form.value = companyStore.getCompanyModel
-    },
-    openAsUpdateMode() {
-      form.value = companyStore.getCompanyModel
-      modalRef.value.openAsUpdateMode()
-    },
-    close() {
-      modalRef.value.close()
-      companyStore.resetField()
-    },
+  open() {
+    modalRef.value.open()
+    companyStore.resetField()
+    form.value = companyStore.getCompanyModel
+  },
+  openAsUpdateMode() {
+    form.value = companyStore.getCompanyModel
+    modalRef.value.openAsUpdateMode()
+  },
+  close() {
+    modalRef.value.close()
+    companyStore.resetField()
+  },
 })
 
 
@@ -71,7 +73,7 @@ async function update() {
     }
 
   } catch (err) {
-    console.log(err);
+    console.log(err)
     if ((err.response?.data?.errors) ?? false) {
       errors.value = err.response?.data?.errors
     }
@@ -82,7 +84,10 @@ async function update() {
 </script>
 
 <template>
-  <AppDialog ref="modalRef" :max-width="420">
+  <AppDialog
+    ref="modalRef"
+    :max-width="420"
+  >
     <template #title>
       Company Details
     </template>
@@ -131,8 +136,14 @@ async function update() {
               v-model="form.status"
               inline
             >
-              <VRadio label="active" value="active" />
-              <VRadio label="inactive" value="inactive" />
+              <VRadio
+                label="active"
+                value="active"
+              />
+              <VRadio
+                label="inactive"
+                value="inactive"
+              />
             </VRadioGroup>
           </VCol>
         </VRow>

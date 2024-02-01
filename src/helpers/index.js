@@ -53,7 +53,7 @@ const resolver = ({
     const virtaulcid = import.meta.env.VITE_APP_VIRTUAL_COMPANY_ID
 
     if (authStore.isAdmin) {
-      return `/admin/${virtaulcid}/ad-types`
+      return `/admin/${virtaulcid}/companies`
     } else if (authStore.isCompany) {
       return "/company"
     } else if (authStore.isUser) {
