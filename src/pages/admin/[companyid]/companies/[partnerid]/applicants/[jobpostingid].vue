@@ -71,6 +71,10 @@ const itemsPerPage = ref(10)
 const loaded = ref(false)
 const toast = inject('toast')
 
+const selectedJobPosting = computed(() => {
+  return JSON.parse(localStorage.getItem('selectedJobPosting'))
+})
+
 const items = computed(() => {
   const data = jobApplicationStore.getJobApplications
 
@@ -124,7 +128,10 @@ onMounted(async () => {
 
 <template>
   <section>
-    <PageHeader title="Applicants" />
+    <PageHeader
+      :title="`${selectedJobPosting?.position?.title} Applicants`"
+      :subtitle="`List of ${selectedJobPosting?.position?.title} applicants`"
+    />
     <VCard>
       <VCardText>
         <VRow>

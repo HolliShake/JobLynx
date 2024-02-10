@@ -1,4 +1,5 @@
 <script setup>
+import { avatarText } from '@/@core/utils/formatters'
 import { helpers } from '@/helpers'
 import ApplicationLogService from '@/service/application-log.service'
 import JobApplicationService from '@/service/job-application.service'

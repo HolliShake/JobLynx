@@ -166,7 +166,24 @@ async function onReject(company) {
     })
 }
 
+const hasApplicant = company => {
+  const statuses = company.employee_status
+  let applicant = 0
+
+  for (const status of statuses) {
+    for (const jobpost of status.job_posting) {
+      applicant += jobpost.job_applicants.length 
+    }
+  }
+
+  return applicant > 0
+}
+
 async function onDelete(company) {
+  if (hasApplicant(company)) {
+    return toast.info("Company already contains applicant and employees. Cannot delete.")
+  }
+
   swal.value.fire({
     question: "Are you sure you want to delete this company?",
     dangerMode: true,
@@ -198,10 +215,12 @@ onMounted(async () => {
     const { status: code, data: response } = await CompanyService.getAllPartnerCompanies()
 
     if (code == 200) {
+      console.log(response)
       companyStore.initialize(response)
       loaded.value = true
     }
   } catch (error) {
+    console.log(error)
     toast.error("Failed to load company data.")
   }
 })

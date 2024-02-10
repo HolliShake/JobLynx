@@ -1,4 +1,5 @@
 <script setup>
+import { avatarText } from '@/@core/utils/formatters'
 import { helpers } from '@/helpers'
 import { useAppAbility } from '@/plugins/casl/useAppAbility'
 import ApplicationLogService from '@/service/application-log.service'

@@ -2,7 +2,7 @@
 import { helpers } from '@/helpers'
 import JobPostingService from '@/service/jobposting.service'
 import useJobPostingStore from '@/stores/job-posting.store'
-import { computed, inject, onMounted } from 'vue'
+import { computed, h, inject, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 
 const props = defineProps({
@@ -25,9 +25,17 @@ const tableHeaders = ref([
     title: 'EMPLOYMENT TYPE',
     key: 'position.employment_type',
   },
+
+  // {
+  //   title: 'PAID',
+  //   key: 'paid',
+  // },
   {
-    title: 'PAID',
-    key: 'paid',
+    title: 'SKILLS',
+    key: 'position.skills',
+    value: v => h("div", { class: 'd-flex flex-row gap-1' }, 
+      [...v.position.skills.split(' ').filter(s => s.trim().length > 0).map(s => h("span", { class: 'v-chip v-theme--light text-success v-chip--density-default rounded-sm v-chip--size-small v-chip--variant-tonal' }, [h('span', { class: 'v-chip__underlay' }), h('span', { class: 'v-chip__content' }, s.trim())]))],
+    ),
   },
   {
     title: 'STATUS',
@@ -125,6 +133,10 @@ async function onDelete(data) {
   }
 }
 
+async function onRowClick(data) {
+  localStorage.setItem('selectedJobPosting', JSON.stringify(data.raw))
+}
+
 onMounted(async () => {
   try {
     const { status: code, data: response } = await JobPostingService.getJobPostingByCompanyId(helpers.security.decrypt(props.partnerid))
@@ -181,6 +193,7 @@ onMounted(async () => {
       :items="data"
       :items-per-page="itemsPerPage"
       :loading="!loaded"
+      @click:row="onRowClick"
     >
       <template #item.paid="{ item }">
         <VChip
@@ -217,6 +230,7 @@ onMounted(async () => {
             size="small"
             variant="text"
             color="primary"
+            @click="onRowClick(item)"
           >
             <VIcon icon="tabler-eye" />
             <VTooltip activator="parent">
