@@ -1,6 +1,6 @@
 
 <script setup>
-import { integerValidator } from '@/@core/utils/validators'
+import { integerValidator, requiredValidator } from '@/@core/utils/validators'
 import OfficeService from '@/service/office.service'
 import PositionService from '@/service/position.service'
 import SalaryService from '@/service/salary.service'
@@ -90,6 +90,10 @@ async function onSubmit() {
 }
 
 async function create() {
+  const { valid: isValid } = await refVForm.value.validate()
+
+  if (!isValid) return
+  
   try
   {
     const { status: code, data: response } = await PositionService.createPosition(form.value)
@@ -107,6 +111,10 @@ async function create() {
 }
 
 async function update() {
+  const { valid: isValid } = await refVForm.value.validate()
+
+  if (!isValid) return
+
   try
   {
     const { status: code, data: response } = await PositionService.updatePosition(form.value.id, form.value)
@@ -167,6 +175,27 @@ const getOffices = async () => {
     console.error(error)
     toast.error("Failed to load offices.")
   }
+}
+
+const rolesValidator = data => {
+  const PRIMARY_KEYWORD = "PRIMARY JOB ROLES:".toLowerCase()
+  const SECONDARY_KEYWORD = "SECONDARY JOB ROLES:".toLowerCase()
+  const TARGET = data.toLowerCase()
+
+  const pindex = TARGET.indexOf(PRIMARY_KEYWORD)
+  const sindex = TARGET.indexOf(SECONDARY_KEYWORD)
+
+  const primary = TARGET.slice(pindex + PRIMARY_KEYWORD.length, sindex).trim()
+    .split('\n').map(s => s.trim().startsWith('-') ? s.trim().slice(1) : s.trim()).map(s => s.trim())
+
+  const secondary = TARGET.slice(sindex + SECONDARY_KEYWORD.length).trim()
+    .split('\n').map(s => s.trim().startsWith('-') ? s.trim().slice(1) : s.trim()).map(s => s.trim())
+
+  if (primary.length < 3) return "Primary job roles must atleast 3 items."
+  
+  if (secondary.length < 3) return "Secondary job roles must atleast 3 items."
+
+  return false
 }
 
 // 
@@ -257,9 +286,10 @@ const getOffices = async () => {
             <VTextarea
               v-model="form.description"
               :rows="2"
-              :max-rows="5"
+              :max-rows="50"
               auto-grow
               :error-messages="errors.description"
+              :rules="[requiredValidator, rolesValidator]"
             />
           </VCol>
           <VCol cols="12">

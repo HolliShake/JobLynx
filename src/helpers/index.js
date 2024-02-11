@@ -63,8 +63,6 @@ const resolver = ({
     }
   },
   naiveSearch: (requiredSkills, currentSkill) => {
-    console.log(":>>", requiredSkills, currentSkill)
-
     let M = currentSkill.length
     let N = requiredSkills.length
   
@@ -82,7 +80,6 @@ const resolver = ({
       }
 
       // if pat[0...M-1] = txt[i, i+1, ...i+M-1]
-      console.log(j, M)
       if (j == M) {
         return true
       }

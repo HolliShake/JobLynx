@@ -149,18 +149,59 @@ defineExpose({
               <h2 class="text-h2 font-weight-thin text-center">
                 {{ pageData.first_name }} {{ pageData.last_name }}
               </h2>
-              <p class="text-center font-weight-thin">
+              <p class="text-center text-sm font-weight-thin my-0 py-0">
                 {{ pageData.address }}
                 {{ pageData.country }}
               </p>
+              <p class="text-center text-sm font-weight-thin my-0 py-0">
+                {{ pageData.mobile_number }}
+              </p>
+              <!-- Parent  -->
+              <div class="d-block mt-10 px-10">
+                <div class="d-flex flex-row align-center gap-3">
+                  <VIcon icon="mdi-person" />
+                  <h3 class="d-block">
+                    PARENT
+                  </h3>
+                </div>
+                <span class="d-block text-sm ps-3 mt-3">Mother</span>
+                <span class="d-block ps-3 font-weight-bold">{{ pageData.personal_data.mother_last_name }}, {{ pageData.personal_data.mother_first_name }}, {{ pageData.personal_data.mother_middle_name }}</span>
+                <span class="d-block text-sm ps-3 mt-3">Father</span>
+                <span class="d-block ps-3 font-weight-bold">{{ pageData.personal_data.father_last_name }}, {{ pageData.personal_data.father_first_name }}, {{ pageData.personal_data.father_middle_name }}</span>
+              </div>
 
+              <!-- COUNTRY  -->
+              <div class="d-block mt-3 px-10">
+                <div class="d-flex flex-row align-center gap-3">
+                  <VIcon icon="mdi-flag" />
+                  <h3>{{ pageData.personal_data.citizenship }}</h3>
+                </div>
+              </div>
+
+              <!-- CITIZENT  -->
+              <div class="d-block mt-3 px-10">
+                <div class="d-flex flex-row align-center gap-3">
+                  <VIcon icon="mdi-church" />
+                  <h3>{{ pageData.personal_data.religion }}</h3>
+                </div>
+              </div>
               
               <!-- Education  -->
-              <div class="d-block mt-10 px-10">
+              <div class="d-block mt-3 px-10">
                 <div class="d-flex flex-row align-center gap-3">
                   <VIcon icon="mdi-school" />
                   <h3>EDUCATIONAL BACKGROUND</h3>
                 </div>
+                <VCard
+                  v-if="pageData.personal_data.education.length <= 0"
+                  class="mt-2"
+                  flat
+                  border
+                >
+                  <VCardText class="pa-3 text-center text-sm">
+                    No Education Added Yet!
+                  </VCardText>
+                </VCard>
                 <VTimeline
                   side="end"
                   align="start"
@@ -171,7 +212,7 @@ defineExpose({
                 >
                   <!--  -->
                   <VTimelineItem
-                    v-for="(education, index) in pageData.personal_data.education"
+                    v-for="(education, index) in pageData.personal_data?.education"
                     :key="`item-${index}`"
                     size="x-small"
                     dot-color="success"
@@ -200,6 +241,16 @@ defineExpose({
                   <VIcon icon="mdi-account-hard-hat" />
                   <h3>WORK EXPERIENCE</h3>
                 </div>
+                <VCard
+                  v-if="pageData.JobExperience?.length <= 0"
+                  class="mt-2"
+                  flat
+                  border
+                >
+                  <VCardText class="pa-3 text-center text-sm">
+                    No Job Experience Yet!
+                  </VCardText>
+                </VCard>
 
                 <VTimeline
                   side="end"
@@ -228,6 +279,17 @@ defineExpose({
                     </div>
                   </VTimelineItem>
                 </VTimeline>
+              </div>
+
+              <div class="d-block mt-3 px-10">
+                <div class="d-flex flex-row align-center gap-3">
+                  <VIcon icon="mdi-gmail" />
+                  <span class="text-sm font-weight-thin">{{ pageData.email }}</span>
+                </div>
+                <div class="d-flex flex-row align-center gap-3">
+                  <VIcon icon="mdi-phone" />
+                  <span class="text-sm font-weight-thin">{{ pageData.mobile_number }}</span>
+                </div>
               </div>
             </div>
           </VCol>

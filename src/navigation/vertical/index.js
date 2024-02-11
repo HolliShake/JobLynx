@@ -109,12 +109,12 @@ export default Object.freeze([
       auth: true,
     },
 
-    // {
-    //   title: 'Ad Types',
-    //   to: { name: 'admin-companyid-ad-types' },
-    //   icon: { icon: 'tabler-ticket' },
-    //   auth: true,
-    // },
+    {
+      title: 'Ad Types',
+      to: { name: 'admin-companyid-ad-types' },
+      icon: { icon: 'tabler-ticket' },
+      auth: true,
+    },
     {
       title: 'Salary',
       to: { name: 'admin-companyid-salary' },

@@ -61,6 +61,32 @@ watch(pageData, async value => {
   }
 }, { deep: true })
 
+const primaryRoles = computed(() => {
+  return function(data) {
+    const PRIMARY_KEYWORD = "PRIMARY JOB ROLES:".toLowerCase()
+    const SECONDARY_KEYWORD = "SECONDARY JOB ROLES:".toLowerCase()
+    const TARGET = data.position.description.toLowerCase()
+
+    const pindex = TARGET.indexOf(PRIMARY_KEYWORD)
+    const sindex = TARGET.indexOf(SECONDARY_KEYWORD)
+
+    return TARGET.slice(pindex + PRIMARY_KEYWORD.length, sindex).trim()
+      .split('\n').map(s => s.trim().startsWith('-') ? s.trim().slice(1) : s.trim()).map(s => s.trim())
+  }
+})
+
+const secondaryRoles = computed(() => {
+  return function(data) {
+    const SECONDARY_KEYWORD = "SECONDARY JOB ROLES:".toLowerCase()
+    const TARGET = data.position.description.toLowerCase()
+
+    const sindex = TARGET.indexOf(SECONDARY_KEYWORD)
+
+    return TARGET.slice(sindex + SECONDARY_KEYWORD.length).trim()
+      .split('\n').map(s => s.trim().startsWith('-') ? s.trim().slice(1) : s.trim()).map(s => s.trim())
+  }
+})
+
 onMounted(async () => {
   try
   {
@@ -213,6 +239,50 @@ async function onVisitApplication() {
                 cols="12"
                 class="py-0"
               />
+              <VCol
+                cols="12"
+                md="6"
+              >
+                <h4 class="text-h4 font-weight-bold ps-4 mb-3">
+                  <VIcon icon="mdi-bullhorn" /> Primary Job Roles
+                </h4>
+                <VList>
+                  <VListItem
+                    v-for="role in primaryRoles(pageData)"
+                    :key="`${role}-n`"
+                  >
+                    <template #prepend>
+                      <VIcon
+                        icon="mdi-circle"
+                        size="9"
+                      />
+                    </template>
+                    <VListItemTitle>{{ role?.toUpperCase() }}</VListItemTitle>
+                  </VListItem>
+                </VList>
+              </VCol>
+              <VCol
+                cols="12"
+                md="6"
+              >
+                <h4 class="text-h4 font-weight-bold ps-4 mb-3">
+                  <VIcon icon="mdi-bullhorn" /> Secondary Job Roles
+                </h4>
+                <VList>
+                  <VListItem
+                    v-for="role in secondaryRoles(pageData)"
+                    :key="`${role}-n`"
+                  >
+                    <template #prepend>
+                      <VIcon
+                        icon="mdi-circle"
+                        size="9"
+                      />
+                    </template>
+                    <VListItemTitle>{{ role?.toUpperCase() }}</VListItemTitle>
+                  </VListItem>
+                </VList>
+              </VCol>
               <VCol 
                 cols="12" 
                 md="6"
@@ -234,13 +304,13 @@ async function onVisitApplication() {
                 md="6"
                 class="mt-10"
               >
-                <h4 class="text-h4 font-weight-thin mb-3">
-                  Skills Required
+                <h4 class="text-h4 font-weight-bold mb-3">
+                  <VIcon icon="mdi-arm-flex" /> Skills Required
                 </h4>
 
                 <VList>
                   <VListItem
-                    v-for="item in pageData.position.skills.split(' ')" 
+                    v-for="item in pageData.position.skills.split(' ').filter(s => s.trim().length > 0)" 
                     :key="`skill-${item.id}`"
                   >
                     <template #prepend>
@@ -261,8 +331,8 @@ async function onVisitApplication() {
                 offset-md="1"
                 class="mt-10"
               >
-                <h4 class="text-h4 font-weight-thin mb-3">
-                  Sample Photos
+                <h4 class="text-h4 font-weight-bold mb-3">
+                  <VIcon icon="mdi-view-gallery" /> Sample Photos
                 </h4>
                 <VCard
                   style="border: 4px solid rgb(var(--v-theme-background));"

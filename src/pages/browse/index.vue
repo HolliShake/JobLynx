@@ -32,9 +32,6 @@ const slides = ref([
 const jobPostingLoaded = ref(false)
 const toast = inject('toast')
 
-
-
-
 // 
 
 function isRecommended(data) {
@@ -56,12 +53,50 @@ function isRecommended(data) {
   return myQualification >= tresh
 }
 
+
+function isRoleMatched(pool, data) {
+  const PRIMARY_KEYWORD = "PRIMARY JOB ROLES:".toLowerCase()
+  const SECONDARY_KEYWORD = "SECONDARY JOB ROLES:".toLowerCase()
+  const TARGET = data.position.description.toLowerCase()
+
+  const pindex = TARGET.indexOf(PRIMARY_KEYWORD)
+  const sindex = TARGET.indexOf(SECONDARY_KEYWORD)
+
+  const primary = TARGET.slice(pindex + PRIMARY_KEYWORD.length, sindex).trim()
+    .split('\n').map(s => s.trim().startsWith('-') ? s.trim().slice(1) : s.trim()).map(s => s.trim())
+
+  const secondary = TARGET.slice(sindex + SECONDARY_KEYWORD.length).trim()
+    .split('\n').map(s => s.trim().startsWith('-') ? s.trim().slice(1) : s.trim()).map(s => s.trim())
+
+  const POOL = pool.toLowerCase().replaceAll('-', ' ').replaceAll(' - ', ' ').replaceAll('_', ' ').replaceAll(' _ ', ' ').trim()
+
+  const pmatched = helpers.resolver.getQualification(
+    [POOL],
+    primary.join(', '),
+  )
+
+  const smatched = helpers.resolver.getQualification(
+    [POOL],
+    secondary.join(', '),
+  )
+
+  const TRESH = 3
+  
+  if (pmatched >= TRESH || smatched >= TRESH)
+    return true
+  else if (primary.join(', ').includes(pool) || secondary.join(', ').includes(pool))
+    return true
+
+  return data.position.title.toLowerCase().includes(pool.toLowerCase())
+}
+
+
 const jobPostings = computed(() => {
   return jobPostingStore.getJobPostings
-    .filter(jp => jp.position.title.toLowerCase().includes(searchQuery.value.toLowerCase()))
+    .filter(jp => isRoleMatched(searchQuery.value, jp))
+    .filter(jp => isRecommended(jp))
     .filter(jp => (stars.value == -1) ? true : (jp.position.company.average == stars.value))
     .filter(jp => (!featured.value) ? true : (jp.adtype.is_featured == featured.value))
-    .filter(jp => isRecommended(jp))
 })
 
 const loadSampleJobPosting = async () => {
@@ -69,7 +104,6 @@ const loadSampleJobPosting = async () => {
   {
     const { status: code, data: response } = await JobPostingService.getAllJobPosting()
 
-    console.log(">>", response)
     if (code == 200) {
       jobPostingStore.initialize(response)
       jobPostingLoaded.value = true
